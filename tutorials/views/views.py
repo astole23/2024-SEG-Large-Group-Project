@@ -7,3 +7,6 @@ def employer_dashboard(request):
 def contact_us(request):
     return render(request, 'contact_us.html')
 
+def index(request):
+    return render(request, 'index.html')
+
