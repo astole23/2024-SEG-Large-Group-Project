@@ -1,6 +1,6 @@
 /* Reset and base styles */
 :root {
-    --primary-color: #2563eb;
+    --primary-color: #462191;
     --secondary-color: #475569;
     --background-color: #f8fafc;
     --card-background: #ffffff;
@@ -27,15 +27,18 @@
 
   /* Top Navigation Bar */
   .navbar {
-      background-color: #4b0082; /* Purple background for the navbar */
-      color: white;
-      padding: 1rem 2rem;
-      position: fixed; /* Fixes the navbar at the top */
-      width: 100%; /* Ensure it spans the full width */
-      z-index: 10; /* Ensure it's above other elements */
-      top: 0;
-      left: 0;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #4b0082;
+    color: white;
+    padding: 1rem 2rem;
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   
   .navbar .navbar-brand {
@@ -50,6 +53,7 @@
   .navbar-nav {
       display: flex;
       gap: 1rem;
+      align-items: center;
   }
   
   .navbar-nav .nav-link {
@@ -83,6 +87,18 @@
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary-color);
+  }
+
+  .logo-item {
+    flex: 0 1 auto;  
+    width: 100%;  
+    padding: 0.5rem;  
+    display: flex;  
+    align-items: center;  
+    justify-content: flex-start;  
+    text-align: left;  
+    box-sizing: border-box;  
+    overflow: hidden;  
   }
   
   .logo-icon {
