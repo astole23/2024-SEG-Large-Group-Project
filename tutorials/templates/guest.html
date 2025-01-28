@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #475569;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, system-ui, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .navbar {
+            background-color: #4b0082;
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .navbar-nav .nav-link {
+            color: white;
+            font-size: 1.1rem;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+            background-color: #6a0dad;
+        }
+
+        .navbar-nav .login-btn {
+            background-color: #6a0dad;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 5px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav .login-btn:hover {
+            background-color: #4b0082;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 150px auto;
+            padding: 0 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 1.25rem;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .search-bar button {
+            background-color: #4b0082;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background-color: #6a0dad;
+        }
+
+        .info-section {
+            background-color: var(--card-background);
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .info-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .info-section p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#" class="navbar-brand">Shy</a>
+        <div class="navbar-nav">
+            <a href="#who-are-we" class="nav-link">About Us</a>
+            <a href="#contact-us" class="nav-link">Sign Up</a>
+            <button class="login-btn">Log In</button>
+        </div>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" placeholder="What are you looking for today?">
+        <button>Search</button>
+    </div>
+
+    <div id="who-are-we" class="info-section">
+        <h2>Who Are We</h2>
+        <p>Welcome to Shy! We are dedicated to providing the best experience for users and companies alike. Our platform fosters seamless collaboration and connections.</p>
+    </div>
+
+    <div id="contact-us" class="info-section">
+        <h2>Contact Us</h2>
+        <p>If you have any questions or need support, feel free to reach out. Contact us via email at <strong>support@shy.com</strong> or call us at <strong>(123) 456-7890</strong>.</p>
+    </div>
+</body>
+</html>
