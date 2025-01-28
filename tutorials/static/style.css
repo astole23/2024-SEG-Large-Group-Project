@@ -27,8 +27,8 @@
 
   /* Top Navigation Bar */
   .navbar {
-    background-color: #4b0082;
-    color: white;
+    background-color: #462191 !important;
+    color: white !important;
     padding: 1rem 2rem;
     position: fixed;
     width: 100%;
@@ -57,7 +57,7 @@
   }
   
   .navbar-nav .nav-link {
-      color: white;
+      color: white !important;
       font-size: 1rem;
       text-decoration: none;
       padding: 0.5rem 1rem;

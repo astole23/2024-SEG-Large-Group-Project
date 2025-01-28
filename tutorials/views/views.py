@@ -19,5 +19,7 @@ def login(request):
 def guest(request):
     return render(request, 'guest.html')
 
+def base_content(request):
+    return render(request, 'base_content.html')
 
 

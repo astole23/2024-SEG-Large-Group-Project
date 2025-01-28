@@ -1,35 +1,31 @@
 {% load static %}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-  <div class="navbar">
-    <a class="navbar-brand" href="/">
-      <img src="{% static 'images/SHY_p.png' %}" alt="Code Tutors Logo" class="logo" style="max-height: 100px;">
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span> class="navbar-toggler-icon" </span> <!--just filler for aesthetics to make the website look more complete - no functionality-->
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" >Home</a> <!--just filler for aesthetics to make the website look more complete - no functionality-->
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" >About Us</a> <!--just filler for aesthetics to make the website look more complete - no functionality-->
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" >Contact Us</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" >Sign Up</a>
-        </li>
+<nav class="navbar">
+  <a class="navbar-brand" href="/">
+    <img src="{% static 'images/SHY_p.png' %}" alt="SHY Logo" class="logo" style="max-height: 100px;">
+  </a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span> 
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item">
+        <a class="nav-link">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link">About Us</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link">Contact Us</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link">Sign Up</a>
+      </li>
       {% if user.is_authenticated %}
-
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-        </li>
-        </ul>
-
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+      </li>
       {% endif %}
-    </div>
+    </ul>
   </div>
 </nav>
