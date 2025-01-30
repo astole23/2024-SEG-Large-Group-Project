@@ -1,6 +1,6 @@
 /* Reset and base styles */
 :root {
-    --primary-color: #2563eb;
+    --primary-color: #462191;
     --secondary-color: #475569;
     --background-color: #f8fafc;
     --card-background: #ffffff;
@@ -15,29 +15,39 @@
     box-sizing: border-box;
   }
   
-  body {
+  .body {
     font-family: Inter, system-ui, sans-serif;
     background-color: var(--background-color);
     color: var(--text-primary);
     line-height: 1.5;
     overflow: hidden;
-    
+    padding-top: 0;    
+    display: flex;
+    flex-direction: column;
   }
 
 
   /* Top Navigation Bar */
   .navbar {
-      background-color: #4b0082; /* Purple background for the navbar */
-      color: white;
-      padding: 1rem 2rem;
-      position: fixed; /* Fixes the navbar at the top */
-      width: 100%; /* Ensure it spans the full width */
-      z-index: 10; /* Ensure it's above other elements */
-      top: 0;
-      left: 0;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #462191;
+    color: white;
+    padding: 0.5rem 1rem;
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  
+
+  .navbar .logo {
+    height: 80px;
+    width: auto;
+  }
+ 
   .navbar .navbar-brand {
       color: white;
       font-size: 1.5rem;
@@ -49,12 +59,15 @@
   
   .navbar-nav {
       display: flex;
-      gap: 1rem;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: flex-end;
+      flex-direction: row
   }
   
   .navbar-nav .nav-link {
       color: white;
-      font-size: 1rem;
+      font-size: 1.1rem;
       text-decoration: none;
       padding: 0.5rem 1rem;
       border-radius: 5px;
@@ -65,7 +78,81 @@
       background-color: #6a0dad; /* Slightly lighter purple */
   }
 
-  
+  .navbar-nav .login-btn {
+    background-color: #6a0dad;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-flex;   
+  }
+
+  .navbar-nav .login-btn:hover {
+    background-color: #4b0082;
+  }
+
+
+  /* Home search bar*/
+  .search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 150px auto;
+    padding: 0 20px;
+  } 
+
+  .search-bar input {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 25px;
+    font-size: 1.25rem;
+    width: 80%;
+    max-width: 600px;
+  }
+
+  .search-bar button {
+    background-color: #462191;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .search-bar button:hover {
+    background-color: #6a0dad;
+  }
+
+  /* Home info section */
+  .info-section {
+    background-color: var(--card-background);
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    text-align: center;
+  }
+
+  .info-section h2 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+  }
+
+  .info-section p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+
   /* Header and Navigation */
   .top-nav {
     background: white;
@@ -83,6 +170,18 @@
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary-color);
+  }
+
+  .logo-item {
+    flex: 0 1 auto;  
+    width: 100%;  
+    padding: 0.5rem;  
+    display: flex;  
+    align-items: center;  
+    justify-content: flex-start;  
+    text-align: left;  
+    box-sizing: border-box;  
+    overflow: hidden;  
   }
   
   .logo-icon {
@@ -467,7 +566,261 @@
       background-color: #4b0082;
       color: white;
   }
+
+  /* Log in and Sign in content */
+  .container {
+    background: var(--card-background);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    padding: 40px;
+    text-align: center;
+    margin: 150px auto;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+  }
+
+  .buttons button {
+    flex: 1;
+    margin: 0 10px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 25px;
+    background-color: #462191;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+  }
+
+  .buttons button.inactive {
+    opacity: 0.5;
+  }
+
+  .buttons button:hover {
+    background-color: #6a0dad;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #462191;
+    color: white;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #6a0dad;
+  }
+
+  /* Log In form */
+  .login-form {
+    display: none;
+  }
+
+  .login-form.active {
+    display: block;
+  }
+
+  /*Sign In form */
+  .signup-form {
+    display: none;
+  }
+
+  .signup-form.active {
+    display: block;
+  }
   
+  /* Side bar for dashboards */
+  .sidebar {
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #5f4299;
+    color: white;
+    padding-top: 100px;
+  
+  }
+
+  .sidebar a {
+    color: white;
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+    font-size: 16px;
+  }
+
+  .sidebar a:hover {
+    background-color: #575d63;
+  }
+
+  .sidebar .sidebar-options {
+    color: white;
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Verdana", sans-serif;
+    text-align: left;
+    line-height: 4;
+  }
+
+  .sidebar .sidebar-options a:hover {
+    background-color: #6343a3;
+  }
+
+  .sidebar img {
+    width: 230px;
+    height: auto;
+    border-radius: 50%; 
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .sidebar-options .profile-picture {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .sidebar-options .sidebar-logo {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .sidebar-logo .small-logo {
+    width: 125px;
+    height: auto;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* Header for dashboards */
+  .header {
+    background-color: #46219117;
+    padding: 15px;
+    padding-right: 280px;
+    margin-bottom: 20px;
+    height: 150px;
+  }
+
+  /* Main content for dashboards */
+  .scrollable-section {
+    flex-grow: 1;
+    overflow-y: scroll;
+    margin-top: 20px;
+    margin-right: 270px;
+    margin-left: 10px;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    grid-gap: 10px; /* Space between the buttons */
+  }
+
+  .grid-button {
+    width: 100%;
+    height: 260px;
+    margin-bottom: 10px;
+    background-color: #ebebeb79;
+    border: rgb(255, 255, 255); /* for identification */
+    color: white;
+    text-align: left;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 20px;
+  } 
+
+  .job-details {
+    text-align: left;
+  }
+
+  .job-title {
+    padding-top: 5px;
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 0.7;
+  }
+
+  .company-name {
+    font-size: 1rem;
+    margin-top: 5px;
+    color: #2c1855;
+  }
+
+  .location {
+    font-size: 0.9rem;
+    color: rgb(158, 158, 158);
+    line-height: 0.5;
+  }
+
+  .pay-contract {
+    font-size: 0.9rem;
+    color: white;
+    background-color: #9995a3;
+    padding: 5px 10px;
+    border-radius: 12px;
+    display: inline-block;
+  }
+
+  .job-summary {
+    list-style-type: none;
+    padding: 0;
+    font-size: 0.9rem;
+    color: #1e293b;
+    text-indent: 20px;
+  }
+
+  .job-summary li {
+    margin-bottom: 5px;
+  }
+
+  .applicants-info {
+    font-size: 0.8rem;
+    color: rgb(146, 146, 146);
+    font-weight: bold;
+    line-height: 0.5;
+  }
+
+
 
   /* Responsive Design */
   @media (max-width: 1024px) {
@@ -489,6 +842,16 @@
       text-align: center;
       width: 100%;
     }
-  }
 
-  
+    .scrollable-section {
+      margin-right: 0;  
+    }
+
+    .grid-container {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+      width: 200px;
+    }
+  }

@@ -18,8 +18,12 @@ from django.contrib import admin
 from django.urls import path
 from tutorials.views import views 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.guest, name='guest'),
     path('employer_dashboard/', views.employer_dashboard, name='employer_dashboard'),
     path('contact_us/', views.contact_us, name='contact_us'),
-]
+    path('signup/', views.signup, name='signup'),
+    path('login/', views.login, name='login'),
+] 

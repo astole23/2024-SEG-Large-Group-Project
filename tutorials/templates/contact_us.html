@@ -1,4 +1,6 @@
+{% extends 'base_content.html' %}
 {% load static %}
+{% block content %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,21 +12,6 @@
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar fixed-top">
-        <a class="navbar-brand" href="#">
-            <img src="https://via.placeholder.com/40" alt="Logo">
-            JobPlatform
-        </a>
-        <div class="navbar-nav">
-            <a class="nav-link " href="#">Dashboard</a>
-            <a class="nav-link" href="#">Posted Jobs</a>
-            <a class="nav-link" href="#">Create Job</a>
-            <a class="nav-link active" href="#">Contact Us</a>
-            <a class="nav-link" href="#">Logout</a>
-        </div>
-    </nav>
-
     <!-- Contact Area -->
     <div class="contactbackground">
         <!-- Contact Form -->
@@ -130,3 +117,5 @@
     </script>
 </body>
 </html>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+  {% include 'partials/navbar.html' %}
+  <body style="padding-top: 80px;">
+    {% block content %}
+    {% endblock %}
+  </body>
+{% endblock %}
