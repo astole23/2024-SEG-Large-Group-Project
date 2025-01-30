@@ -1,18 +1,5 @@
-/* Reset and base styles */
-:root {
-  --primary-color: rgb(86, 37, 235);
-  --secondary-color: #475569;
-  --background-color: #f8fafc;
-  --card-background: #ffffff;
-  --border-color: #e2e8f0;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --danger-color: #ef4444;
-  --modal-overlay: rgba(0, 0, 0, 0.5);
-}
 
 * {
-  margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
