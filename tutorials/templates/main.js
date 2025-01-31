@@ -32,21 +32,25 @@ const mockCV = {
     hasRightToWork: 'Yes',
     visaDetails: 'N/A'
   },
-  education: {
-    university: 'Stanford University',
-    degreeType: "Master's",
-    fieldOfStudy: 'Computer Science',
-    grade: '3.8 GPA',
-    dates: '2018-2022',
-    modules: 'Advanced Algorithms, Machine Learning, Distributed Systems',
-    highSchool: 'Tech High School'
-  },
-  workExperience: {
-    employer: 'Tech Corp',
-    jobTitle: 'Senior Software Developer',
-    dates: '2022-Present',
-    responsibilities: 'Led development team, implemented microservices architecture'
-  },
+  education: [
+    {
+      university: 'Stanford University',
+      degreeType: "Master's",
+      fieldOfStudy: 'Computer Science',
+      grade: '3.8 GPA',
+      dates: '2018-2022',
+      modules: 'Advanced Algorithms, Machine Learning, Distributed Systems',
+      highSchool: 'Tech High School'
+    }
+  ],
+  workExperience: [
+    {
+      employer: 'Tech Corp',
+      jobTitle: 'Senior Software Developer',
+      dates: '2022-Present',
+      responsibilities: 'Led development team, implemented microservices architecture'
+    }
+  ],
   skills: {
     keySkills: 'Leadership, Communication, Problem Solving',
     technicalSkills: 'JavaScript, Python, SQL, React',
@@ -77,7 +81,7 @@ function createDashboard() {
     <nav class="top-nav">
       <div class="logo">
         <span class="logo-icon">📦</span>
-        SHY
+        JobSeeker
       </div>
       <div class="search-container">
         <span class="search-icon">🔍</span>
@@ -143,15 +147,25 @@ function createDashboard() {
                 </div>
                 <div class="cv-section">
                   <h4>Education</h4>
-                  <p><strong>University:</strong> ${mockCV.education.university}</p>
-                  <p><strong>Degree:</strong> ${mockCV.education.degreeType} in ${mockCV.education.fieldOfStudy}</p>
-                  <p><strong>Grade:</strong> ${mockCV.education.grade}</p>
+                  ${mockCV.education.map(edu => `
+                    <div class="education-entry">
+                      <p><strong>University:</strong> ${edu.university}</p>
+                      <p><strong>Degree:</strong> ${edu.degreeType} in ${edu.fieldOfStudy}</p>
+                      <p><strong>Grade:</strong> ${edu.grade}</p>
+                      <p><strong>Period:</strong> ${edu.dates}</p>
+                    </div>
+                  `).join('')}
                 </div>
                 <div class="cv-section">
                   <h4>Work Experience</h4>
-                  <p><strong>Current Role:</strong> ${mockCV.workExperience.jobTitle}</p>
-                  <p><strong>Company:</strong> ${mockCV.workExperience.employer}</p>
-                  <p><strong>Period:</strong> ${mockCV.workExperience.dates}</p>
+                  ${mockCV.workExperience.map(exp => `
+                    <div class="experience-entry">
+                      <p><strong>Role:</strong> ${exp.jobTitle}</p>
+                      <p><strong>Company:</strong> ${exp.employer}</p>
+                      <p><strong>Period:</strong> ${exp.dates}</p>
+                      <p><strong>Responsibilities:</strong> ${exp.responsibilities}</p>
+                    </div>
+                  `).join('')}
                 </div>
                 <div class="cv-section">
                   <h4>Skills</h4>
@@ -290,54 +304,18 @@ function createDashboard() {
 
           <div class="form-section">
             <h3>3. Education</h3>
-            <div class="form-group">
-              <label for="university">University/Institution Name</label>
-              <input type="text" id="university" name="university" required>
+            <div id="educationEntries">
+              <!-- Education entries will be dynamically added here -->
             </div>
-            <div class="form-group">
-              <label for="degreeType">Degree Type</label>
-              <input type="text" id="degreeType" name="degreeType" placeholder="e.g., Bachelor's, Master's" required>
-            </div>
-            <div class="form-group">
-              <label for="fieldOfStudy">Field of Study</label>
-              <input type="text" id="fieldOfStudy" name="fieldOfStudy" required>
-            </div>
-            <div class="form-group">
-              <label for="grade">Expected Grade</label>
-              <input type="text" id="grade" name="grade" placeholder="e.g., 2:1, 1st Class Honours">
-            </div>
-            <div class="form-group">
-              <label for="eduDates">Start and End Dates</label>
-              <input type="text" id="eduDates" name="eduDates" required>
-            </div>
-            <div class="form-group">
-              <label for="modules">Relevant Modules or Coursework (optional)</label>
-              <textarea id="modules" name="modules"></textarea>
-            </div>
-            <div class="form-group">
-              <label for="highSchool">A-Level/High School Information (optional)</label>
-              <textarea id="highSchool" name="highSchool"></textarea>
-            </div>
+            <button type="button" class="btn btn-outline" id="addEducation">+ Add Education</button>
           </div>
 
           <div class="form-section">
             <h3>4. Work Experience</h3>
-            <div class="form-group">
-              <label for="employer">Employer Name</label>
-              <input type="text" id="employer" name="employer" required>
+            <div id="workExperienceEntries">
+              <!-- Work experience entries will be dynamically added here -->
             </div>
-            <div class="form-group">
-              <label for="jobTitle">Job Title</label>
-              <input type="text" id="jobTitle" name="jobTitle" required>
-            </div>
-            <div class="form-group">
-              <label for="workDates">Start and End Dates</label>
-              <input type="text" id="workDates" name="workDates" required>
-            </div>
-            <div class="form-group">
-              <label for="responsibilities">Responsibilities and Achievements</label>
-              <textarea id="responsibilities" name="responsibilities" required></textarea>
-            </div>
+            <button type="button" class="btn btn-outline" id="addWorkExperience">+ Add Work Experience</button>
           </div>
 
           <div class="form-section">
@@ -460,9 +438,112 @@ function createDashboard() {
   const cancelEdit = document.getElementById('cancelEdit');
   const cvForm = document.getElementById('cvForm');
 
+  // Function to create education entry HTML
+  function createEducationEntry(data = {}) {
+    const entryId = Date.now();
+    return `
+      <div class="entry-container" data-id="${entryId}">
+        <div class="entry-header">
+          <h4>Education Entry</h4>
+          <button type="button" class="btn-remove" onclick="removeEntry(this)">Remove</button>
+        </div>
+        <div class="form-group">
+          <label for="university-${entryId}">University/Institution Name</label>
+          <input type="text" id="university-${entryId}" name="university" value="${data.university || ''}" required>
+        </div>
+        <div class="form-group">
+          <label for="degreeType-${entryId}">Degree Type</label>
+          <input type="text" id="degreeType-${entryId}" name="degreeType" placeholder="e.g., Bachelor's, Master's" value="${data.degreeType || ''}" required>
+        </div>
+        <div class="form-group">
+          <label for="fieldOfStudy-${entryId}">Field of Study</label>
+          <input type="text" id="fieldOfStudy-${entryId}" name="fieldOfStudy" value="${data.fieldOfStudy || ''}" required>
+        </div>
+        <div class="form-group">
+          <label for="grade-${entryId}">Expected Grade</label>
+          <input type="text" id="grade-${entryId}" name="grade" placeholder="e.g., 2:1, 1st Class Honours" value="${data.grade || ''}">
+        </div>
+        <div class="form-group">
+          <label for="eduDates-${entryId}">Start and End Dates</label>
+          <input type="text" id="eduDates-${entryId}" name="eduDates" value="${data.dates || ''}" required>
+        </div>
+        <div class="form-group">
+          <label for="modules-${entryId}">Relevant Modules or Coursework (optional)</label>
+          <textarea id="modules-${entryId}" name="modules">${data.modules || ''}</textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  // Function to create work experience entry HTML
+  function createWorkExperienceEntry(data = {}) {
+    const entryId = Date.now();
+    return `
+      <div class="entry-container" data-id="${entryId}">
+        <div class="entry-header">
+          <h4>Work Experience Entry</h4>
+          <button type="button" class="btn-remove" onclick="removeEntry(this)">Remove</button>
+        </div>
+        <div class="form-group">
+          <label for="employer-${entryId}">Employer Name</label>
+          <input type="text" id="employer-${entryId}" name="employer" value="${data.employer || ''}" required>
+        </div>
+        <div class="form-group">
+          <label for="jobTitle-${entryId}">Job Title</label>
+          <input type="text" id="jobTitle-${entryId}" name="jobTitle" value="${data.jobTitle || ''}" required>
+        </div>
+        <div class="form-group">
+          <label for="workDates-${entryId}">Start and End Dates</label>
+          <input type="text" id="workDates-${entryId}" name="workDates" value="${data.dates || ''}" required>
+        </div>
+        <div class="form-group">
+          <label for="responsibilities-${entryId}">Responsibilities and Achievements</label>
+          <textarea id="responsibilities-${entryId}" name="responsibilities" required>${data.responsibilities || ''}</textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  // Add education entry button functionality
+  const addEducationBtn = document.getElementById('addEducation');
+  const educationEntries = document.getElementById('educationEntries');
+
+  addEducationBtn.addEventListener('click', () => {
+    educationEntries.insertAdjacentHTML('beforeend', createEducationEntry());
+  });
+
+  // Add work experience entry button functionality
+  const addWorkExperienceBtn = document.getElementById('addWorkExperience');
+  const workExperienceEntries = document.getElementById('workExperienceEntries');
+
+  addWorkExperienceBtn.addEventListener('click', () => {
+    workExperienceEntries.insertAdjacentHTML('beforeend', createWorkExperienceEntry());
+  });
+
+  // Remove entry functionality
+  window.removeEntry = function(button) {
+    const container = button.closest('.entry-container');
+    container.remove();
+  };
+
   editCVBtn.addEventListener('click', () => {
     modal.style.display = 'block';
-    // Populate form with mock data
+    
+    // Clear existing entries
+    educationEntries.innerHTML = '';
+    workExperienceEntries.innerHTML = '';
+    
+    // Populate education entries
+    mockCV.education.forEach(edu => {
+      educationEntries.insertAdjacentHTML('beforeend', createEducationEntry(edu));
+    });
+    
+    // Populate work experience entries
+    mockCV.workExperience.forEach(exp => {
+      workExperienceEntries.insertAdjacentHTML('beforeend', createWorkExperienceEntry(exp));
+    });
+    
+    // Populate other form fields
     Object.keys(mockCV.personalInfo).forEach(key => {
       const input = document.getElementById(key);
       if (input) input.value = mockCV.personalInfo[key];
