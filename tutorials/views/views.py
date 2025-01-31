@@ -16,6 +16,5 @@ def login(request):
 def guest(request):
     return render(request, 'guest.html')
 
-
-
-
+def user_dashboard(request):
+    return render(request, 'index.html')
