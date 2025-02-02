@@ -26,7 +26,7 @@
   
   /* Header and Navigation */
   .top-nav {
-    background:  #462191;
+    background:  white;
     padding: 1rem 2rem;
     border-bottom: 1px solid var(--border-color);
     display: flex;
@@ -37,9 +37,9 @@
   .logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1.25rem;
-    font-weight: 600;
+    gap: 0rem;
+    font-size: 2rem;
+    font-weight: 700;
     color: var(--primary-color);
   }
   
