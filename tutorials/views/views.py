@@ -17,4 +17,4 @@ def guest(request):
     return render(request, 'guest.html')
 
 def user_dashboard(request):
-    return render(request, 'index.html')
+    return render(request, 'user_dashboard.html')
