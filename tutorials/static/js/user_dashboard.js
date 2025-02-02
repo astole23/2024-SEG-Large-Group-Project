@@ -76,12 +76,14 @@ const mockJobs = [
   };
   
   function createDashboard() {
+    const logoUrl = STATIC_URL + "images/shylogo_purple.png";
     const app = document.querySelector('#app');
     app.innerHTML = `
       <nav class="top-nav">
         <div class="logo">
-          <span class="logo-icon">📦</span>
-          JobSeeker
+          <a class="navbar-brand" href="/">
+            <img src="${logoUrl}" alt="SHY Logo" class="logo" style="max-height: 100px;">
+          </a>
         </div>
         <div class="search-container">
           <span class="search-icon">🔍</span>
