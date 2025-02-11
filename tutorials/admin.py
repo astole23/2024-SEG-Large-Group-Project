@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models.jobposting import JobPosting  # Import the JobPosting model
+from .models.accounts import Company, User  
 
 @admin.register(JobPosting)
 class JobPostingAdmin(admin.ModelAdmin):
@@ -23,3 +24,16 @@ class JobPostingAdmin(admin.ModelAdmin):
     )  # Fields searchable in the admin
     ordering = ('-application_deadline',)  # Default ordering
     readonly_fields = ('created_at', 'updated_at')  # Fields that cannot be edited
+
+
+    
+
+
+
+@admin.register(Company)
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ('company_name', 'email', 'industry', 'phone')  # Fields to display in the admin panel
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'email', 'phone')  # Fields to display in the admin panel
