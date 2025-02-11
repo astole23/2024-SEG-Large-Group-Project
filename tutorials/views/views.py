@@ -18,3 +18,6 @@ def guest(request):
 
 def user_dashboard(request):
     return render(request, 'user_dashboard.html')
+
+def about_us(request):
+    return render(request, 'about_us.html')
