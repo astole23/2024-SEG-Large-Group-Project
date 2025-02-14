@@ -1,0 +1,34 @@
+{% extends 'base_content.html' %}
+{% load static %}
+{% block content %}
+<div class="company-profile">
+    <div class="company-header">
+        <h1>{{ company.company_name }}</h1>
+        <p class="company-industry"><strong>Industry:</strong> {{ company.industry }}</p>
+    </div>
+    <div class="company-contact">
+        <p><strong>Email:</strong> {{ company.email }}</p>
+        <p><strong>Phone:</strong> {{ company.phone }}</p>
+    </div>
+
+    <section class="job-listings">
+        <h2>Job Openings</h2>
+        {% if job_postings %}
+        <ul>
+            {% for job in job_postings %}
+            <li class="job-item">
+                <h3>{{ job.job_title }}</h3>
+                <p><strong>Location:</strong> {{ job.location }}</p>
+                <p><strong>Contract Type:</strong> {{ job.contract_type }}</p>
+                <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                <p>{{ job.job_overview }}</p>
+                <p><strong>Application Deadline:</strong> {{ job.application_deadline }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No job openings available at the moment.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
