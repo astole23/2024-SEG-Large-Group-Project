@@ -1,9 +1,15 @@
 import os
+import re
 import requests
 import random
 from django.core.management.base import BaseCommand
 from tutorials.models.jobposting import JobPosting
+import faker
+from tutorials.models.accounts import User,Company
+from phonenumbers import parse, is_possible_number, is_valid_number, PhoneNumberFormat, format_number
 
+
+fake = faker.Faker()
 # Adzuna API credentials
 ADZUNA_APP_ID = "dac9af71"
 ADZUNA_APP_KEY = "0d149e6c79fe0dbc54e9bece78c8ff87"
@@ -23,6 +29,7 @@ EDUCATION_OPTIONS = [
     "No Formal Education Required", "Relevant Work Experience",
 ]
 
+# Randomized options for perks, application deadlines,  and why join us
 PERKS_OPTIONS = [
     "Flexible working hours", "Health insurance", "Remote work opportunities",
     "On-site gym", "Free lunch/snacks", "Childcare facilities", "Pet-friendly office",
@@ -45,6 +52,7 @@ PERKS_OPTIONS = [
     "Subscription to industry journals", "Discounts on company products/services"
 ]
 
+# Randomized options for application deadlines
 APPLICATION_DEADLINE_OPTIONS = [
     "7 days from now", "10 days from now", "14 days from now", "30 days from now",
     "60 days from now", "Rolling applications", "Applications close when position is filled",
@@ -65,6 +73,7 @@ APPLICATION_DEADLINE_OPTIONS = [
     "Deadline: First week of next month", "Application window: Open for 2 more months"
 ]
 
+# Randomized options for why join us section
 WHY_JOIN_US_OPTIONS = [
     "Join a dynamic team passionate about innovation and excellence.",
     "Be part of a company that values creativity and individuality.",
@@ -119,90 +128,144 @@ WHY_JOIN_US_OPTIONS = [
 ]
 
 # Function to generate roles, responsibilities, and skills based on job title
-def generate_roles_and_skills():
-    """Generate a broad set of roles, responsibilities, required skills, and preferred skills."""
-    
-    # Expanded pools of responsibilities, required skills, and preferred skills
-    responsibilities_pool = [
-        "Collaborate with team members to achieve project milestones.",
-        "Develop and maintain technical documentation for projects.",
-        "Analyze and resolve complex issues to ensure project success.",
-        "Monitor and evaluate project progress to ensure timelines are met.",
-        "Communicate effectively with stakeholders and clients.",
-        "Participate in team meetings and provide strategic insights.",
-        "Ensure compliance with company policies and industry standards.",
-        "Support training and onboarding of new team members.",
-        "Facilitate cross-departmental collaboration for key initiatives.",
-        "Maintain up-to-date knowledge of industry trends and best practices.",
-        "Conduct market research to identify opportunities for growth.",
-        "Develop strategies to optimize operational efficiency.",
-        "Prepare reports and presentations for senior management.",
-        "Oversee quality assurance and testing processes.",
-        "Identify and mitigate risks throughout the project lifecycle.",
-        "Implement process improvements for enhanced productivity.",
-        "Provide mentorship and guidance to junior staff members.",
-        "Lead brainstorming sessions to develop innovative solutions.",
-        "Coordinate with external vendors and service providers.",
-        "Evaluate and manage project budgets effectively."
-    ]
+def generate_roles_and_skills(category):
+    #Generate roles, responsibilities, required skills, and preferred skills based on the category
 
-    required_skills_pool = [
-        "Strong analytical and problem-solving skills",
-        "Excellent communication and interpersonal skills",
-        "Proficiency in project management tools (e.g., JIRA, Trello)",
-        "Ability to work collaboratively in a team environment",
-        "Expertise in data analysis and visualization tools",
-        "Proficiency in programming languages like Python or Java",
-        "Familiarity with cloud computing platforms (AWS, Azure, GCP)",
-        "Knowledge of Agile and Scrum methodologies",
-        "Strong organizational and time management abilities",
-        "Proficiency in Microsoft Office Suite",
-        "Ability to develop and manage budgets effectively",
-        "Strong presentation and public speaking skills",
-        "Familiarity with digital marketing and SEO tools",
-        "Understanding of cybersecurity principles and practices",
-        "Proficiency in database management systems (SQL, NoSQL)",
-        "Experience with customer relationship management (CRM) tools",
-        "Knowledge of machine learning and AI frameworks",
-        "Ability to manage multiple priorities effectively",
-        "Strong negotiation and conflict resolution skills",
-        "Familiarity with supply chain and logistics management"
-    ]
+    # Define pools for each category
+    category_specific_data = {
+        "business": {
+            "responsibilities": [
+                "Analyze business operations and identify opportunities for improvement.",
+                "Develop and execute business strategies to meet goals.",
+                "Monitor market trends and adapt business plans accordingly.",
+                "Collaborate with stakeholders to align objectives.",
+                "Prepare and present business performance reports.",
+            ],
+            "required_skills": [
+                "Strong analytical and problem-solving skills",
+                "Excellent communication and presentation skills",
+                "Knowledge of business operations and financial planning",
+                "Ability to manage cross-functional teams",
+                "Proficiency in business analytics tools (e.g., Power BI, Tableau)",
+            ],
+            "preferred_skills": [
+                "MBA or equivalent degree",
+                "Experience in strategic consulting",
+                "Familiarity with CRM tools like Salesforce",
+                "Knowledge of international business practices",
+                "Expertise in competitive market analysis",
+            ],
+        },
+        "software-development": {
+            "responsibilities": [
+                "Write clean, efficient, and maintainable code.",
+                "Collaborate with design and product teams to define requirements.",
+                "Test and debug applications to ensure reliability.",
+                "Optimize software performance for scalability.",
+                "Research and integrate new technologies.",
+            ],
+            "required_skills": [
+                "Proficiency in programming languages (e.g., Python, Java, C++)",
+                "Experience with RESTful APIs and microservices",
+                "Strong understanding of version control systems (e.g., Git)",
+                "Knowledge of software development life cycles",
+                "Familiarity with cloud platforms (e.g., AWS, Azure)",
+            ],
+            "preferred_skills": [
+                "Experience with DevOps tools like Docker and Kubernetes",
+                "Knowledge of machine learning frameworks",
+                "Familiarity with front-end frameworks like React or Angular",
+                "Strong problem-solving skills and algorithm design expertise",
+                "Experience with blockchain technologies",
+            ],
+        },
+        "healthcare": {
+            "responsibilities": [
+                "Provide high-quality patient care and medical services.",
+                "Collaborate with healthcare teams to ensure comprehensive care.",
+                "Maintain accurate and up-to-date patient records.",
+                "Educate patients about health management and prevention.",
+                "Participate in ongoing medical training and certifications.",
+            ],
+            "required_skills": [
+                "Strong understanding of medical terminology and procedures",
+                "Excellent interpersonal and communication skills",
+                "Knowledge of patient care protocols",
+                "Proficiency in using electronic medical records systems",
+                "Ability to work in high-pressure environments",
+            ],
+            "preferred_skills": [
+                "Specialization in a specific field (e.g., cardiology, pediatrics)",
+                "Experience in emergency medicine",
+                "Knowledge of public health policies",
+                "Certification in advanced medical techniques",
+                "Familiarity with telemedicine platforms",
+            ],
+        },
+        "marketing": {
+            "responsibilities": [
+                "Develop and execute marketing campaigns.",
+                "Analyze market trends and competitor strategies.",
+                "Collaborate with sales teams to align marketing objectives.",
+                "Manage social media platforms and digital content.",
+                "Measure campaign performance and generate reports.",
+            ],
+            "required_skills": [
+                "Strong knowledge of digital marketing strategies",
+                "Proficiency in SEO and SEM tools",
+                "Excellent copywriting and content creation skills",
+                "Experience with social media management tools",
+                "Ability to analyze and interpret marketing data",
+            ],
+            "preferred_skills": [
+                "Experience in graphic design and video editing",
+                "Familiarity with influencer marketing strategies",
+                "Knowledge of CRM and email marketing tools",
+                "Experience in managing marketing budgets",
+                "Strong public speaking and presentation skills",
+            ],
+        },
+        # Add other categories similarly...
+    }
 
-    preferred_skills_pool = [
-        "Experience in leadership or supervisory roles",
-        "Certification in project management (e.g., PMP, PRINCE2)",
-        "Proficiency in additional programming languages (e.g., C++, R)",
-        "Familiarity with DevOps tools (e.g., Jenkins, Docker, Kubernetes)",
-        "Expertise in blockchain technologies and distributed systems",
-        "Knowledge of business intelligence tools (e.g., Tableau, Power BI)",
-        "Experience with big data technologies (e.g., Hadoop, Spark)",
-        "Understanding of natural language processing (NLP) techniques",
-        "Ability to work in fast-paced and dynamic environments",
-        "Familiarity with e-commerce platforms and strategies",
-        "Proficiency in designing and executing digital campaigns",
-        "Expertise in automation and workflow optimization tools",
-        "Experience with diversity and inclusion initiatives",
-        "Knowledge of international business practices and regulations",
-        "Understanding of sustainability and environmental impact practices",
-        "Familiarity with hardware and embedded systems design",
-        "Experience in strategic planning and roadmap development",
-        "Proficiency in statistical analysis and modeling techniques",
-        "Experience with financial analysis and forecasting",
-        "Ability to mentor and train junior team members effectively"
-    ]
+    # Fallback to generic skills and responsibilities if the category is not mapped
+    generic_data = {
+        "responsibilities": [
+            "Collaborate with team members to achieve project goals.",
+            "Develop and maintain key deliverables in alignment with project timelines.",
+            "Ensure compliance with company policies and industry standards.",
+            "Participate in meetings and provide insights and updates.",
+            "Monitor and evaluate project progress and implement necessary changes.",
+        ],
+        "required_skills": [
+            "Strong analytical skills",
+            "Excellent communication skills",
+            "Proficiency in Microsoft Office Suite",
+            "Project management expertise",
+            "Ability to work independently",
+        ],
+        "preferred_skills": [
+            "Experience with data visualization tools",
+            "Familiarity with Agile methodologies",
+            "Knowledge of cloud computing platforms",
+            "Previous experience in leadership roles",
+            "Proficiency in a second language",
+        ],
+    }
 
-    # Randomly generate roles, responsibilities, and skills
-    roles_responsibilities = random.sample(responsibilities_pool, k=random.randint(5, 7))
-    required_skills = random.sample(required_skills_pool, k=random.randint(4, 6))
-    preferred_skills = random.sample(preferred_skills_pool, k=random.randint(3, 5))
+    # Fetch category-specific data or default to generic
+    data = category_specific_data.get(category, generic_data)
+
+    # Randomly select items from the pools
+    roles_responsibilities = random.sample(data["responsibilities"], k=random.randint(2, 5))
+    required_skills = random.sample(data["required_skills"], k=random.randint(2, 5))
+    preferred_skills = random.sample(data["preferred_skills"], k=random.randint(2, 4))
 
     return {
         "roles_responsibilities": ", ".join(roles_responsibilities),
         "required_skills": ", ".join(required_skills),
         "preferred_skills": ", ".join(preferred_skills),
     }
-
 
 # Function to fetch jobs from Adzuna API
 def fetch_adzuna_jobs():
@@ -227,13 +290,29 @@ def fetch_adzuna_jobs():
 
                 for job in data.get("results", []):
                     job_title = job.get("title", "Unknown Job")
-                    details = generate_roles_and_skills()
+                    company_name = job.get("company", {}).get("display_name", "Unknown Company")
+                    location = job.get("location", {}).get("display_name", "Remote")
+                    details = generate_roles_and_skills(category)
+           
+
+                    # Ensure company account exists or create one
+                    company, created = Company.objects.get_or_create(
+                        company_name=company_name,
+                        defaults={
+                            "email": generate_unique_email(company_name),
+                            "password": fake.password(),
+                            "industry": category.capitalize(),
+                            "phone": job.get("phone_number", fake.phone_number()),
+    
+                        }
+                    )
+                    
 
                     job_list.append({
                         "job_title": job_title,
                         "company_name": job.get("company", {}).get("display_name", "Unknown Company"),
                         "location": job.get("location", {}).get("display_name", "Remote"),
-                        "salary_range": f"{random.randint(30000, 100000)} GBP",
+                        "salary_range": f"{random.randint(23000 // 1000, 100000 // 1000) * 1000} GBP",
                         "job_overview": job.get("description", "No description available."),
                         "roles_responsibilities": details["roles_responsibilities"],
                         "required_skills": details["required_skills"],
@@ -247,15 +326,78 @@ def fetch_adzuna_jobs():
         print(f"❌ Error: {e}")
     return job_list
 
+def generate_clean_phone_number():
+    """
+    Generate a valid and clean phone number without extensions or invalid characters.
 
+    Returns:
+        str: A valid phone number in E.164 format or a fallback number.
+    """
+    while True:
+        try:
+            # Generate a random phone number
+            raw_phone_number = fake.phone_number()
+
+            # Remove any extensions or letters
+            raw_phone_number = re.sub(r"[a-zA-ZxX]", "", raw_phone_number)
+
+            # Parse the phone number using the phonenumbers library
+            parsed_number = parse(raw_phone_number, None)  # None allows parsing in any international format
+
+            # Validate the parsed phone number
+            if is_possible_number(parsed_number) and is_valid_number(parsed_number):
+                return format_number(parsed_number, PhoneNumberFormat.E164)
+
+        except Exception:
+            # If invalid, regenerate a new number
+            continue
+
+# Fallback number in case generation consistently fails
+    return "+1234567890"
+
+
+def generate_unique_email(company_name):
+    """
+    Generate a unique email for a company based on the company name.
+    """
+    base_email = f"{company_name.replace(' ', '').lower()}@example.com"
+    counter = 1
+    unique_email = base_email
+
+    # Check if the email already exists in the database
+    while Company.objects.filter(email=unique_email).exists():
+        unique_email = f"{company_name.replace(' ', '').lower()}{counter}@example.com"
+        counter += 1
+
+    return unique_email
 # Django Command
 class Command(BaseCommand):
     help = "Fetches 150 job postings from Adzuna API and saves them to the database."
 
     def handle(self, *args, **kwargs):
-        job_postings = fetch_adzuna_jobs()
-        job_count = 0  # Counter for jobs successfully added
+        self.seed_users(100)  # Seed 100 users
+        self.seed_jobs()      # Seed job postings
+        self.stdout.write(self.style.SUCCESS("✅ Database seeding complete!"))
 
+    def seed_users(self, count):
+        """Seed the User model with dummy data."""
+        for _ in range(count):
+            user = User.objects.create(
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                email=fake.unique.email(),
+                phone=generate_clean_phone_number(),
+                password=fake.password(length=10),
+            )
+            print(f"✅ Created User: {user.first_name} {user.last_name}")
+
+
+                    
+    def seed_jobs(self):
+
+        job_count = 0
+
+        job_postings = fetch_adzuna_jobs()
         for job in job_postings:
             try:
                 JobPosting.objects.create(
@@ -279,5 +421,8 @@ class Command(BaseCommand):
                 print(f"✅ Added: {job['job_title']} at {job['company_name']}")
             except Exception as e:
                 print(f"❌ Error: {e}")
+            finally:
+                pass
 
         self.stdout.write(self.style.SUCCESS(f"✅ Success : {job_count}"))
+    
