@@ -31,7 +31,8 @@ urlpatterns = [
     path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
     path('about_us/', views.about_us, name='about_us'),
     path('company/<int:company_id>/', views.company_detail, name='company_detail'),
-    path('company/<int:company_id>/review/', views.leave_review, name='leave_review')
+    path('company/<int:company_id>/review/', views.leave_review, name='leave_review'),
+    path('company/<int:company_id>/edit/', views.edit_company, name='edit_company'),
 ] 
 
 if settings.DEBUG:

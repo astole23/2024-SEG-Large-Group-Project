@@ -5,6 +5,7 @@ from tutorials.forms import CompanyForm
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from tutorials.models.company_review import Review
+from tutorials.forms import CompanyEditForm
 
 # Create your views here.
 def employer_dashboard(request):
@@ -52,3 +53,20 @@ def leave_review(request, company_id):
         return JsonResponse({'message': 'Review submitted successfully!'}, status=200)
     
     return render(request, 'company_detail.html', {'company_id': company_id})
+
+def edit_company(request, company_id):
+    company = Company.objects.get(id=company_id)
+
+    # Check if the logged-in user is authorized to edit this company
+    if company.user != request.user:
+        return redirect('home')  # Redirect if not authorized
+
+    if request.method == 'POST':
+        form = CompanyEditForm(request.POST, request.FILES, instance=company)
+        if form.is_valid():
+            form.save()
+            return redirect('company_detail', company_id=company.id)
+    else:
+        form = CompanyEditForm(instance=company)
+
+    return render(request, 'company/edit_company.html', {'form': form, 'company': company})
