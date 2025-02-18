@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.hashers import check_password
+from django.shortcuts import redirect, render
 from tutorials.models.accounts import Company
 from tutorials.models.jobposting import JobPosting
 from tutorials.forms import CompanyForm
@@ -18,6 +20,21 @@ def signup(request):
     return render(request, 'signup.html')
 
 def login(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        try:
+            company = Company.objects.get(email=email)
+        except Company.DoesNotExist:
+            company = None
+
+        if company and check_password(password, company.password):
+            request.session['company_id'] = company.id
+
+            return redirect('edit_company', company_id=company.id)
+        else:
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+
     return render(request, 'login.html')
 
 def guest(request):
@@ -54,19 +71,16 @@ def leave_review(request, company_id):
     
     return render(request, 'company_detail.html', {'company_id': company_id})
 
-def edit_company(request, company_id):
-    company = Company.objects.get(id=company_id)
 
-    # Check if the logged-in user is authorized to edit this company
-    if company.user != request.user:
-        return redirect('home')  # Redirect if not authorized
+def edit_company(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
 
     if request.method == 'POST':
-        form = CompanyEditForm(request.POST, request.FILES, instance=company)
-        if form.is_valid():
-            form.save()
-            return redirect('company_detail', company_id=company.id)
-    else:
-        form = CompanyEditForm(instance=company)
+        company.description = request.POST.get('description')
+        company.logo = request.FILES.get('logo')  # If uploading logo
+        company.save()
+        
+        # Optionally, provide feedback to the user
+        return render(request, 'edit_company.html', {'company': company, 'message': 'Company details updated!'})
 
-    return render(request, 'company/edit_company.html', {'form': form, 'company': company})
+    return render(request, 'edit_company.html', {'company': company})
