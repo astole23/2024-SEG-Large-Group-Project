@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from tutorials.views import views 
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -28,5 +30,9 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
     path('about_us/', views.about_us, name='about_us'),
-    path("company/<int:company_id>/", views.company_detail, name="company_detail"),
+    path('company/<int:company_id>/', views.company_detail, name='company_detail'),
+    path('company/<int:company_id>/review/', views.leave_review, name='leave_review')
 ] 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

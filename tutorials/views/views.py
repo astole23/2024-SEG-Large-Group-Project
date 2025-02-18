@@ -1,6 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from tutorials.models.accounts import Company
 from tutorials.models.jobposting import JobPosting
+from tutorials.forms import CompanyForm
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from tutorials.models.company_review import Review
 
 # Create your views here.
 def employer_dashboard(request):
@@ -26,5 +30,25 @@ def about_us(request):
 
 def company_detail(request, company_id):
     company = get_object_or_404(Company, id=company_id)
-    job_postings = JobPosting.objects.filter(company_name=company.company_name)  # Match by name
-    return render(request, "company_detail.html", {"company": company, "job_postings": job_postings})
+
+    if request.method == 'POST':
+        form = CompanyForm(request.POST, request.FILES, instance=company)
+        if form.is_valid():
+            form.save()
+    else:
+        form = CompanyForm(instance=company)
+
+    return render(request, 'company_detail.html', {'company': company, 'form': form})
+
+def leave_review(request, company_id):
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        rating = request.POST.get('rating')
+
+        # Create and save the review
+        review = Review(text=text, rating=rating)
+        review.save()
+
+        return JsonResponse({'message': 'Review submitted successfully!'}, status=200)
+    
+    return render(request, 'company_detail.html', {'company_id': company_id})
