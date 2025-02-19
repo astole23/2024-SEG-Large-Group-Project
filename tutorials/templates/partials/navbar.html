@@ -1,13 +1,22 @@
 {% load static %}
 
-<div class="navbar">
-  <a class="navbar-brand" href="/">
-    <img src="{% static 'images/shylogo_purple.png' %}" alt="SHY Logo" class="logo" style="max-height: 100px;">
-  </a>
-  <div class="navbar-nav">
-    <a href="#" class="nav-link">Home</a>
-    <a href="#" class="nav-link">About Us</a>
-    <a href="#" class="nav-link">Contact Us</a>
-    <button class="login-btn">Log In</button>
+<nav class="top-nav">
+  <div class="logo">
+    <a class="navbar-brand" href="/">
+      <img src="${logoUrl}" alt="SHY Logo" class="logo" style="max-height: 80px;">
+    </a>
+    <span>SHY</span>
   </div>
-</div>
+  <div class="search-container">
+    <span class="search-icon">🔍</span>
+    <input type="search" placeholder="Search jobs..." class="search-input">
+  </div>
+  <div class="user-actions">
+    <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact us</button>
+    <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact us</button>
+    <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact us</button>
+    <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact us</button>
+    <span>🔔</span>
+    <span>👤</span>
+  </div>
+</nav>

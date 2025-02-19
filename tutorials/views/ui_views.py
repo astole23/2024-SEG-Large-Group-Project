@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from tutorials.forms import UserRegistrationForm, CompanyRegistrationForm
 
 # Create your views here.
 def employer_dashboard(request):
@@ -8,7 +9,9 @@ def contact_us(request):
     return render(request, 'contact_us.html')
 
 def signup(request):
-    return render(request, 'signup.html')
+    user_form = UserRegistrationForm()
+    company_form = CompanyRegistrationForm()
+    return render(request, 'signup.html', {'user_form': user_form, 'company_form': company_form})
 
 def login(request):
     return render(request, 'login.html')
@@ -28,7 +31,7 @@ def settings(request):
 
 
 
-####
+"""
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from tutorials.forms import CompanyRegistrationForm, UserRegistrationForm
@@ -44,6 +47,7 @@ from django.contrib import messages
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
+
 
 def signup_view(request):
     company_form = CompanyRegistrationForm()
@@ -135,3 +139,4 @@ def signup_view(request):
     company_form = CompanyRegistrationForm()
     user_form = UserRegistrationForm()
     return render(request, 'signup.html', {'company_form': company_form, 'user_form': user_form})
+"""

@@ -7,6 +7,8 @@
     --border-color: #e2e8f0;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
+    --danger-color: #ef4444;
+    --modal-overlay: rgba(0, 0, 0, 0.5);
   }
   
   * {
@@ -599,7 +601,7 @@
 
   .buttons button.inactive {
     opacity: 0.5;
-  }
+  }    
 
   .buttons button:hover {
     background-color: #6a0dad;

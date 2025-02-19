@@ -182,6 +182,7 @@
         </div>
     </div>
 
+<!--ranim's og code -->
     <div class="container">
         <div class="buttons">
             <button id="company-signup" onclick="showSignupForm('company')">Company Sign Up</button>
@@ -271,5 +272,90 @@
             }
         }
     </script>
+
+
+<!-- isa attempt at fixing:
+     <div class="container">
+        <div class="buttons">
+            <button id="company-signup" onclick="showSignupForm('company')">Company Sign Up</button>
+            <button id="user-signup" onclick="showSignupForm('user')">User Sign Up</button>
+        </div>
+    
+        <form id="company-signup-form" class="signup-form" method="POST" action="{% url 'signup' %}">
+            {% csrf_token %}
+            <input type="hidden" name="user_type" value="company">
+            
+            <div class="form-group">
+                <label for="company-name">Company Name</label>
+                <input type="text" name="company_name" id="company-name" autocomplete="organization" required>
+            </div>
+            <div class="form-group">
+                <label for="company-email">Email Address</label>
+                <input type="email" name="email" id="company-email" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+                <label for="company-password">Password</label>
+                <input type="password" name="password" id="company-password" autocomplete="new-password" required pattern="^(?=.*[A-Z])(?=.*[\W_]).{8,}$">
+            </div>
+            <div class="form-group">
+                <label for="company-industry">Industry</label>
+                <input type="text" name="industry" id="company-industry" autocomplete="off" required>
+            </div>
+            <div class="form-group">
+                <label for="company-phone">Phone Number</label>
+                <input type="tel" name="phone" id="company-phone" autocomplete="tel" required>
+            </div>
+    
+            <input type="checkbox" id="terms" name="terms" required>
+            <label for="terms">I agree to the <a href="#">Terms and Conditions</a></label>
+            <br></br>
+            <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+    
+        <form id="user-signup-form" class="signup-form" method="POST" action="{% url 'signup' %}">
+            {% csrf_token %}
+            <input type="hidden" name="user_type" value="user">
+            
+            <div class="form-group">
+                <label for="user-first-name">First Name</label>
+                <input type="text" name="first_name" id="user-first-name" autocomplete="given-name" required>
+            </div>
+            <div class="form-group">
+                <label for="user-last-name">Last Name</label>
+                <input type="text" name="last_name" id="user-last-name" autocomplete="family-name" required>
+            </div>
+            <div class="form-group">
+                <label for="user-email">Email Address</label>
+                <input type="email" name="email" id="user-email" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+                <label for="user-phone">Phone Number</label>
+                <input type="tel" name="phone" id="user-phone" autocomplete="tel" required>
+            </div>
+            <div class="form-group">
+                <label for="user-password">Password</label>
+                <input type="password" name="password" id="user-password" autocomplete="new-password" required pattern="^(?=.*[A-Z])(?=.*[\W_]).{8,}$">
+            </div>
+    
+            <input type="checkbox" id="terms" name="terms" required>
+            <label for="terms">I agree to the <a href="#">Terms and Conditions</a></label>
+            <br></br>
+            <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+    </div>
+    
+    <script>
+        function showSignupForm(type) {
+            document.getElementById('company-signup-form').classList.remove('active');
+            document.getElementById('user-signup-form').classList.remove('active');
+    
+            if (type === 'company') {
+                document.getElementById('company-signup-form').classList.add('active');
+            } else {
+                document.getElementById('user-signup-form').classList.add('active');
+            }
+        }
+    </script>
+    -->
 </body>
 </html>

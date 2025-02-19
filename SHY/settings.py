@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from tutorials.helpers import user_type_redirect
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -126,3 +127,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# User model for authentication and login purposes
+AUTH_USER_MODEL = 'tutorials.User'
+
+# Login URL for redirecting users from login protected views
+LOGIN_URL = 'login'
+
+# URL where @login_prohibited redirects to
+REDIRECT_URL_WHEN_LOGGED_IN = user_type_redirect

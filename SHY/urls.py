@@ -16,20 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from tutorials.views import views 
+from tutorials.views import ui_views 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.guest, name='guest'),
-    path('employer_dashboard/', views.employer_dashboard, name='employer_dashboard'),
-    path('contact_us/', views.contact_us, name='contact_us'),
+    path('', ui_views.guest, name='guest'),
+    path('employer_dashboard/', ui_views.employer_dashboard, name='employer_dashboard'),
+    path('contact_us/', ui_views.contact_us, name='contact_us'),
    
-    path('login/', views.login, name='login'),
-    path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
-    path('signup/', views.signup_view, name='signup'),
+    path('login/', ui_views.login, name='login'),
+    path('user_dashboard/', ui_views.user_dashboard, name='user_dashboard'),
+    path('signup/', ui_views.signup, name='signup'),
  
     
-    path('about_us/', views.about_us, name='about_us'),
-    path('settings/', views.settings, name='settings'),
+    path('about_us/', ui_views.about_us, name='about_us'),
+    path('settings/', ui_views.settings, name='settings'),
 ] 
