@@ -32,4 +32,6 @@ urlpatterns = [
     
     path('about_us/', ui_views.about_us, name='about_us'),
     path('settings/', ui_views.settings, name='settings'),
+
+    path('base_content/', ui_views.base_content, name='base_content'),
 ] 

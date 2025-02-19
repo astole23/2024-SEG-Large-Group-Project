@@ -28,6 +28,9 @@ def about_us(request):
 def settings(request):
     return render(request, 'settings.html')
 
+def base_content(request):
+    return render(request, 'base_content.html')
+
 
 
 
