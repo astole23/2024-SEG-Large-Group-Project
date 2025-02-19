@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models.jobposting import JobPosting  # Import the JobPosting model
+from .models.accounts import Company, User  
 from .models.accounts import User, Company  # Import the User and Company models
 
 

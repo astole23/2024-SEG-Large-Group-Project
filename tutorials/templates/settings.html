@@ -1,0 +1,95 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <!-- Spacer to push content below the navbar -->
+    <div class="content-spacer"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar fixed-top">
+        <a class="navbar-brand" href="#">
+            <img src="https://via.placeholder.com/40" alt="Logo">
+            JobPlatform
+        </a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="#">Dashboard</a>
+            <a class="nav-link active" href="#">Settings</a>
+            <a class="nav-link" href="#">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Settings Page -->
+    <div class="settings-background">
+        <div class="settings-content">
+            <!-- Account Settings Section -->
+            <div class="settings-section">
+                <h3 class="text-center">Account Settings</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="first-name">First Name</label>
+                        <input type="text" id="first-name" class="form-control" placeholder="Enter your first name">
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" class="form-control" placeholder="Enter your last name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" class="form-control" placeholder="Enter a new password">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Privacy Management Section -->
+            <div class="settings-section">
+                <h3 class="text-center">Privacy Management</h3>
+                <p>
+                    <strong>Terms & Conditions</strong><br>
+                    By using JobPlatform, you agree to the following terms:
+                </p>
+                <ul>
+                    <li>We may collect personal data including your name, contact information, and job preferences to better tailor our services.</li>
+                    <li>JobPlatform will never share your personal information with third parties without your consent, except as required by law.</li>
+                    <li>You are responsible for maintaining the confidentiality of your account and password.</li>
+                    <li>JobPlatform reserves the right to update these terms at any time. Please review them regularly for any changes.</li>
+                </ul>
+            </div>
+
+            <!-- Communication Settings Section -->
+            <div class="settings-section">
+                <h3 class="text-center">Communication Settings</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="sms-updates">Receive SMS updates</label>
+                        <input type="checkbox" id="sms-updates" class="form-check-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="email-updates">Receive Email updates</label>
+                        <input type="checkbox" id="email-updates" class="form-check-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="push-notifications">Enable Push Notifications</label>
+                        <input type="checkbox" id="push-notifications" class="form-check-input">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
