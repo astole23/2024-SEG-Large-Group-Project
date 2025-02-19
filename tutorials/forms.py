@@ -22,7 +22,9 @@ class CompanyEditForm(forms.ModelForm):
         fields = ['logo', 'description']  # Fields the company can update
 
     logo = forms.ImageField(required=False)  # Logo is optional
-    description = forms.from django import forms
+    description = forms.CharField(widget=forms.Textarea, required=False)
+    
+from django import forms
 from .models import Company, User
 from django.contrib.auth.hashers import make_password
 
