@@ -79,22 +79,6 @@ const mockJobs = [
     const logoUrl = STATIC_URL + "images/SHY_small.png";
     const app = document.querySelector('#app');
     app.innerHTML = `
-      <nav class="top-nav">
-        <div class="logo">
-          <a class="navbar-brand" href="/">
-            <img src="${logoUrl}" alt="SHY Logo" class="logo" style="max-height: 80px;">
-          </a>
-          <span>SHY</span>
-        </div>
-        <div class="search-container">
-          <span class="search-icon">🔍</span>
-          <input type="search" placeholder="Search jobs..." class="search-input">
-        </div>
-        <div class="user-actions">
-          <span>🔔</span>
-          <span>👤</span>
-        </div>
-      </nav>
   
       <div class="dashboard">
         <main>

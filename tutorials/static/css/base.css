@@ -28,6 +28,12 @@
     padding-top: 0;    
     display: flex;
     flex-direction: column;
+    margin: 0;
+    height: 100%;
+  }
+
+  .main-content {
+    flex: 1;
   }
 
   /* Header and Navigation */
@@ -39,25 +45,20 @@
     justify-content: space-between;
     align-items: center;
   }
-  
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 0rem;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary-color);
+
+  /* LOGO */
+  .logo-img {
+    height: 100px; 
+    width: auto;
+    display: block;
   }
-  
-  .logo-icon {
-    font-size: 1.5rem;
-  }
-  
+
+  /* SEARCH */
   .search-container {
     position: relative;
     width: 300px;
   }
-  
+
   .search-input {
     width: 100%;
     padding: 0.5rem 1rem 0.5rem 2rem;
@@ -65,7 +66,7 @@
     border-radius: 0.5rem;
     outline: none;
   }
-  
+
   .search-icon {
     position: absolute;
     left: 0.5rem;
@@ -73,10 +74,63 @@
     transform: translateY(-50%);
     color: var(--text-secondary);
   }
-  
+
+  /* USER ACTION BUTTONS */
   .user-actions {
     display: flex;
     gap: 1rem;
     align-items: center;
+  }
+
+  .login-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    transition: background 0.2s ease-in-out;
+  }
+
+  .login-btn:hover {
+    background: rgba(0, 0, 0, 0.05);  /* Slightly darker hover effect */
+    border-radius: 5px;
+  }
+
+  /* FOOTER */
+  .footer {
+    background-color: #f3f2ef;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .footer-links li {
+    display: inline;
+  }
+
+  .footer-links a {
+    text-decoration: none;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .footer-links a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-text {
+    margin-top: 10px;
+    color: #666;
   }
   

@@ -1,3 +1,110 @@
+{% extends 'base_content.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+
+<div class="container">
+    <div class="buttons">
+        <button id="company-signup" onclick="showSignupForm('company')">Company Sign Up</button>
+        <button id="user-signup" onclick="showSignupForm('user')">User Sign Up</button>
+    </div>
+
+    <p class="signup-text">
+        Already have an account? <a href="{% url 'login' %}" class="signup-link">Log in</a>
+    </p>
+
+    <!-- Company Signup Form -->
+    <form id="company-signup-form" class="signup-form" method="POST" action="{% url 'signup' %}">
+        {% csrf_token %}
+        <input type="hidden" name="user_type" value="company">
+        
+        <div class="form-group">
+            <label for="company-name">Company Name</label>
+            <input type="text" name="company_name" id="company-name" autocomplete="organization" required>
+        </div>
+        <div class="form-group">
+            <label for="company-email">Email Address</label>
+            <input type="email" name="email" id="company-email" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+            <label for="company-password">Password</label>
+            <input type="password" name="password" id="company-password" autocomplete="new-password" required pattern="^(?=.*[A-Z])(?=.*[\W_]).{8,}$">
+        </div>
+        <div class="form-group">
+            <label for="company-industry">Industry</label>
+            <input type="text" name="industry" id="company-industry" autocomplete="off" required>
+        </div>
+        <div class="form-group">
+            <label for="company-phone">Phone Number</label>
+            <input type="tel" name="phone" id="company-phone" autocomplete="tel" required>
+        </div>
+
+        <input type="checkbox" id="terms" name="terms" required>
+        <label for="terms">I agree to the <a href="#">Terms and Conditions</a></label>
+        <br></br>
+        <button type="submit" class="submit-btn">Sign Up</button>
+    </form>
+
+    
+    <!-- User Signup Form (MISSING IN YOUR CODE) -->
+    <form id="user-signup-form" class="signup-form" method="POST" action="{% url 'signup' %}">
+        {% csrf_token %}
+        <input type="hidden" name="user_type" value="user">
+        
+        <div class="form-group">
+            <label for="user-first-name">First Name</label>
+            <input type="text" name="first_name" id="user-first-name" autocomplete="given-name" required>
+        </div>
+        <div class="form-group">
+            <label for="user-last-name">Last Name</label>
+            <input type="text" name="last_name" id="user-last-name" autocomplete="family-name" required>
+        </div>
+        <div class="form-group">
+            <label for="user-email">Email Address</label>
+            <input type="email" name="email" id="user-email" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+            <label for="user-phone">Phone Number</label>
+            <input type="tel" name="phone" id="user-phone" autocomplete="tel" required>
+        </div>
+        <div class="form-group">
+            <label for="user-password">Password</label>
+            <input type="password" name="password" id="user-password" autocomplete="new-password" required pattern="^(?=.*[A-Z])(?=.*[\W_]).{8,}$">
+            
+        </div>
+
+        <input type="checkbox" id="terms" name="terms" required>
+
+         <label for="terms">I agree to the <a href="#">Terms and Conditions</a></label>
+         <br></br>
+
+
+
+
+
+        <button type="submit" class="submit-btn">Sign Up</button>
+    </form>
+    
+</div>
+
+<script>
+    function showSignupForm(type) {
+        document.getElementById('company-signup-form').style.display = "none";
+        document.getElementById('user-signup-form').style.display = "none";
+
+        if (type === 'company') {
+            document.getElementById('company-signup-form').style.display = "block";
+        } else {
+            document.getElementById('user-signup-form').style.display = "block";
+        }
+    }
+</script>
+{% endblock %}
+
+
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,7 +281,7 @@
 
 
         
-            <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact us</button>
+            <button class="login-btn " onclick="window.location.href='/contact_us/'">Contact us</button>
 
             <button class="login-btn" onclick="window.location.href='/login/'">Log In</button>
             <button class="login-btn" onclick="window.location.href='/about_us/'">About us</button>
@@ -182,7 +289,7 @@
         </div>
     </div>
 
-<!--ranim's og code -->
+ranim's og code 
     <div class="container">
         <div class="buttons">
             <button id="company-signup" onclick="showSignupForm('company')">Company Sign Up</button>
@@ -359,3 +466,5 @@
     -->
 </body>
 </html>
+
+-->
