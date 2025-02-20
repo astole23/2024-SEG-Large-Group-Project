@@ -1,0 +1,116 @@
+{% extends 'base_content.html' %}
+{% load static %}
+{% block content %}
+<div class="company-profile">
+    <div class="company-header">
+        <div class="company-logo-container">
+            {% if company.logo %}
+                <img src="{{ company.logo.url }}" alt="{{ company.company_name }} Logo" class="company-logo">
+            {% else %}
+                <div class="placeholder-logo">No Logo</div>
+            {% endif %}
+            <h1 class="company-name">{{ company.company_name }}</h1>
+        </div>
+        <!-- Review Company Button in a purple box -->
+        <div class="review-box">
+            <button class="review-button" id="reviewButton">Review Company</button>
+        </div>
+        <hr class="company-divider">
+        <p class="company-industry"><strong>Industry:</strong> {{ company.industry }}</p>
+    </div>
+    <div class="company-contact">
+        <p><strong>Email:</strong> {{ company.email }}</p>
+        <p><strong>Phone:</strong> {{ company.phone }}</p>
+        <p><strong>Headquarters:</strong> {{ company.location }}</p>
+    </div>
+
+    <section class="job-listings">
+        <h2>Job Openings</h2>
+        {% if job_postings %}
+        <ul>
+            {% for job in job_postings %}
+            <li class="job-item">
+                <h3>{{ job.job_title }}</h3>
+                <p><strong>Location:</strong> {{ job.location }}</p>
+                <p><strong>Contract Type:</strong> {{ job.contract_type }}</p>
+                <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                <p>{{ job.job_overview }}</p>
+                <p><strong>Application Deadline:</strong> {{ job.application_deadline }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No job openings available at the moment.</p>
+        {% endif %}
+    </section>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Leave a Review</h2>
+            <form id="reviewForm" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="reviewText">Review Text:</label>
+                    <textarea id="reviewText" name="text" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="reviewRating">Rating:</label>
+                    <select id="reviewRating" name="rating" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-review">Submit Review</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get modal and review button elements
+        const reviewButton = document.getElementById('reviewButton');
+        const reviewModal = document.getElementById('reviewModal');
+        const reviewForm = document.getElementById('reviewForm');
+
+        // Show the modal when the button is clicked
+        reviewButton.addEventListener('click', function () {
+            reviewModal.style.display = 'block';
+        });
+
+        // Hide the modal when the form is submitted
+        reviewForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent form from submitting normally
+            
+            const formData = new FormData(reviewForm);
+
+            // Send the review data via AJAX
+            fetch('{% url "leave_review" company_id=company.id %}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Review submitted successfully!') {
+                    alert('Review submitted!');
+                    reviewModal.style.display = 'none'; // Close modal
+                    reviewForm.reset(); // Reset the form fields
+                } else {
+                    alert('Error submitting review');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_stylesheets %}
+    <link rel="stylesheet" href="{% static 'css/company_detail.css' %}">
+{% endblock %}
