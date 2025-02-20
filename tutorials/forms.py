@@ -1,6 +1,11 @@
 from django import forms
 from .models import Company
 from .models.company_review import Review
+from django import forms
+from .models import Company, User
+from django.contrib.auth.hashers import make_password
+
+
 
 class CompanyForm(forms.ModelForm):
     class Meta:
@@ -23,14 +28,7 @@ class CompanyEditForm(forms.ModelForm):
 
     logo = forms.ImageField(required=False)  # Logo is optional
     description = forms.CharField(widget=forms.Textarea, required=False)
-    
-from django import forms
-from .models import Company, User
-from django.contrib.auth.hashers import make_password
 
-from django import forms
-from django.contrib.auth.hashers import make_password
-from .models import Company, User
 
 class CompanyRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)

@@ -1,4 +1,5 @@
 from django.db import models
+import random
 
 
 class Company(models.Model):
@@ -15,6 +16,17 @@ class Company(models.Model):
     )
     logo = models.ImageField(upload_to='company_logos/', null=True, blank=True)
     description = models.TextField(blank=True, null=True)
+
+    unique_id = models.PositiveIntegerField(unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.unique_id:
+            while True:
+                new_id = random.randint(10000000, 99999999)  # Generates a random 8-digit number
+                if not Company.objects.filter(unique_id=new_id).exists():
+                    self.unique_id = new_id
+                    break
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.company_name
