@@ -6,4 +6,4 @@ google-cloud-language-2.16.0
 grpcio-1.70.0 
 grpcio-status-1.70.0
 phonenumbers-8.13.54
-Pillow=11.1.0
+Pillow==11.1.0
