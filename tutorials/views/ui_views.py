@@ -1,7 +1,5 @@
-<<<<<<< HEAD:tutorials/views/ui_views.py
 from django.shortcuts import render
 from tutorials.forms import UserRegistrationForm, CompanyRegistrationForm
-=======
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import check_password
 from tutorials.models.accounts import Company
@@ -12,11 +10,9 @@ from django.http import JsonResponse
 from tutorials.models.company_review import Review
 from tutorials.forms import CompanyEditForm
 
-from tutorials.forms import CompanyRegistrationForm, UserRegistrationForm
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 
->>>>>>> 0133cc1a2efbfe9ddc9d7cc0df321f543b3f298b:tutorials/views/views.py
 
 # Create your views here.
 def employer_dashboard(request):
@@ -63,58 +59,6 @@ def settings(request):
 def base_content(request):
     return render(request, 'base_content.html')
 
-
-<<<<<<< HEAD:tutorials/views/ui_views.py
-
-
-"""
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from tutorials.forms import CompanyRegistrationForm, UserRegistrationForm
-from tutorials.models.accounts import Company, User
-from django.contrib.auth.hashers import make_password
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-
-
-=======
->>>>>>> 0133cc1a2efbfe9ddc9d7cc0df321f543b3f298b:tutorials/views/views.py
-def signup_view(request):
-    company_form = CompanyRegistrationForm()
-    user_form = UserRegistrationForm()
-    if request.method == "POST":
-
-        user_type = request.POST.get("user_type")
-     
-        if user_type == "company":
-            company_form = CompanyRegistrationForm(request.POST)
-            if company_form.is_valid():
-                company_form.save()
-                messages.success(request, "Company registered successfully!")
-                return redirect("employer_dashboard")
-            else:
-                messages.error(request, "Error in company signup form.")
-
-        elif user_type == "user":
-            user_form = UserRegistrationForm(request.POST)
-            if user_form.is_valid():
-                user_form.save()
-                messages.success(request, "User registered successfully!")
-                return redirect("user_dashboard")
-            else:
-                messages.error(request, "Error in user signup form.")
-
-    return render(request, "signup.html", {"company_form": company_form, "user_form": user_form})
- 
-
 def company_detail(request, company_id):
     company = get_object_or_404(Company, id=company_id)
 
@@ -144,12 +88,6 @@ def leave_review(request, company_id):
 def edit_company(request, company_id):
     company = get_object_or_404(Company, id=company_id)
 
-<<<<<<< HEAD:tutorials/views/ui_views.py
-    company_form = CompanyRegistrationForm()
-    user_form = UserRegistrationForm()
-    return render(request, 'signup.html', {'company_form': company_form, 'user_form': user_form})
-"""
-=======
     if request.method == 'POST':
         company.description = request.POST.get('description')
         company.logo = request.FILES.get('logo')  # If uploading logo
@@ -159,4 +97,3 @@ def edit_company(request, company_id):
         return render(request, 'edit_company.html', {'company': company, 'message': 'Company details updated!'})
 
     return render(request, 'edit_company.html', {'company': company})
->>>>>>> 0133cc1a2efbfe9ddc9d7cc0df321f543b3f298b:tutorials/views/views.py

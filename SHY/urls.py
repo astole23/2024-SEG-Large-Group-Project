@@ -16,13 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-<<<<<<< HEAD
 from tutorials.views import ui_views 
-=======
-from tutorials.views import views 
 from django.conf import settings
 from django.conf.urls.static import static
->>>>>>> 0133cc1a2efbfe9ddc9d7cc0df321f543b3f298b
 
 
 urlpatterns = [
@@ -36,18 +32,15 @@ urlpatterns = [
     path('signup/', ui_views.signup, name='signup'),
  
     
-<<<<<<< HEAD
     path('about_us/', ui_views.about_us, name='about_us'),
     path('settings/', ui_views.settings, name='settings'),
 
     path('base_content/', ui_views.base_content, name='base_content'),
-=======
-    path('about_us/', views.about_us, name='about_us'),
-    path('company/<int:company_id>/', views.company_detail, name='company_detail'),
-    path('company/<int:company_id>/review/', views.leave_review, name='leave_review'),
-    path('company/<int:company_id>/edit/', views.edit_company, name='edit_company'),
-    path('settings/', views.settings, name='settings'),
->>>>>>> 0133cc1a2efbfe9ddc9d7cc0df321f543b3f298b
+    
+    path('company/<int:company_id>/', ui_views.company_detail, name='company_detail'),
+    path('company/<int:company_id>/review/', ui_views.leave_review, name='leave_review'),
+    path('company/<int:company_id>/edit/', ui_views.edit_company, name='edit_company'),
+    path('settings/', ui_views.settings, name='settings'),
 ] 
 
 if settings.DEBUG:

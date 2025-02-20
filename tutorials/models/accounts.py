@@ -1,9 +1,6 @@
 from django.db import models
-<<<<<<< HEAD
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-=======
 import random
->>>>>>> 0133cc1a2efbfe9ddc9d7cc0df321f543b3f298b
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -67,18 +64,4 @@ class Company(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-<<<<<<< HEAD
         return self.company_name
-=======
-        return self.company_name
-
-
-class User(models.Model):
-    first_name = models.CharField(max_length=255) 
-    last_name = models.CharField(max_length=255)  
-    email = models.EmailField(unique=True)        
-    phone = models.CharField(max_length=20)       
-    password = models.CharField(max_length=255)
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
->>>>>>> 0133cc1a2efbfe9ddc9d7cc0df321f543b3f298b
