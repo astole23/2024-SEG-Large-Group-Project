@@ -2,8 +2,8 @@ google-api-python-client==2.160.0
 requests==2.32.3
 beautifulsoup4==4.12.3
 soupsieve==2.6
-google-cloud-language-2.16.0 
-grpcio-1.70.0 
-grpcio-status-1.70.0
-phonenumbers-8.13.54
-Pillow=11.1.0
+google-cloud-language==2.16.0 
+grpcio==1.70.0 
+grpcio-status==1.70.0
+phonenumbers==8.13.54
+Pillow==11.1.0
