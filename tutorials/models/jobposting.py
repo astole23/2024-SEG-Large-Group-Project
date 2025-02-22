@@ -28,16 +28,11 @@ class JobPosting(models.Model):
     # Perks and benefits
     perks = models.TextField(help_text="List of benefits and perks provided by the employer.")
 
-<<<<<<< Updated upstream
-    # Job application deadline
-    application_deadline = models.CharField(max_length=100, help_text="Deadline for submitting job applications.")
-=======
     # Job application deadline (expects format 'YYYY-MM-DD')
     application_deadline = models.CharField(
         help_text="Deadline for submitting job applications.",
         max_length=255
     )
->>>>>>> Stashed changes
 
     # Additional details about the company and job offer
     company_overview = models.TextField(blank=True, null=True, help_text="Brief information about the company.")

@@ -20,6 +20,8 @@ class Company(models.Model):
     unique_id = models.CharField(max_length=5, unique=True, blank=True, null=True)
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
 =======
 >>>>>>> Stashed changes
 =======

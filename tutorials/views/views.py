@@ -4,8 +4,11 @@ from django.shortcuts import render
 def employer_dashboard(request):
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     return render(request, 'employer_dashboard.html')
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     # Query the database for all job postings
@@ -14,6 +17,9 @@ def employer_dashboard(request):
     context = {'job_postings': job_postings}
     return render(request, 'employer_dashboard.html', context)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

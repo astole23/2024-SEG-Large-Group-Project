@@ -326,6 +326,7 @@ def fetch_adzuna_jobs():
                             "phone": job.get("phone_number", fake.phone_number()),
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                             "unique_id":generate_unique_company_code()  # Assigning the generated unique code
 =======
                             "unique_id":generate_unique_company_id()  # Assigning the generated unique code
