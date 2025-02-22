@@ -2,11 +2,43 @@ import os
 import re
 import requests
 import random
+import string
 from django.core.management.base import BaseCommand
 from tutorials.models.jobposting import JobPosting
 import faker
 from tutorials.models.accounts import User,Company
 from phonenumbers import parse, is_possible_number, is_valid_number, PhoneNumberFormat, format_number
+
+
+#Already generated list of users
+user_fixtures = [
+    {
+        'company_name': '@JohnLTD',
+        'email': 'johnLTD@example.org',
+        'industry': 'construction',
+        'phone': '+447652567298',
+        'user_type': 'company',
+        'password': 'password',
+        'unique_code' : '*****'
+    },
+    {
+        'username': '@janedoe',
+        'email': 'jane.doe@example.org',
+        'first_name': 'Jane',
+        'last_name': 'Doe',
+        'phone': '+447866352809',
+        'user_type': 'user',
+        'password': 'password'
+    },
+    {
+        'username': '@admin',
+        'email': 'admin@example.org',
+        'user_type': 'admin',
+        'password': 'password'
+    },
+]
+
+
 
 
 fake = faker.Faker()
@@ -101,17 +133,6 @@ WHY_JOIN_US_OPTIONS = [
     "Participate in cutting-edge projects with top-tier clients.",
     "Shape your career in an organization with a clear mission.",
     "Experience a culture that celebrates success and creativity.",
-    "Work in an environment that encourages continuous learning.",
-    "Join a team of highly skilled and passionate professionals.",
-    "Be part of a company committed to sustainability and innovation.",
-    "Take advantage of ample opportunities for upward mobility.",
-    "Contribute to building innovative solutions for a better future.",
-    "Be part of a close-knit, high-performing team.",
-    "Enjoy perks such as free snacks, gym memberships, and team events.",
-    "Grow in a role where your contributions truly matter.",
-    "Work in a company with strong values and a clear vision.",
-    "Join a team that thrives on collaboration and innovation.",
-    "Take pride in being part of a highly respected brand.",
     "Enjoy a culture of recognition and employee appreciation.",
     "Work in a role that challenges and excites you every day.",
     "Be supported by leadership that genuinely cares about employees.",
@@ -303,6 +324,7 @@ def fetch_adzuna_jobs():
                             "password": fake.password(),
                             "industry": category.capitalize(),
                             "phone": job.get("phone_number", fake.phone_number()),
+                            "unique_code":generate_unique_company_code()  # Assigning the generated unique code
     
                         }
                     )
@@ -355,6 +377,15 @@ def generate_clean_phone_number():
 # Fallback number in case generation consistently fails
     return "+1234567890"
 
+def generate_unique_company_code():
+    """Generate a unique 5-character alphanumeric code for a company."""
+    while True:
+        # Generate a random 5-character code (letters and digits)
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+
+        # Ensure it's unique by checking the database
+        if not Company.objects.filter(unique_code=code).exists():
+            return code
 
 def generate_unique_email(company_name):
     """
@@ -377,22 +408,76 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.seed_users(100)  # Seed 100 users
         self.seed_jobs()      # Seed job postings
+        '''
+        for user_data in user_fixtures:
+            self.create_known_users(user_data)
         self.stdout.write(self.style.SUCCESS("✅ Database seeding complete!"))
+        '''
 
+    '''
+    def create_known_users(self, data):
+        """Attempt to create a user and handle any exceptions."""
+        try:
+            if data['user_type'] == 'admin':
+                # Create a superuser if the user_type is admin
+                User.objects.create_superuser(
+                    username=data['username'],
+                    email=data['email'],
+                    password=data['password'],
+                    user_type=data['user_type']  
+                )
+                print(f"Superuser created: {data['username']}")
+            elif data['user_type'] == 'company':
+                # Create a company user
+                User.objects.create_user(
+                    company_name=data['company_name'],
+                    email=data['email'],
+                    industry=data['industry'],
+                    phone=data['phone'],
+                    password=data['password'],
+                    user_type=data['user_type'],
+                    unique_code=data['unique_code']
+                )
+                print(f"Company created: {data['username']}")
+            elif data['user_type'] == 'user':
+                # Create a regular user
+                User.objects.create_user(
+                    username=data['username'],
+                    email=data['email'],
+                    first_name=data['first_name'],
+                    last_name=data['last_name'],
+                    phone=data['phone'],
+                    password=data['password'],
+                    user_type=data['user_type']
+                )
+                print(f"User created: {data['username']}")
+            else:
+                print(f"Invalid user type: {data['user_type']}")
+        except Exception as e:
+            print(f"Error creating user {data['username']}: {e}")
+            raise e  # Re-raise the error to prevent silent failures
+
+
+    '''
     def seed_users(self, count):
         """Seed the User model with dummy data."""
-        for _ in range(count):
-            user = User.objects.create(
-                first_name=fake.first_name(),
-                last_name=fake.last_name(),
-                email=fake.unique.email(),
-                phone=generate_clean_phone_number(),
-                password=fake.password(length=10),
+        for _ in range(count):  # ✅ This should loop correctly
+            email = fake.unique.email()  # Ensure unique email
+            user, created = User.objects.get_or_create(
+                email=email,
+                defaults={
+                    "first_name": fake.first_name(),
+                    "last_name": fake.last_name(),
+                    "phone": fake.phone_number(),
+                    "password": fake.password(length=10),
+                }
             )
-            print(f"✅ Created User: {user.first_name} {user.last_name}")
+            if created:
+                print(f"✅ Created User: {user.first_name} {user.last_name} - {user.email}")
+            else:
+                print(f"⚠️ User {user.email} already exists, skipping...")
 
 
-                    
     def seed_jobs(self):
 
         job_count = 0
