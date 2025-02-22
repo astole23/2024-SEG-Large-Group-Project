@@ -2,7 +2,15 @@ from django.shortcuts import render
 
 # Create your views here.
 def employer_dashboard(request):
+<<<<<<< Updated upstream
     return render(request, 'employer_dashboard.html')
+=======
+    # Query the database for all job postings
+    job_postings = JobPosting.objects.all()
+    # Pass the query results to the template in a context dictionary
+    context = {'job_postings': job_postings}
+    return render(request, 'employer_dashboard.html', context)
+>>>>>>> Stashed changes
 
 def contact_us(request):
     return render(request, 'contact_us.html')

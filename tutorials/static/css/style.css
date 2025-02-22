@@ -317,6 +317,7 @@
   .company-info {
     display: flex;
     align-items: center;
+    
     gap: 0.5rem;
   }
   
@@ -404,6 +405,10 @@
   }
   
   .company-name {
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+  }
+  .company-overview {
     color: var(--text-secondary);
     margin-bottom: 0.25rem;
   }
@@ -786,6 +791,7 @@
     color: #2c1855;
   }
 
+
   .location {
     font-size: 0.9rem;
     color: rgb(158, 158, 158);
@@ -855,3 +861,151 @@
       width: 200px;
     }
   }
+<<<<<<< Updated upstream
+=======
+
+    /*About Us*/
+    .aboutbackground {
+        margin-right: 0;
+        padding: 40px 20px;
+        height: 100vh;
+        overflow-y: auto;
+        position: relative;
+        background-image: url('/static/contact_us_background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        padding-top: 5rem;
+        width: 100vw;
+    }
+    
+    .aboutbackground::before {
+      content: '';
+      position: relative;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 120%;
+      background-color: rgba(128, 0, 128, 0.2);
+      z-index: 1;
+    }
+    
+    .about-content {
+        position: relative;
+        z-index: 2;
+        max-width: 700px;
+        margin: auto;
+        padding: 30px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .about-content h2, .about-content h3 {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #4b0082;
+    }
+    
+    .about-content p {
+        font-size: 1.1rem;
+        color: #475569;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+    
+    /* General padding for all sections */
+    .about-content, .statistics, .chart-section, .photo-section {
+        max-width: 800px; /* Limit the width of the sections */
+        margin: 0 auto; /* Center the content */
+        padding: 2rem; /* Add padding on all sides */
+        background-color: var(--card-background); /* Add background to all boxes */
+        border-radius: 10px; /* Rounded corners for all sections */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Add shadow for a card-like effect */
+    }
+    
+    /* Statistics Section */
+    .statistics {
+        background-color: #f8fafc;
+        margin-top: 3rem;
+    }
+    
+    .stats-container {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 2rem;
+    }
+    
+    .stat-item {
+        padding: 1rem;
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 30%;
+    }
+    
+    .stat-item h4 {
+        font-size: 2rem;
+        color: #4b0082;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-item p {
+        font-size: 1rem;
+        color: var(--text-secondary);
+    }
+
+    
+    /* Chart Section */
+    .chart-section {
+        margin-top: 3rem; /* Add margin-top for spacing from previous section */
+    }
+    
+    .chart-box {
+        padding: 2rem;
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 3rem; /* Add margin-bottom to create space between chart and photo */
+    }
+    
+    /* Team Photo Section */
+    .photo-section {
+        padding: 2rem;
+        background-color: #f8fafc;
+        text-align: center;
+        margin-top: 3rem; /* Ensure there's space from the chart section */
+    }
+    
+    .photo-box {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1rem;
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Spacing between "Our Team" heading, image, and text */
+    .photo-section h3 {
+        margin-bottom: 2rem; /* Add margin below the heading */
+    }
+    
+    .team-photo {
+        width: 80%;
+        max-width: 600px;
+        margin: 1rem 0;
+        border-radius: 10px;
+    }
+    
+    .photo-section p {
+        margin-top: 2rem; /* Add margin on top of the text */
+    }
+    .grid-button p.company-overview {
+      color: #475569 !important; /* Change to your desired color, e.g. dark gray */
+    }
+
+
+  
+
+>>>>>>> Stashed changes

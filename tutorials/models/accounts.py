@@ -18,6 +18,10 @@ class Company(models.Model):
     description = models.TextField(blank=True, null=True)
 
     unique_id = models.CharField(max_length=5, unique=True, blank=True, null=True)
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     def save(self, *args, **kwargs):
         if not self.unique_id:
             while True:
