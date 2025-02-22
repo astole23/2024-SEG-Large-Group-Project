@@ -333,6 +333,9 @@ def fetch_adzuna_jobs():
 =======
                             "unique_id":generate_unique_company_id()  # Assigning the generated unique code
 >>>>>>> Stashed changes
+=======
+                            "unique_id":generate_unique_company_id()  # Assigning the generated unique code
+>>>>>>> Stashed changes
     
                         }
                     )
