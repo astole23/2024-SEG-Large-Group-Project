@@ -60,6 +60,7 @@
                   data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">
             View More
           </button>
+<<<<<<< Updated upstream
         </div>
         {% empty %}
         <p>No job postings available.</p>
@@ -318,6 +319,101 @@
     <!-- Create Job Posting Modal -->
     <div class="modal fade" id="createJobModal" tabindex="-1" aria-labelledby="createJobModalLabel" aria-hidden="true">
 =======
+=======
+        </div>
+        {% empty %}
+        <p>No job postings available.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Models: One per job posting -->
+  {% for job in job_postings %}
+  <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <!-- Modal Header using primary color from your CSS variables -->
+        <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+          <h5 class="modal-title" id="jobModalLabel{{ job.id }}">{{ job.job_title }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <!-- Row 1: Basic Job Info -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <p><strong>Company:</strong> {{ job.company_name }}</p>
+                {% if job.child_company_name %}
+                <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                {% endif %}
+                <p><strong>Location:</strong> {{ job.location }}</p>
+                <p><strong>Work Type:</strong> {{ job.work_type }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                <p><strong>Contract:</strong> {{ job.contract_type }}</p>
+                <p><strong>Deadline:</strong> {{ job.application_deadline }}</p>
+              </div>
+            </div>
+            <hr>
+            <!-- Row 2: Job Overview and Responsibilities -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <h6>Job Overview</h6>
+                <p>{{ job.job_overview }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6>Roles &amp; Responsibilities</h6>
+                <p>{{ job.roles_responsibilities }}</p>
+              </div>
+            </div>
+            <hr>
+            <!-- Row 3: Skills -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <h6>Required Skills</h6>
+                <p>{{ job.required_skills }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6>Preferred Skills</h6>
+                <p>{{ job.preferred_skills }}</p>
+              </div>
+            </div>
+            <hr>
+            <!-- Row 4: Additional Details -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <h6>Education</h6>
+                <p>{{ job.education_required }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6>Perks</h6>
+                <p>{{ job.perks }}</p>
+              </div>
+            </div>
+            <hr>
+            <!-- Row 5: Company Details -->
+            <div class="row">
+              <div class="col-12">
+                <h6>About the Company</h6>
+                <p><strong>Overview:</strong> {{ job.company_overview }}</p>
+                <p><strong>Why Join Us:</strong> {{ job.why_join_us }}</p>
+                <p><strong>Reviews:</strong> {{ job.company_reviews }}</p>
+                <p class="text-muted"><small>Posted on {{ job.created_at|date:"M d, Y" }}</small></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+>>>>>>> Stashed changes
   Create Job Posting Modal -->
     <div class="modal fade" id="createJobModal" tabindex="-1" aria-labelledby="createJobModalLabel">
 >>>>>>> Stashed changes
@@ -459,6 +555,7 @@
   <script src="{% static 'js/job_form_validation.js' %}"></script>
   
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
     <!-- Bootstrap JS and Popper (optional for interactivity) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -555,6 +652,8 @@
 
     </script>
       
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 </body>
