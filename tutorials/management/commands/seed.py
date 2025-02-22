@@ -76,6 +76,7 @@ PERKS_OPTIONS = [
     "Relocation assistance", "Commuter benefits", "Wellness programs",
     "Corporate social responsibility opportunities", "Paid volunteering days",
     "Flexible dress id", "Monthly social events", "Annual health check-ups",
+    "Flexible dress id", "Monthly social events", "Annual health check-ups",
     "Employee recognition programs", "Innovation budget", "Quarterly team dinners",
     "Company-sponsored sports teams", "On-site library", "Study leave benefits",
     "Hybrid work environment", "Leadership training", "Sabbatical leave options",
@@ -97,11 +98,13 @@ APPLICATION_DEADLINE_OPTIONS = [
     "Open until all positions are filled", "30 days from today",
     "Open-ended application process", "Hiring within 2 months", "Hiring within 6 weeks",
     "10 working days from now", "Open for 3 months", "Last date to apply: 25th of next month",
+    "10 working days from now", "Open for 3 months", "Last date to apply: 25th of next month",
     "On or before the first Friday of next month", "Closes mid-year", 
     "Submit applications by next Monday", "Hiring till 15th of next month",
     "Position expected to be filled by next month", "Last call for applications in 2 weeks",
     "Deadline extended to next month", "Final date: end of quarter",
     "Open until next fiscal quarter", "Hiring closes on last Friday of the month",
+    "First week of next month", "Application window: Open for 2 more months"
     "First week of next month", "Application window: Open for 2 more months"
 ]
 
@@ -324,20 +327,7 @@ def fetch_adzuna_jobs():
                             "password": fake.password(),
                             "industry": category.capitalize(),
                             "phone": job.get("phone_number", fake.phone_number()),
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                            "unique_id":generate_unique_company_code()  # Assigning the generated unique code
-=======
                             "unique_id":generate_unique_company_id()  # Assigning the generated unique code
->>>>>>> Stashed changes
-=======
-                            "unique_id":generate_unique_company_id()  # Assigning the generated unique code
->>>>>>> Stashed changes
-=======
-                            "unique_id":generate_unique_company_id()  # Assigning the generated unique code
->>>>>>> Stashed changes
-    
                         }
                     )
                     
@@ -449,6 +439,7 @@ class Command(BaseCommand):
                     password=data['password'],
                     user_type=data['user_type'],
                     unique_id=data['unique_id']
+                    unique_id=data['unique_id']
                 )
                 print(f"Company created: {data['username']}")
             elif data['user_type'] == 'user':
@@ -504,6 +495,8 @@ class Command(BaseCommand):
                     salary_range=job["salary_range"],
                     contract_type=random.choice(["Full-time", "Part-time", "Apprenticeship", "Internship"]),
                     work_type=random.choice(["Remote", "Hybrid", "On-site"]),
+                    contract_type=random.choice(["Full-time", "Part-time", "Apprenticeship", "Internship"]),
+                    work_type=random.choice(["Remote", "Hybrid", "On-site"]),
                     job_overview=job["job_overview"],
                     education_required=random.choice(EDUCATION_OPTIONS),
                     perks=", ".join(random.sample(PERKS_OPTIONS, k=random.randint(3, 9))),
@@ -513,6 +506,10 @@ class Command(BaseCommand):
                     preferred_skills=job["preferred_skills"],
                     company_overview=job["company_overview"],
                     why_join_us=random.choice(WHY_JOIN_US_OPTIONS),
+                    company_reviews=round(random.uniform(3.5, 5.0), 1),
+                    child_company_name="",
+                    required_documents="Updated CV",
+
                     company_reviews=round(random.uniform(3.5, 5.0), 1),
                     child_company_name="",
                     required_documents="Updated CV",
