@@ -19,7 +19,7 @@ user_fixtures = [
         'phone': '+447652567298',
         'user_type': 'company',
         'password': 'password',
-        'unique_code' : '*****'
+        'unique_id' : '*****'
     },
     {
         'username': '@janedoe',
@@ -324,7 +324,7 @@ def fetch_adzuna_jobs():
                             "password": fake.password(),
                             "industry": category.capitalize(),
                             "phone": job.get("phone_number", fake.phone_number()),
-                            "unique_code":generate_unique_company_code()  # Assigning the generated unique code
+                            "unique_id":generate_unique_company_code()  # Assigning the generated unique code
     
                         }
                     )
@@ -384,7 +384,7 @@ def generate_unique_company_code():
         code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
 
         # Ensure it's unique by checking the database
-        if not Company.objects.filter(unique_code=code).exists():
+        if not Company.objects.filter(unique_id=code).exists():
             return code
 
 def generate_unique_email(company_name):
@@ -436,7 +436,7 @@ class Command(BaseCommand):
                     phone=data['phone'],
                     password=data['password'],
                     user_type=data['user_type'],
-                    unique_code=data['unique_code']
+                    unique_id=data['unique_id']
                 )
                 print(f"Company created: {data['username']}")
             elif data['user_type'] == 'user':
