@@ -9,29 +9,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employer Dashboard</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employer Dashboard</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
-  <!-- Sidebar (unchanged from your design) -->
-  <div class="sidebar">
-    <div class="sidebar-options">
-      <img src="{% static 'images/empty_profile.png' %}" alt="Profile Photo" class="profile-photo">
-      <a href="#"><i class="fas fa-briefcase"></i> See posted jobs</a>
-      <a href="#" data-bs-toggle="modal" data-bs-target="#createJobModal">
-        <i class="fas fa-plus-circle"></i> Create new posting
-      </a>
-      <a href="#"><i class="fas fa-building"></i> Company Profile</a>
-      <a href="#"><i class="fas fa-users"></i> View User Request</a>
-      <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-    <div class="sidebar-logo">
-      <img src="{% static 'images/circle_lilac.png' %}" alt="Small logo" class="small-logo">
-    </div>
-  </div>
   <!-- Sidebar (unchanged from your design) -->
   <div class="sidebar">
     <div class="sidebar-options">
@@ -73,15 +53,13 @@
             <p class="company-name">{{ job.company_name }}</p>
             <p class="location">{{ job.location }}</p>
             <p class="pay-contract">{{ job.salary_range }} | {{ job.contract_type }}</p>
-            <p class="company-overview">{{ job.company_overview|truncatewords:10 }} </p>
+            <p class="company-overview">{{ job.company_overview|truncatewords:10 }}</p>
           </div>
           <!-- Bigger View More Button -->
           <button class="btn btn-secondary btn-lg mt-2" 
                   data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">
             View More
           </button>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         </div>
         {% empty %}
         <p>No job postings available.</p>
@@ -90,266 +68,7 @@
     </div>
   </div>
 
-  <!-- Models: One per job posting -->
-  {% for job in job_postings %}
-  <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-      <div class="modal-content">
-        <!-- Modal Header using primary color from your CSS variables -->
-        <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-          <h5 class="modal-title" id="jobModalLabel{{ job.id }}">{{ job.job_title }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
-        </div>
-        <div class="modal-body">
-          <div class="container-fluid">
-            <!-- Row 1: Basic Job Info -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <p><strong>Company:</strong> {{ job.company_name }}</p>
-                {% if job.child_company_name %}
-                <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
-                {% endif %}
-                <p><strong>Location:</strong> {{ job.location }}</p>
-                <p><strong>Work Type:</strong> {{ job.work_type }}</p>
-              </div>
-              <div class="col-md-6">
-                <p><strong>Salary:</strong> {{ job.salary_range }}</p>
-                <p><strong>Contract:</strong> {{ job.contract_type }}</p>
-                <p><strong>Deadline:</strong> {{ job.application_deadline }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 2: Job Overview and Responsibilities -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <h6>Job Overview</h6>
-                <p>{{ job.job_overview }}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Roles &amp; Responsibilities</h6>
-                <p>{{ job.roles_responsibilities }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 3: Skills -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <h6>Required Skills</h6>
-                <p>{{ job.required_skills }}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Preferred Skills</h6>
-                <p>{{ job.preferred_skills }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 4: Additional Details -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <h6>Education</h6>
-                <p>{{ job.education_required }}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Perks</h6>
-                <p>{{ job.perks }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 5: Company Details -->
-            <div class="row">
-              <div class="col-12">
-                <h6>About the Company</h6>
-                <p><strong>Overview:</strong> {{ job.company_overview }}</p>
-                <p><strong>Why Join Us:</strong> {{ job.why_join_us }}</p>
-                <p><strong>Reviews:</strong> {{ job.company_reviews }}</p>
-                <p class="text-muted"><small>Posted on {{ job.created_at|date:"M d, Y" }}</small></p>
-              </div>
-            </div>
-          </div>
-        </div>
-<<<<<<< Updated upstream
-
-         <!-- Main content -->
-         <div class="main-content">
-            <!-- Scrollable Section (Grid of 2x6 buttons) -->
-            <div class="scrollable-section">
-                <div class="grid-container">
-                    <!-- 12 Buttons (2 Columns x 6 Rows) -->
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-                    
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-
-                    <button class="grid-button">
-                        <div class="job-details">
-                            <h5 class="job-title">Job Posting Title</h5>
-                            <p class="company-name">Company Name</p>
-                            <p class="location">Location</p>
-                            <p class="pay-contract">Pay and Contract Type</p>
-                            <ul class="job-summary">
-                                <li>Bullet point 1</li>
-                                <li>Bullet point 2</li>
-                                <li>Bullet point 3</li>
-                            </ul>
-                            <p class="applicants-info">5 Applicants | 3 weeks ago</p>
-                        </div>
-                    </button>
-                </div>
-            </div>
-=======
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
->>>>>>> Stashed changes
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endfor %}
-
-<<<<<<< Updated upstream
-    <!-- Create Job Posting Modal -->
-    <div class="modal fade" id="createJobModal" tabindex="-1" aria-labelledby="createJobModalLabel" aria-hidden="true">
-=======
-=======
-        </div>
-        {% empty %}
-        <p>No job postings available.</p>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-
-  <!-- Models: One per job posting -->
+  <!-- Modals: One per job posting -->
   {% for job in job_postings %}
   <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
@@ -434,107 +153,8 @@
   </div>
   {% endfor %}
 
->>>>>>> Stashed changes
-=======
-        </div>
-        {% empty %}
-        <p>No job postings available.</p>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-
-  <!-- Models: One per job posting -->
-  {% for job in job_postings %}
-  <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-      <div class="modal-content">
-        <!-- Modal Header using primary color from your CSS variables -->
-        <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-          <h5 class="modal-title" id="jobModalLabel{{ job.id }}">{{ job.job_title }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
-        </div>
-        <div class="modal-body">
-          <div class="container-fluid">
-            <!-- Row 1: Basic Job Info -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <p><strong>Company:</strong> {{ job.company_name }}</p>
-                {% if job.child_company_name %}
-                <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
-                {% endif %}
-                <p><strong>Location:</strong> {{ job.location }}</p>
-                <p><strong>Work Type:</strong> {{ job.work_type }}</p>
-              </div>
-              <div class="col-md-6">
-                <p><strong>Salary:</strong> {{ job.salary_range }}</p>
-                <p><strong>Contract:</strong> {{ job.contract_type }}</p>
-                <p><strong>Deadline:</strong> {{ job.application_deadline }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 2: Job Overview and Responsibilities -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <h6>Job Overview</h6>
-                <p>{{ job.job_overview }}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Roles &amp; Responsibilities</h6>
-                <p>{{ job.roles_responsibilities }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 3: Skills -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <h6>Required Skills</h6>
-                <p>{{ job.required_skills }}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Preferred Skills</h6>
-                <p>{{ job.preferred_skills }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 4: Additional Details -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <h6>Education</h6>
-                <p>{{ job.education_required }}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Perks</h6>
-                <p>{{ job.perks }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 5: Company Details -->
-            <div class="row">
-              <div class="col-12">
-                <h6>About the Company</h6>
-                <p><strong>Overview:</strong> {{ job.company_overview }}</p>
-                <p><strong>Why Join Us:</strong> {{ job.why_join_us }}</p>
-                <p><strong>Reviews:</strong> {{ job.company_reviews }}</p>
-                <p class="text-muted"><small>Posted on {{ job.created_at|date:"M d, Y" }}</small></p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endfor %}
-  </div>
-  {% endfor %}
-
->>>>>>> Stashed changes
   Create Job Posting Modal -->
     <div class="modal fade" id="createJobModal" tabindex="-1" aria-labelledby="createJobModalLabel">
->>>>>>> Stashed changes
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <!-- Modal Header -->
@@ -598,8 +218,8 @@
                 </div>
                 <!-- Roles/Responsibility -->
                 <div class="mb-3">
-                <label for="rolesResponsibility" class="form-label">Roles/Responsibility</label>
-                <textarea class="form-control" id="rolesResponsibility" name="roles_responsibility" rows="3" placeholder="List roles and responsibilities"></textarea>
+                <label for="rolesResponsibilities" class="form-label">Roles/Responsibility</label>
+                <textarea class="form-control" id="rolesResponsibilities" name="roles_responsibilities" rows="3" placeholder="List roles and responsibilities"></textarea>
                 </div>
                 <!-- Required Skills (Tag Input) -->
                 <div class="mb-3">
@@ -661,8 +281,8 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             <!-- You can attach an AJAX call to this button to handle form submission without reloading -->
-            <button type="button" class="btn btn-primary" id="saveJobPosting">Save</button>
-            </div>
+            <button type="submit" class="btn btn-primary" id="saveJobPosting" form="createJobForm">Save</button>
+        </div>
         </div>
         </div>
     </div>
@@ -672,111 +292,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/job_form_validation.js' %}"></script>
   
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-    <!-- Bootstrap JS and Popper (optional for interactivity) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('saveJobPosting').addEventListener('click', function () {
-          // Gather form data
-          const jobTitle = document.getElementById('jobTitle').value;
-          const companyName = document.getElementById('companyName').value;
-          const jobDescription = document.getElementById('jobDescription').value;
-          
-          // Create an object with your form data
-          const formData = {
-            title: jobTitle,
-            company: companyName,
-            description: jobDescription
-            // Add more fields as needed
-          };
-      
-          // Perform an AJAX request (using fetch here)
-          fetch('/your-job-posting-endpoint/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': '{{ csrf_token }}'  // Ensure you pass the CSRF token if needed
-            },
-            body: JSON.stringify(formData)
-          })
-          .then(response => response.json())
-          .then(data => {
-            // Handle successful response
-            console.log('Job posting created:', data);
-            // Optionally, close the modal after success
-            const modalElement = document.getElementById('createJobModal');
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            modal.hide();
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
-        });
-        function initTagInput(inputId, containerId, hiddenInputId) {
-            const input = document.getElementById(inputId);
-            const container = document.getElementById(containerId);
-            const hiddenInput = document.getElementById(hiddenInputId);
-            let tags = [];
-
-            // Update the hidden input with the current tags list.
-            function updateHiddenInput() {
-            hiddenInput.value = tags.join(',');
-            }
-
-            // Create a badge element for a tag.
-            function createTagElement(tag) {
-            const tagElem = document.createElement('span');
-            tagElem.classList.add('badge', 'bg-primary', 'me-1', 'mb-1');
-            tagElem.textContent = tag;
-
-            // Create a close button for the tag.
-            const closeBtn = document.createElement('button');
-            closeBtn.type = 'button';
-            closeBtn.classList.add('btn-close', 'btn-close-white', 'ms-1');
-            closeBtn.style.fontSize = '0.6em';
-            closeBtn.addEventListener('click', function() {
-                container.removeChild(tagElem);
-                tags = tags.filter(t => t !== tag);
-                updateHiddenInput();
-            });
-            
-            tagElem.appendChild(closeBtn);
-            return tagElem;
-            }
-
-            // Listen for Enter key presses to add a new tag.
-            input.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const tag = input.value.trim();
-                if (tag !== '' && !tags.includes(tag)) {
-                tags.push(tag);
-                container.appendChild(createTagElement(tag));
-                updateHiddenInput();
-                input.value = '';
-                }
-            }
-            });
-        }
-
-        // Initialize tag inputs once the DOM is fully loaded.
-        document.addEventListener('DOMContentLoaded', function() {
-            initTagInput('requiredSkillsInput', 'requiredSkillsContainer', 'requiredSkills');
-            initTagInput('preferredSkillsInput', 'preferredSkillsContainer', 'preferredSkills');
-        });
-
-
-    </script>
-      
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 </body>
 </html>
 
