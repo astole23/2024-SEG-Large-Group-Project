@@ -136,3 +136,18 @@
 </html>
 
 {% endblock %}
+
+
+<script>
+// Listen for wheel events on the whole document (or target a specific element)
+document.addEventListener("wheel", function(e) {
+    // Prevent the default scrolling
+    e.preventDefault();
+    
+    // Adjust the scroll delta (here, we reduce it to 50% of the original)
+    const scrollAmount = e.deltaY * 0.9;
+    
+    // Scroll the window by the adjusted amount
+    window.scrollBy(0, scrollAmount);
+}, { passive: false }); // passive: false is required to call preventDefault()
+</script>

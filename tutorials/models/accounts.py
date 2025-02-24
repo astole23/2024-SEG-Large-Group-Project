@@ -17,7 +17,11 @@ class Company(models.Model):
     logo = models.ImageField(upload_to='company_logos/', null=True, blank=True)
     description = models.TextField(blank=True, null=True)
 
+<<<<<<< HEAD
     unique_id = models.CharField(max_length = 5, unique=True, blank=True, null=True)
+=======
+    unique_id = models.CharField(max_length=5, unique=True, blank=True, null=True)
+>>>>>>> 679a10d18f973b48e204d4b25ee73907734c3492
 
     def save(self, *args, **kwargs):
         if not self.unique_id:
