@@ -80,7 +80,7 @@ def search(request):
         "human-resources", "writing", "consulting", "ngo", "data-science"
     ]
 
-    job_types = ["contract", "freelance", "full_time", "internship", "part_time", "temporary"]
+    job_types = ["Apprenticeship", "Full-time", "Internship", "Part-time"]
 
     perks_list = [
         "Flexible working hours", "Health insurance", "Remote work opportunities",
