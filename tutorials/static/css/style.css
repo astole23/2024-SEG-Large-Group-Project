@@ -872,7 +872,9 @@
         height: 100vh;
         overflow-y: auto;
         position: relative;
+
         background-image: url('/static/images/contact_us_background.jpg');
+
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -1002,6 +1004,7 @@
     .photo-section p {
         margin-top: 2rem; /* Add margin on top of the text */
     }
+
     .grid-button p.company-overview {
       color: #475569 !important; /* Change to your desired color, e.g. dark gray */
     }

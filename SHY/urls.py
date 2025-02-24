@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from tutorials.views import views 
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -24,8 +26,24 @@ urlpatterns = [
     path('', views.guest, name='guest'),
     path('employer_dashboard/', views.employer_dashboard, name='employer_dashboard'),
     path('contact_us/', views.contact_us, name='contact_us'),
-    path('signup/', views.signup, name='signup'),
+   
     path('login/', views.login, name='login'),
     path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
+
     path('search/', views.search, name='search'),
+
+    path('signup/', views.signup_view, name='signup'),
+ 
+    
+    path('about_us/', views.about_us, name='about_us'),
+    path('company/<int:company_id>/', views.company_detail, name='company_detail'),
+    path('company/<int:company_id>/review/', views.leave_review, name='leave_review'),
+    path('company/<int:company_id>/edit/', views.edit_company, name='edit_company'),
+    path('settings/', views.settings, name='settings'),
+    path('your-job-posting-endpoint/', views.create_job_posting, name='create_job_posting'),
+
+
 ] 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

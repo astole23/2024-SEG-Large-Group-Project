@@ -68,6 +68,7 @@
     </div>
   </div>
 
+
   <!-- Modals: One per job posting -->
   {% for job in job_postings %}
   <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
@@ -147,13 +148,16 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
         </div>
       </div>
     </div>
   </div>
   {% endfor %}
 
-  Create Job Posting Modal -->
+
+    <!-- Create Job Posting Modal -->
+
     <div class="modal fade" id="createJobModal" tabindex="-1" aria-labelledby="createJobModalLabel">
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
@@ -288,10 +292,15 @@
     </div>
   
 
-  <!-- Bootstrap JS and Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="{% static 'js/job_form_validation.js' %}"></script>
-  
+
+    <!-- Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/job_form_validation.js' %}"></script>
+
+
+    
+      
+
 </body>
 </html>
 
