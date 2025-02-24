@@ -384,13 +384,8 @@ def generate_unique_company_id():
         id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
 
         # Ensure it's unique by checking the database
-<<<<<<< HEAD
         if not Company.objects.filter(unique_id=id).exists():
             return id
-=======
-        if not Company.objects.filter(unique_id=code).exists():
-            return code
->>>>>>> 679a10d18f973b48e204d4b25ee73907734c3492
 
 def generate_unique_email(company_name):
     """
@@ -442,10 +437,7 @@ class Command(BaseCommand):
                     password=data['password'],
                     user_type=data['user_type'],
                     unique_id=data['unique_id']
-<<<<<<< HEAD
-=======
                   
->>>>>>> 679a10d18f973b48e204d4b25ee73907734c3492
                 )
                 print(f"Company created: {data['username']}")
             elif data['user_type'] == 'user':
@@ -511,14 +503,11 @@ class Command(BaseCommand):
                     company_overview=job["company_overview"],
                     why_join_us=random.choice(WHY_JOIN_US_OPTIONS),
                     company_reviews=round(random.uniform(3.5, 5.0), 1),
-<<<<<<< HEAD
-=======
                     child_company_name="",
                     required_documents="Updated CV",
                     
 
->>>>>>> 679a10d18f973b48e204d4b25ee73907734c3492
-                )
+                 )
                 job_count += 1
                 print(f"✅ Added: {job['job_title']} at {job['company_name']}")
             except Exception as e:
