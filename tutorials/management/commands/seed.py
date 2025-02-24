@@ -324,7 +324,7 @@ def fetch_adzuna_jobs():
                             "password": fake.password(),
                             "industry": category.capitalize(),
                             "phone": job.get("phone_number", fake.phone_number()),
-                            "unique_code":generate_unique_company_code()  # Assigning the generated unique code
+                            "unique_id":generate_unique_company_id()  # Assigning the generated unique code
     
                         }
                     )
@@ -377,15 +377,15 @@ def generate_clean_phone_number():
 # Fallback number in case generation consistently fails
     return "+1234567890"
 
-def generate_unique_company_code():
+def generate_unique_company_id():
     """Generate a unique 5-character alphanumeric code for a company."""
     while True:
         # Generate a random 5-character code (letters and digits)
-        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
 
         # Ensure it's unique by checking the database
-        if not Company.objects.filter(unique_code=code).exists():
-            return code
+        if not Company.objects.filter(unique_id=id).exists():
+            return id
 
 def generate_unique_email(company_name):
     """
@@ -436,7 +436,7 @@ class Command(BaseCommand):
                     phone=data['phone'],
                     password=data['password'],
                     user_type=data['user_type'],
-                    unique_code=data['unique_code']
+                    unique_id=data['unique_id']
                 )
                 print(f"Company created: {data['username']}")
             elif data['user_type'] == 'user':
@@ -500,7 +500,7 @@ class Command(BaseCommand):
                     preferred_skills=job["preferred_skills"],
                     company_overview=job["company_overview"],
                     why_join_us=random.choice(WHY_JOIN_US_OPTIONS),
-                    company_reviews=f"{random.uniform(3.5, 5.0):.1f}/5 rating",
+                    company_reviews=round(random.uniform(3.5, 5.0), 1),
                 )
                 job_count += 1
                 print(f"✅ Added: {job['job_title']} at {job['company_name']}")

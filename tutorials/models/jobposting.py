@@ -78,8 +78,9 @@ class JobPosting(models.Model):
     )
 
     # Job application deadline (expects format 'YYYY-MM-DD')
-    application_deadline = models.DateField(
-        help_text="Deadline for submitting job applications."
+    application_deadline = models.CharField(
+        help_text="Deadline for submitting job applications.",
+        max_length=255
     )
 
     # Extra field: Required Documents for the application
