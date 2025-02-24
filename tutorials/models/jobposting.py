@@ -78,8 +78,11 @@ class JobPosting(models.Model):
     )
 
     # Job application deadline (expects format 'YYYY-MM-DD')
-    application_deadline = models.DateField(
-        help_text="Deadline for submitting job applications."
+
+    application_deadline = models.CharField(
+        help_text="Deadline for submitting job applications.",
+        max_length=255
+
     )
 
     # Extra field: Required Documents for the application
@@ -115,6 +118,10 @@ class JobPosting(models.Model):
         auto_now=True,
         help_text="Date and time when the job details were last updated."
     )
+
+    work_type = models.CharField(max_length=255, help_text="Type of work flexibility offered by the employer.")
+    child_company_name = models.CharField(max_length=255, null = True, blank = True, help_text="Name of the child company.")
+    required_documents = models.TextField(help_text="List of documents required for the job application.", default="Updated CV")
 
     def __str__(self):
         return f"{self.job_title} at {self.company_name} ({self.location})"

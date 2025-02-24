@@ -29,6 +29,9 @@ urlpatterns = [
    
     path('login/', views.login, name='login'),
     path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
+
+    path('search/', views.search, name='search'),
+
     path('signup/', views.signup_view, name='signup'),
  
     
@@ -38,6 +41,7 @@ urlpatterns = [
     path('company/<int:company_id>/edit/', views.edit_company, name='edit_company'),
     path('settings/', views.settings, name='settings'),
     path('your-job-posting-endpoint/', views.create_job_posting, name='create_job_posting'),
+
 
 ] 
 
