@@ -505,6 +505,7 @@ class Command(BaseCommand):
                     company_reviews=round(random.uniform(3.5, 5.0), 1),
                     child_company_name="",
                     required_documents="Updated CV",
+                    
 
                 )
                 job_count += 1

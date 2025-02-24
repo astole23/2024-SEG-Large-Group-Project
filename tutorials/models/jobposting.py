@@ -43,6 +43,10 @@ class JobPosting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, help_text="Date and time when the job was posted.")
     updated_at = models.DateTimeField(auto_now=True, help_text="Date and time when the job details were last updated.")
 
+    work_type = models.CharField(max_length=255, help_text="Type of work flexibility offered by the employer.")
+    child_company_name = models.CharField(max_length=255, null = True, blank = True, help_text="Name of the child company.")
+    required_documents = models.TextField(help_text="List of documents required for the job application.", default="Updated CV")
+
     def __str__(self):
         """
         String representation of the JobPosting model.

@@ -470,18 +470,21 @@
 
   /* Contact Us */
   .contactbackground {
-      margin-right: 0;
-      padding: 40px 20px; /* Increase padding for better spacing */
-      height: 100vh;
-      overflow-y: auto;
-      position: relative;
-      background-image: url('/static/contact_us_background.jpg');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      padding-top: 5rem; /* Account for navbar height */
-      width: 100vw;
-  }
+    margin-right: 0;
+    /* Increase bottom padding to ensure content isn't cut off */
+    padding: 40px 20px 150px 20px; /* Top, right, bottom, left */
+    min-height: 500vh;
+    overflow-y: auto;
+    position: relative;
+    background-image: url("/static/images/contact_us_background.jpg");
+    background-size: cover;
+    background-position: center;
+    /* Remove fixed background to allow smoother scrolling */
+    /* background-attachment: fixed; */
+    padding-top: 5rem;
+    width: 100vw;
+}
+
 
   .contactbackground::before {
       content: '';
@@ -869,7 +872,7 @@
         height: 100vh;
         overflow-y: auto;
         position: relative;
-        background-image: url('/static/contact_us_background.jpg');
+        background-image: url('/static/images/contact_us_background.jpg');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -1002,6 +1005,66 @@
     .grid-button p.company-overview {
       color: #475569 !important; /* Change to your desired color, e.g. dark gray */
     }
+    
+    /* Search bar */
+
+    .grid-button {
+      width: 100%;
+      height: 260px;
+      margin-bottom: 10px;
+      background-color: #ebebeb79;
+      border: rgb(255, 255, 255);
+      color: white;
+      text-align: left;
+      padding: 30px; /* Increased padding */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 20px;
+      box-sizing: border-box;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      width: 100%;
+      padding: 20px; /* Adds padding around the grid items */
+      box-sizing: border-box;
+    }
+
+    .scrollable-section {
+      padding: 20px; /* Adjust this value as needed */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .scrollable-section::-webkit-scrollbar {
+      display: none;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 100%;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .dropdown-content label {
+      display: block;
+      margin-top: 10px;
+    }
+    /* Show dropdown on hover or via JavaScript click toggle */
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+    
 
 
   
