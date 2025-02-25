@@ -68,12 +68,15 @@ body {
     padding: 0;
 }
 
+/* Review Box Styling */
 .review-box {
     background-color: purple;
     padding: 20px;
     text-align: center;
     margin-bottom: 20px;
     border-radius: 10px;
+    position: relative;
+    z-index: 2; /* Ensures the button is above the divider */
 }
 
 .review-button {
@@ -95,7 +98,7 @@ body {
     width: 50%;
     margin: 10px auto;
     border: none;
-    border-top: 2px solid #34495e;
+    border-top: 1px solid purple; /* Changed to a thinner purple line */
     opacity: 0.8;
 }
 

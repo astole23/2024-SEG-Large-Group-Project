@@ -4,6 +4,8 @@ from .models.company_review import Review
 from django import forms
 from .models import Company, User
 from django.contrib.auth.hashers import make_password
+from tutorials.models.jobposting import JobPosting
+
 
 
 
@@ -57,3 +59,8 @@ class UserRegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+class JobPostingForm(forms.ModelForm):
+    class Meta:
+        model = JobPosting
+        fields = ['job_title', 'location', 'contract_type', 'salary_range', 'job_overview', 'roles_responsibilities', 'education_required', 'application_deadline']

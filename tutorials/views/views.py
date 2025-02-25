@@ -10,6 +10,8 @@ from tutorials.models.company_review import Review
 from tutorials.forms import CompanyEditForm
 from datetime import datetime
 from django.core.paginator import Paginator
+from tutorials.forms import JobPostingForm
+from tutorials.models.jobposting import JobPosting
 
 from tutorials.forms import CompanyRegistrationForm, UserRegistrationForm
 from django.contrib.auth.hashers import make_password
@@ -249,7 +251,7 @@ def edit_company(request, company_id):
 
 @require_POST
 @csrf_exempt  # Remove if you send a valid CSRF token.
-def create_job_posting(request):
+def create_job_posting(request, company_id):
     try:
         # Parse JSON data from the request body.
         data = json.loads(request.body)
@@ -314,4 +316,3 @@ def create_job_posting(request):
         # Log the error for debugging
         print("Error in create_job_posting:", str(e))
         return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
-

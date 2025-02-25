@@ -15,6 +15,7 @@
         <div class="review-box">
             <button class="review-button" id="reviewButton">Review Company</button>
         </div>
+        <!-- Thin Purple Line (Updated) -->
         <hr class="company-divider">
         <p class="company-industry"><strong>Industry:</strong> {{ company.industry }}</p>
     </div>
@@ -45,7 +46,7 @@
     </section>
 
     <!-- Review Modal -->
-    <div id="reviewModal" class="modal">
+    <div id="reviewModal" class="modal" aria-hidden="true" role="dialog">
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
             <h2>Leave a Review</h2>
@@ -75,11 +76,27 @@
         // Get modal and review button elements
         const reviewButton = document.getElementById('reviewButton');
         const reviewModal = document.getElementById('reviewModal');
+        const closeModal = document.getElementById('closeModal');
         const reviewForm = document.getElementById('reviewForm');
 
         // Show the modal when the button is clicked
         reviewButton.addEventListener('click', function () {
             reviewModal.style.display = 'block';
+            reviewModal.setAttribute('aria-hidden', 'false');
+        });
+
+        // Hide the modal when the close button is clicked
+        closeModal.addEventListener('click', function () {
+            reviewModal.style.display = 'none';
+            reviewModal.setAttribute('aria-hidden', 'true');
+        });
+
+        // Close modal if the "Escape" key is pressed
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                reviewModal.style.display = 'none';
+                reviewModal.setAttribute('aria-hidden', 'true');
+            }
         });
 
         // Hide the modal when the form is submitted
@@ -91,13 +108,17 @@
             // Send the review data via AJAX
             fetch('{% url "leave_review" company_id=company.id %}', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.message === 'Review submitted successfully!') {
                     alert('Review submitted!');
                     reviewModal.style.display = 'none'; // Close modal
+                    reviewModal.setAttribute('aria-hidden', 'true');
                     reviewForm.reset(); // Reset the form fields
                 } else {
                     alert('Error submitting review');
