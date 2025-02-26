@@ -41,19 +41,32 @@ from django.contrib import messages
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 
 def signup_view(request):
     company_form = CompanyRegistrationForm()
     user_form = UserRegistrationForm()
+    
     if request.method == "POST":
-
         user_type = request.POST.get("user_type")
-     
+        
         if user_type == "company":
             company_form = CompanyRegistrationForm(request.POST)
             if company_form.is_valid():
-                company_form.save()
-                messages.success(request, "Company registered successfully!")
+                company = company_form.save()  # Save the company instance
+                company_id = company.unique_id  # Get the unique_id of the created company
+
+                # Send an email with the unique ID
+                subject = "Welcome to our platform!"
+                message = f"Dear {company.company_name},\n\nYour company has been successfully registered.\nYour unique company ID is: {company_id}\n\nThank you for joining us!"
+                from_email = settings.DEFAULT_FROM_EMAIL  # Ensure that you have set DEFAULT_FROM_EMAIL in your settings
+                recipient_list = [company.email]
+
+                # Send the email
+                send_mail(subject, message, from_email, recipient_list)
+
+                messages.success(request, "Company registered successfully! An email has been sent with the company ID.")
                 return redirect("employer_dashboard")
             else:
                 messages.error(request, "Error in company signup form.")
@@ -70,65 +83,4 @@ def signup_view(request):
     return render(request, "signup.html", {"company_form": company_form, "user_form": user_form})
 
 
-    company_form = CompanyRegistrationForm()
-    user_form = UserRegistrationForm()
-
-    if request.method == "POST":
-        user_type = request.POST.get("user_type")
-
-        if user_type == "company":
-            company_form = CompanyRegistrationForm(request.POST)
-            if company_form.is_valid():
-                company_form.save()
-                messages.success(request, "Company registered successfully!")
-                return redirect("login")  # Redirect to login page
-            else:
-                messages.error(request, "Company registration failed.")
-
-        elif user_type == "user":
-            user_form = UserRegistrationForm(request.POST)
-            if user_form.is_valid():
-                user_form.save()
-                messages.success(request, "User registered successfully!")
-                return redirect("login")  # Redirect to login page
-            else:
-                messages.error(request, "User registration failed.")
-
-    return render(request, "signup.html", {"company_form": company_form, "user_form": user_form})
-
-
-    if request.method == 'POST':
-        print("Form submitted:", request.POST)  # Debug: Print the submitted data
-        user_type = request.POST.get('user_type')
-
-        if user_type == 'company':
-            form = CompanyRegistrationForm(request.POST)
-            if form.is_valid():
-                company = form.save(commit=False)
-                print("Form is valid. Data:", form.cleaned_data)  # Debug: Log valid data
-                company.password = make_password(form.cleaned_data['password'])  # Hash password
-                company.save()
-                print("Company saved:", company)  # Debug: Confirm saving
-                messages.success(request, "Company registered successfully!")
-                return redirect('login')  # Adjust to your login URL
-            else:
-                print("Company form errors:", form.errors)  # Debug: Log form errors
-                messages.error(request, "Error in company signup form!")
-
-        elif user_type == 'user':
-            form = UserRegistrationForm(request.POST)
-            if form.is_valid():
-                user = form.save(commit=False)
-                print("Form is valid. Data:", form.cleaned_data)  # Debug: Log valid data
-                user.password = make_password(form.cleaned_data['password'])  # Hash password
-                user.save()
-                print("User saved:", user)  # Debug: Confirm saving
-                messages.success(request, "User registered successfully!")
-                return redirect('login')  # Adjust to your login URL
-            else:
-                print("User form errors:", form.errors)  # Debug: Log form errors
-                messages.error(request, "Error in user signup form!")
-
-    company_form = CompanyRegistrationForm()
-    user_form = UserRegistrationForm()
-    return render(request, 'signup.html', {'company_form': company_form, 'user_form': user_form})
+   
