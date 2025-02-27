@@ -39,7 +39,7 @@ urlpatterns = [
     path('company/<int:company_id>/', views.company_detail, name='company_detail'),
     path('company/<int:company_id>/review/', views.leave_review, name='leave_review'),
     path('company/<int:company_id>/edit/', views.edit_company, name='edit_company'),
-    path('settings/', views.settings, name='settings'),
+    path('settings/', views.profile_settings, name='settings'),
     path('your-job-posting-endpoint/', views.create_job_posting, name='create_job_posting'),
 
 

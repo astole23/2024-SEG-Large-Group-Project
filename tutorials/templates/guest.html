@@ -92,40 +92,52 @@
 
        
 
-        .search-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin: 150px auto;
-            padding: 0 20px;
-        }
+      .search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 100px auto;
+    padding: 10px;
+    max-width: 700px; /* Adjust for consistency */
+}
 
-        .search-bar input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 25px;
-            font-size: 1.25rem;
-            width: 80%;
-            max-width: 600px;
-        }
+.search-bar input {
+    padding: 15px;
+    font-size: 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 25px;
+    width: 600px;
+    max-width: 600px;
+    transition: all 0.3s ease-in-out;
+    background-color: white;
+    color: var(--text-primary);
+}
 
-        .search-bar button {
-            background-color: #4b0082;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-size: 1.25rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+.search-bar input:focus {
+    border-color: #6a0dad;
+    outline: none;
+    box-shadow: 0 0 6px rgba(106, 13, 173, 0.3);
+}
 
-        .search-bar button:hover {
-            background-color: #6a0dad;
-        }
+.search-bar button {
+    padding: 15px 30px;
+    font-size: 1.25rem;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #6a0dad, #4b0082);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.search-bar button:hover {
+    background: linear-gradient(135deg, #4b0082, #6a0dad);
+    transform: scale(1.05);
+}
+
+      
 
         .info-section {
             background-color: var(--card-background);
@@ -149,6 +161,19 @@
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="#" class="navbar-brand">Shy</a>
+        <div class="navbar-nav">
+         
+            <button class="login-btn" onclick="window.location.href='/signup/'">Sign Up</button>
+            <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact us</button>
+            <button class="login-btn" onclick="window.location.href='/login/'">Log In</button>
+            <button class="login-btn" onclick="window.location.href='/about_us/'">About us</button>
+
+        </div>
+    </div>
+    <br><br><br><br>
+
 
     <div class="search-bar" style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
         <form action="{% url 'search' %}" method="GET" style="display: flex; align-items: center;">
@@ -161,14 +186,15 @@
         </form>
       </div>
 
+      <br><br><br><br>
+
+
     <div id="who-are-we" class="info-section">
-        <a href="{% url 'contact_us' %}" style="text-decoration: none; color: inherit;">
         <h2>Who Are We</h2>
         <p>Welcome to Shy! We are dedicated to providing the best experience for users and companies alike. Our platform fosters seamless collaboration and connections.</p>
     </div>
 
     <div id="contact-us" class="info-section">
-        <a href="{% url 'contact_us' %}" style="text-decoration: none; color: inherit;">
         <h2>Contact Us</h2>
         <p>If you have any questions or need support, feel free to reach out. Contact us via email at <strong>support@shy.com</strong> or call us at <strong>(123) 456-7890</strong>.</p>
     </div>

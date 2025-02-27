@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import certifi
+import ssl
+import smtplib
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -125,6 +128,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # For Gmail
+EMAIL_PORT = 587  # Use 465 for SSL or 587 for TLS
+EMAIL_USE_TLS = True  # Enables TLS encryption
+EMAIL_HOST_USER = 'halamankolch@gmail.com'  # Replace with your Gmail address
+EMAIL_HOST_PASSWORD = 'kuks iine puoq cdtd'  # Replace with your Gmail app password
+DEFAULT_FROM_EMAIL = 'Shy platform  <halamankolch@gmail.com>' 
+
+smtplib.SMTP_SSL.context = ssl.create_default_context(cafile=certifi.where()) 
+
 
 
