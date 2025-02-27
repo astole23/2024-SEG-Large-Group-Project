@@ -91,6 +91,7 @@ const mockJobs = [
           <input type="search" placeholder="Search jobs..." class="search-input">
         </div>
         <div class="user-actions">
+          <button id="signOutBtn" class="btn signout-btn">Sign Out</button>
           <span>🔔</span>
           <span>👤</span>
         </div>
@@ -422,6 +423,12 @@ const mockJobs = [
         <p class="salary-range">${job.salary}</p>
       `;
       suggestedJobsContainer.appendChild(jobElement);
+    });
+
+    const signOutBtn = document.getElementById('signOutBtn');
+    signOutBtn.addEventListener('click', () => {
+      
+      window.location.href = '/';
     });
   
     // CV section toggle functionality
