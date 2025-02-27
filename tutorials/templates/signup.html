@@ -1,275 +1,168 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up Page</title>
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #475569;
-            --background-color: #f8fafc;
-            --card-background: #ffffff;
-            --border-color: #e2e8f0;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Inter, system-ui, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
-
-        .navbar {
-            background-color: #4b0082;
-            color: white;
-            padding: 1rem 2rem;
-            position: fixed;
-            width: 100%;
-            z-index: 10;
-            top: 0;
-            left: 0;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar .navbar-brand {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .navbar-nav {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .navbar-nav .nav-link {
-            color: white;
-            font-size: 1.1rem;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
-            background-color: #6a0dad;
-        }
-
-        .navbar-nav .login-btn {
-          
-            background-color: #4b0082;
-            border: none;
-            padding: 0.75rem 1.25rem;
-            border-radius: 5px;
-            color: white;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .navbar-nav .login-btn:hover {
-            background-color: #6a0dad;
-        }
-
-        .container {
-            background: var(--card-background);
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 600px;
-            padding: 40px;
-            text-align: center;
-            margin: 150px auto;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-
-        .buttons button {
-            flex: 1;
-            margin: 0 10px;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 25px;
-            background-color: #4b0082;
-            color: white;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease, opacity 0.3s ease;
-        }
-
-        .buttons button.inactive {
-            opacity: 0.5;
-        }
-
-        .buttons button:hover {
-            background-color: #6a0dad;
-        }
-
-        .signup-form {
-            display: none;
-        }
-
-        .signup-form.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 15px;
-            background-color: #4b0082;
-            color: white;
-            font-size: 1.1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            background-color: #6a0dad;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Job Search Platform</title>
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+  <style>
+    /* Example styling for error messages */
+    .error {
+      color: red;
+      font-size: 0.9em;
+      margin-top: 4px;
+    }
+  </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="#" class="navbar-brand">Shy</a>
-        <div class="navbar-nav">
-            <button class="login-btn" onclick="window.location.href='/'">Home</button>
-
-
-        
-            <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact us</button>
-
-            <button class="login-btn" onclick="window.location.href='/login/'">Log In</button>
-            <button class="login-btn" onclick="window.location.href='/about_us/'">About us</button>
-
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="buttons">
-            <button id="company-signup" onclick="showSignupForm('company')">Company Sign Up</button>
-            <button id="user-signup" onclick="showSignupForm('user')">User Sign Up</button>
-        </div>
-
-        <form id="company-signup-form" class="signup-form" method="POST" action="{% url 'signup' %}">
+  <div class="container">
+    <div class="auth-container">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="user">Job Seeker</button>
+        <button class="tab-btn" data-tab="company">Company</button>
+      </div>
+      
+      <div class="tab-content">
+        <!-- Job Seeker Sign Up -->
+        <div class="tab-pane active" id="user-tab">
+          <h2>Job Seeker Sign Up</h2>
+          <form action="{% url 'process_signup' %}" method="post">
             {% csrf_token %}
-            <input type="hidden" name="user_type" value="company">
-            
-            <div class="form-group">
-                <label for="company-name">Company Name</label>
-                <input type="text" name="company_name" id="company-name" autocomplete="organization" required>
-            </div>
-            <div class="form-group">
-                <label for="company-email">Email Address</label>
-                <input type="email" name="email" id="company-email" autocomplete="email" required>
-            </div>
-            <div class="form-group">
-                <label for="company-password">Password</label>
-                <input type="password" name="password" id="company-password" autocomplete="new-password" required pattern="^(?=.*[A-Z])(?=.*[\W_]).{8,}$">
-            </div>
-            <div class="form-group">
-                <label for="company-industry">Industry</label>
-                <input type="text" name="industry" id="company-industry" autocomplete="off" required>
-            </div>
-            <div class="form-group">
-                <label for="company-phone">Phone Number</label>
-                <input type="tel" name="phone" id="company-phone" autocomplete="tel" required>
-            </div>
-
-            <input type="checkbox" id="terms" name="terms" required>
-            <label for="terms">I agree to the <a href="#">Terms and Conditions</a></label>
-            <br></br>
-            <button type="submit" class="submit-btn">Sign Up</button>
-        </form>
-
-        <form id="user-signup-form" class="signup-form" method="POST" action="{% url 'signup' %}">
-            {% csrf_token %}
+            <!-- Hidden field to pass user type -->
             <input type="hidden" name="user_type" value="user">
             
+            <!-- Non-field errors -->
+            {% if user_form.non_field_errors %}
+              <div class="error">{{ user_form.non_field_errors }}</div>
+            {% endif %}
+            
             <div class="form-group">
-                <label for="user-first-name">First Name</label>
-                <input type="text" name="first_name" id="user-first-name" autocomplete="given-name" required>
+              {{ user_form.username }}
+              {% if user_form.username.errors %}
+                <div class="error">{{ user_form.username.errors }}</div>
+              {% endif %}
             </div>
+            
             <div class="form-group">
-                <label for="user-last-name">Last Name</label>
-                <input type="text" name="last_name" id="user-last-name" autocomplete="family-name" required>
+              {{ user_form.email }}
+              {% if user_form.email.errors %}
+                <div class="error">{{ user_form.email.errors }}</div>
+              {% endif %}
             </div>
+            
             <div class="form-group">
-                <label for="user-email">Email Address</label>
-                <input type="email" name="email" id="user-email" autocomplete="email" required>
+              {{ user_form.first_name }}
+              {% if user_form.first_name.errors %}
+                <div class="error">{{ user_form.first_name.errors }}</div>
+              {% endif %}
             </div>
+            
             <div class="form-group">
-                <label for="user-phone">Phone Number</label>
-                <input type="tel" name="phone" id="user-phone" autocomplete="tel" required>
+              {{ user_form.last_name }}
+              {% if user_form.last_name.errors %}
+                <div class="error">{{ user_form.last_name.errors }}</div>
+              {% endif %}
             </div>
+            
             <div class="form-group">
-                <label for="user-password">Password</label>
-                <input type="password" name="password" id="user-password" autocomplete="new-password" required pattern="^(?=.*[A-Z])(?=.*[\W_]).{8,}$">
-                
+              {{ user_form.password1 }}
+              {% if user_form.password1.errors %}
+                <div class="error">{{ user_form.password1.errors }}</div>
+              {% endif %}
             </div>
-
-            <input type="checkbox" id="terms" name="terms" required>
-
-             <label for="terms">I agree to the <a href="#">Terms and Conditions</a></label>
-             <br></br>
-
-
-
-
-
-            <button type="submit" class="submit-btn">Sign Up</button>
-        </form>
+            
+            <div class="form-group">
+              {{ user_form.password2 }}
+              {% if user_form.password2.errors %}
+                <div class="error">{{ user_form.password2.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <button type="submit" class="btn">Sign Up</button>
+          </form>
+        </div>
         
+        <!-- Company Sign Up -->
+        <div class="tab-pane" id="company-tab">
+          <h2>Company Sign Up</h2>
+          <form action="{% url 'process_signup' %}" method="post">
+            {% csrf_token %}
+            <!-- Hidden field to pass user type -->
+            <input type="hidden" name="user_type" value="company">
+            
+            {% if company_form.non_field_errors %}
+              <div class="error">{{ company_form.non_field_errors }}</div>
+            {% endif %}
+            
+            <div class="form-group">
+              {{ company_form.username }}
+              {% if company_form.username.errors %}
+                <div class="error">{{ company_form.username.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ company_form.email }}
+              {% if company_form.email.errors %}
+                <div class="error">{{ company_form.email.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ company_form.password1 }}
+              {% if company_form.password1.errors %}
+                <div class="error">{{ company_form.password1.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ company_form.password2 }}
+              {% if company_form.password2.errors %}
+                <div class="error">{{ company_form.password2.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ company_form.company_name }}
+              {% if company_form.company_name.errors %}
+                <div class="error">{{ company_form.company_name.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ company_form.industry }}
+              {% if company_form.industry.errors %}
+                <div class="error">{{ company_form.industry.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <button type="submit" class="btn">Sign Up</button>
+          </form>
+        </div>
+      </div>
+      
+      <div class="auth-footer">
+        <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+      </div>
     </div>
-
-    <script>
-        function showSignupForm(type) {
-            document.getElementById('company-signup-form').classList.remove('active');
-            document.getElementById('user-signup-form').classList.remove('active');
-
-            if (type === 'company') {
-                document.getElementById('company-signup-form').classList.add('active');
-            } else {
-                document.getElementById('user-signup-form').classList.add('active');
-            }
-        }
-    </script>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabPanes = document.querySelectorAll('.tab-pane');
+      
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabPanes.forEach(p => p.classList.remove('active'));
+          this.classList.add('active');
+          const tabType = this.getAttribute('data-tab');
+          document.getElementById(`${tabType}-tab`).classList.add('active');
+        });
+      });
+    });
+  </script>
 </body>
 </html>

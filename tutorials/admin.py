@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models.jobposting import JobPosting  # Import the JobPosting model
-from .models.accounts import Company, User  
-from .models.accounts import User, Company  # Import the User and Company models
+from django.contrib.auth import get_user_model
+from tutorials.models.jobposting import JobPosting
 
+CustomUser = get_user_model()
 
+# Register JobPosting as before.
 @admin.register(JobPosting)
 class JobPostingAdmin(admin.ModelAdmin):
     list_display = (
@@ -13,50 +14,62 @@ class JobPostingAdmin(admin.ModelAdmin):
         'salary_range',
         'contract_type',
         'application_deadline',
-    )  # Fields displayed in the admin list view
+    )
     list_filter = (
         'contract_type',
         'location',
         'company_name',
-    )  # Filters for the right-hand sidebar
+    )
     search_fields = (
         'job_title',
         'company_name',
         'location',
-    )  # Fields searchable in the admin
-    ordering = ('-application_deadline',)  # Default ordering
-    readonly_fields = ('created_at', 'updated_at')  # Fields that cannot be edited
+    )
+    ordering = ('-application_deadline',)
+    readonly_fields = ('created_at', 'updated_at')
 
 
-@admin.register(Company)
+from tutorials.models.accounts import CompanyUser, NormalUser
+
+@admin.register(CompanyUser)
 class CompanyAdmin(admin.ModelAdmin):
     list_display = (
         'company_name',
         'email',
         'industry',
         'phone',
-    )  # Fields displayed in the admin list view
-    list_filter = ('industry',)  # Filter companies by industry
+    )
+    list_filter = ('industry',)
     search_fields = (
         'company_name',
         'email',
         'industry',
-    )  # Fields searchable in the admin
-    ordering = ('company_name',)  # Default ordering
+    )
+    ordering = ('company_name',)
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Ensure that only users marked as companies appear here.
+        return qs.filter(is_company=True)
 
-
-@admin.register(User)
+@admin.register(NormalUser)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
+        'username', 
         'first_name',
         'last_name',
         'email',
         'phone',
-    )  # Fields displayed in the admin list view
+    )
     search_fields = (
+        'username', 
         'first_name',
         'last_name',
         'email',
-    )  # Fields searchable in the admin
-    ordering = ('first_name', 'last_name')  # Default ordering
+    )
+    ordering = ('username', 'first_name', 'last_name')
     
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Only show users that are not companies.
+        return qs.filter(is_company=False)

@@ -1,2 +1,1 @@
-from .jobposting import JobPosting
-from .accounts import Company, User 
+from .accounts import CustomUser

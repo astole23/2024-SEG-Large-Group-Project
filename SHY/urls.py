@@ -26,24 +26,19 @@ urlpatterns = [
     path('', views.guest, name='guest'),
     path('employer_dashboard/', views.employer_dashboard, name='employer_dashboard'),
     path('contact_us/', views.contact_us, name='contact_us'),
-   
-    path('login/', views.login, name='login'),
-    path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
-
-    path('search/', views.search, name='search'),
-
+    path('login/', views.login_view, name='login'),
+    path('login/process/', views.process_login, name='process_login'),
     path('signup/', views.signup_view, name='signup'),
- 
-    
+    path('signup/process/', views.process_signup, name='process_signup'),
+    path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
+    path('search/', views.search, name='search'),
     path('about_us/', views.about_us, name='about_us'),
     path('company/<int:company_id>/', views.company_detail, name='company_detail'),
     path('company/<int:company_id>/review/', views.leave_review, name='leave_review'),
     path('company/<int:company_id>/edit/', views.edit_company, name='edit_company'),
     path('settings/', views.profile_settings, name='settings'),
     path('your-job-posting-endpoint/', views.create_job_posting, name='create_job_posting'),
-
-
-] 
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

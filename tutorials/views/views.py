@@ -1,79 +1,42 @@
-
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.hashers import check_password
-from tutorials.models.accounts import Company
-from tutorials.models.jobposting import JobPosting
-from tutorials.forms import CompanyForm
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from tutorials.models.company_review import Review
-from tutorials.forms import CompanyEditForm
-from datetime import datetime
-from django.core.paginator import Paginator
-from tutorials.forms import JobPostingForm
-from tutorials.models.jobposting import JobPosting
-
-from tutorials.forms import CompanyRegistrationForm, UserRegistrationForm
-from django.contrib.auth.hashers import make_password
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
+from django.http import JsonResponse
+from datetime import datetime
 import json
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 
+from tutorials.models.jobposting import JobPosting
+from tutorials.models.company_review import Review
+from django.contrib.auth import get_user_model
+from tutorials.forms import (
+    UserLoginForm, CompanyLoginForm,
+    UserSignUpForm, CompanySignUpForm,
+    CompanyProfileForm
+)
 
-
-# Create your views here.
+CustomUser = get_user_model()
 
 def employer_dashboard(request):
-
-    # Query the database for all job postings
     job_postings = JobPosting.objects.all().order_by('-created_at')
-    # Pass the query results to the template in a context dictionary
-    context = {'job_postings': job_postings}
-    return render(request, 'employer_dashboard.html', context)
-
-
+    return render(request, 'employer_dashboard.html', {'job_postings': job_postings})
 
 def contact_us(request):
     return render(request, 'contact_us.html')
 
-def signup(request):
-    return render(request, 'signup.html')
-
-def login(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        try:
-            company = Company.objects.get(email=email)
-        except Company.DoesNotExist:
-            company = None
-
-        if company and check_password(password, company.password):
-            request.session['company_id'] = company.id
-
-            return redirect('edit_company', company_id=company.id)
-        else:
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
-
-    return render(request, 'login.html')
-
 def guest(request):
-    query = request.GET.get('q','')
+    query = request.GET.get('q', '')
     if query:
         job_postings = JobPosting.objects.filter(job_title__icontains=query)
     else:
         job_postings = JobPosting.objects.all()
-    context = {'job_postings': job_postings}
-    return render(request, 'guest.html', context)
+    return render(request, 'guest.html', {'job_postings': job_postings})
 
 def user_dashboard(request):
     return render(request, 'user_dashboard.html')
 
-
 def search(request):
-    query = request.GET.get('q', '')
-
     industries = [
         "business", "management", "sales", "marketing", "technology", "internship",
         "software-development", "engineering", "design", "industry", "finance",
@@ -81,9 +44,7 @@ def search(request):
         "retail", "hospitality", "construction", "media", "logistics",
         "human-resources", "writing", "consulting", "ngo", "data-science"
     ]
-
     job_types = ["Apprenticeship", "Full-time", "Internship", "Part-time"]
-
     perks_list = [
         "Flexible working hours", "Health insurance", "Remote work opportunities",
         "On-site gym", "Free lunch/snacks", "Childcare facilities", "Pet-friendly office",
@@ -105,7 +66,6 @@ def search(request):
         "Health savings account (HSA)", "Dedicated workspace reimbursement",
         "Subscription to industry journals", "Discounts on company products/services"
     ]
-    # Extract selected filters from request
     selected_education = request.GET.getlist('education_required')
     selected_job_types = request.GET.getlist('job_type')
     selected_industries = request.GET.getlist('industry')
@@ -114,42 +74,25 @@ def search(request):
     selected_work_flexibility = request.GET.getlist('work_flexibility')
     selected_salary = request.GET.get('salary_range', '')
     
-
-    # Get distinct locations from database
     cities = JobPosting.objects.values_list('location', flat=True).distinct()
-
-    # Apply filtering logic to job postings
     job_postings = JobPosting.objects.all()
-
-    
 
     if query:
         job_postings = job_postings.filter(job_title__icontains=query)
-
     if selected_education:
         job_postings = job_postings.filter(education_required__in=selected_education)
-
     if selected_job_types:
         job_postings = job_postings.filter(contract_type__in=selected_job_types)
-
     if selected_industries:
         job_postings = job_postings.filter(job_title__in=selected_industries)
-
     if selected_locations:
         job_postings = job_postings.filter(location__in=selected_locations)
-
     if selected_perks:
         job_postings = job_postings.filter(perks__icontains="|".join(selected_perks))
-
     if selected_work_flexibility:
         job_postings = job_postings.filter(work_type__in=selected_work_flexibility)
-
     if selected_salary:
         job_postings = job_postings.filter(salary_range__gte=selected_salary)
-
-    #paginator = Paginator(job_postings, 10)
-    #page_number = request.GET.get('page')  # Get current page from URL
-    #page_obj = paginator.get_page(page_number)  # Get the specific page
 
     context = {
         'query': query,
@@ -165,12 +108,8 @@ def search(request):
         'perks_list': perks_list,
         'industries': industries,
         'job_types': job_types,
-        #'page_obj': page_obj
     }
-
     return render(request, 'search.html', context)
-
-
 
 def about_us(request):
     return render(request, 'about_us.html')
@@ -178,86 +117,137 @@ def about_us(request):
 def profile_settings(request):
     return render(request, 'settings.html')
 
+def login_view(request):
+    # Since this view only needs to display the forms (the POST is handled in process_login),
+    # we just pass prefixed forms to the template.
+    user_form = UserLoginForm(prefix='user')
+    company_form = CompanyLoginForm(prefix='company')
 
+    return render(request, 'login.html', {
+        'user_form': user_form,
+        'company_form': company_form
+    })
+
+def process_login(request):
+    """
+    Process login for both user types based on a hidden input in the form.
+    """
+    if request.method == 'POST':
+        user_type = request.POST.get('user_type')
+        
+        if user_type == 'company':
+            form = CompanyLoginForm(request=request, data=request.POST, prefix='company')
+        else:
+            form = UserLoginForm(request=request, data=request.POST, prefix='user')
+        
+        if form.is_valid():
+            user = form.get_user()
+            auth_login(request, user)
+            if user.is_company:
+                return redirect('edit_company', company_id=user.id)
+            else:
+                return redirect('user_dashboard')
+        else:
+            messages.error(request, "Invalid credentials.")
+    
+    # If GET or invalid POST, re-render the login page with fresh prefixed forms
+    return render(request, 'login.html', {
+        'user_form': UserLoginForm(prefix='user'),
+        'company_form': CompanyLoginForm(prefix='company')
+    })
 
 def signup_view(request):
-    company_form = CompanyRegistrationForm()
-    user_form = UserRegistrationForm()
-    if request.method == "POST":
+    # This view just displays the empty forms for a GET request;
+    # the actual POST is handled in process_signup.
+    user_form = UserSignUpForm(prefix='user')
+    company_form = CompanySignUpForm(prefix='company')
 
+    return render(request, 'signup.html', {
+        'user_form': user_form,
+        'company_form': company_form
+    })
+
+def process_signup(request):
+    """
+    Process signup for both user types based on a hidden input in the form.
+    """
+    if request.method == "POST":
         user_type = request.POST.get("user_type")
-     
+
         if user_type == "company":
-            company_form = CompanyRegistrationForm(request.POST)
-            if company_form.is_valid():
-                company_form.save()
+            form = CompanySignUpForm(request.POST, prefix='company')
+            if form.is_valid():
+                form.save()
                 messages.success(request, "Company registered successfully!")
                 return redirect("employer_dashboard")
             else:
                 messages.error(request, "Error in company signup form.")
-
+                company_form = form  # Keep the data user just submitted
+                user_form = UserSignUpForm(prefix='user')
         elif user_type == "user":
-            user_form = UserRegistrationForm(request.POST)
-            if user_form.is_valid():
-                user_form.save()
+            form = UserSignUpForm(request.POST, prefix='user')
+            if form.is_valid():
+                form.save()
                 messages.success(request, "User registered successfully!")
                 return redirect("user_dashboard")
             else:
+                print(form.errors)  # Debug: print form errors to the terminal
                 messages.error(request, "Error in user signup form.")
+                user_form = form  # Keep the data user just submitted
+                company_form = CompanySignUpForm(prefix='company')
+    else:
+        # If GET or some other method, show blank forms
+        user_form = UserSignUpForm(prefix='user')
+        company_form = CompanySignUpForm(prefix='company')
 
-    return render(request, "signup.html", {"company_form": company_form, "user_form": user_form})
- 
+    return render(request, "signup.html", {
+        "user_form": user_form,
+        "company_form": company_form
+    })
+
 
 def company_detail(request, company_id):
-    company = get_object_or_404(Company, id=company_id)
-
+    """
+    Display and update a company's profile.
+    """
+    company = get_object_or_404(CustomUser, id=company_id, is_company=True)
     if request.method == 'POST':
-        form = CompanyForm(request.POST, request.FILES, instance=company)
+        form = CompanyProfileForm(request.POST, request.FILES, instance=company)
         if form.is_valid():
             form.save()
     else:
-        form = CompanyForm(instance=company)
-
+        form = CompanyProfileForm(instance=company)
     return render(request, 'company_detail.html', {'company': company, 'form': form})
 
 def leave_review(request, company_id):
     if request.method == 'POST':
         text = request.POST.get('text')
         rating = request.POST.get('rating')
-
-        # Create and save the review
         review = Review(text=text, rating=rating)
         review.save()
-
         return JsonResponse({'message': 'Review submitted successfully!'}, status=200)
-    
     return render(request, 'company_detail.html', {'company_id': company_id})
 
-
 def edit_company(request, company_id):
-    company = get_object_or_404(Company, id=company_id)
-
+    """
+    Allow a company to update its profile details.
+    """
+    company = get_object_or_404(CustomUser, id=company_id, is_company=True)
     if request.method == 'POST':
         company.description = request.POST.get('description')
-        company.logo = request.FILES.get('logo')  # If uploading logo
+        company.logo = request.FILES.get('logo')
         company.save()
-        
-        # Optionally, provide feedback to the user
-        return render(request, 'edit_company.html', {'company': company, 'message': 'Company details updated!'})
-
+        return render(request, 'edit_company.html', {
+            'company': company,
+            'message': 'Company details updated!'
+        })
     return render(request, 'edit_company.html', {'company': company})
 
-
-
 @require_POST
-@csrf_exempt  # Remove if you send a valid CSRF token.
+@csrf_exempt
 def create_job_posting(request, company_id):
     try:
-        # Parse JSON data from the request body.
         data = json.loads(request.body)
-        print("Received data:", data)  # Debug: log the incoming data
-        
-        # Convert application_deadline from string to a date object.
         deadline_str = data.get('application_deadline')
         if not deadline_str:
             raise ValueError("Application deadline is required.")
@@ -265,9 +255,6 @@ def create_job_posting(request, company_id):
             deadline = datetime.strptime(deadline_str, "%Y-%m-%d").date()
         except Exception as e:
             raise ValueError(f"Invalid date format for application_deadline: {deadline_str}. Expected YYYY-MM-DD.")
-        print("Parsed deadline:", deadline)
-        
-        # Convert company_reviews to float if provided.
         reviews = data.get('company_reviews')
         if reviews:
             try:
@@ -277,15 +264,15 @@ def create_job_posting(request, company_id):
         else:
             reviews = None
 
-        # Check required fields manually (for debugging)
-        required_fields = ['job_title', 'company_name', 'location', 'contract_type', 
-                           'job_overview', 'roles_responsibilities', 'required_skills', 
-                           'education_required', 'perks']
+        required_fields = [
+            'job_title', 'company_name', 'location', 'contract_type', 
+            'job_overview', 'roles_responsibilities', 'required_skills', 
+            'education_required', 'perks'
+        ]
         for field in required_fields:
             if not data.get(field):
                 raise ValueError(f"Field '{field}' is required but missing or empty.")
 
-        # Create a new JobPosting instance.
         job_posting = JobPosting.objects.create(
             job_title=data.get('job_title'),
             company_name=data.get('company_name'),
@@ -295,7 +282,6 @@ def create_job_posting(request, company_id):
             salary_range=data.get('salary_range'),
             contract_type=data.get('contract_type'),
             job_overview=data.get('job_overview'),
-            # Use the key 'roles_responsibilities' from the form
             roles_responsibilities=data.get('roles_responsibilities'),
             required_skills=data.get('required_skills'),
             preferred_skills=data.get('preferred_skills'),
@@ -307,12 +293,6 @@ def create_job_posting(request, company_id):
             why_join_us=data.get('why_join_us'),
             company_reviews=reviews
         )
-        
-        print("Job posting created with ID:", job_posting.id)
-        # Return a success JSON response.
         return JsonResponse({'status': 'success', 'job_id': job_posting.id})
-    
     except Exception as e:
-        # Log the error for debugging
-        print("Error in create_job_posting:", str(e))
         return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
