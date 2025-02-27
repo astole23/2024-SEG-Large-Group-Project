@@ -175,7 +175,7 @@ def search(request):
 def about_us(request):
     return render(request, 'about_us.html')
 
-def settings(request):
+def profile_settings(request):
     return render(request, 'settings.html')
 
 
