@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import make_password
 class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
-        fields = ['company_name', 'industry', 'email', 'phone', 'location', 'logo']
+        fields = ['company_name', 'industry', 'email', 'phone', 'unique_id']
 
 class ReviewForm(forms.ModelForm):
     class Meta:

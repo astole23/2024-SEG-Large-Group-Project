@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from tutorials.forms import UserRegistrationForm, CompanyRegistrationForm
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import check_password
@@ -9,36 +9,71 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from tutorials.models.company_review import Review
 from tutorials.forms import CompanyEditForm
+from django.contrib.auth import authenticate, login as auth_login
 
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
+
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
 def employer_dashboard(request):
     return render(request, 'employer_dashboard.html')
 
+@login_required
 def contact_us(request):
     return render(request, 'contact_us.html')
 
 def signup(request):
     user_form = UserRegistrationForm()
     company_form = CompanyRegistrationForm()
+
+    if user_form.is_valid() and company_form.is_valid():
+        user = user_form.save(commit=False)
+        password = user_form.cleaned_data.get('password')
+        user.set_password(password)
+        user.save()
+
+        company = company_form.save(commit=False)
+        company.user = user
+        company.save()
+
+        user = authenticate(username=user.email, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect('user_dashboard')
+        else: 
+            messages.error(request, 'Authentication failed.')
+
+        return redirect('login')
+    
+    else:
+        user_form = UserRegistrationForm()
+        company_form = CompanyRegistrationForm()
+
+
     return render(request, 'signup.html', {'user_form': user_form, 'company_form': company_form})
 
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+
         try:
             company = Company.objects.get(email=email)
+            user = company.user
         except Company.DoesNotExist:
             company = None
 
-        if company and check_password(password, company.password):
-            request.session['company_id'] = company.id
-
-            return redirect('edit_company', company_id=company.id)
+        if company and check_password(password, user.password):
+            # Authenticate the user
+            user = authenticate(username=email, password=password)
+            if user is not None:
+                auth_login(request, user)  # This sets up the session
+                # return redirect('edit_company', company_id=company.id)
+            else:
+                return render(request, 'login.html', {'error': 'Authentication failed'})
         else:
             return render(request, 'login.html', {'error': 'Invalid credentials'})
 
