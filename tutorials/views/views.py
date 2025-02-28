@@ -129,9 +129,6 @@ def login_view(request):
     })
 
 def process_login(request):
-    """
-    Process login for both user types based on a hidden input in the form.
-    """
     if request.method == 'POST':
         user_type = request.POST.get('user_type')
         
@@ -149,12 +146,23 @@ def process_login(request):
                 return redirect('user_dashboard')
         else:
             messages.error(request, "Invalid credentials.")
-    
-    # If GET or invalid POST, re-render the login page with fresh prefixed forms
-    return render(request, 'login.html', {
-        'user_form': UserLoginForm(prefix='user'),
-        'company_form': CompanyLoginForm(prefix='company')
-    })
+            # Pass the form with errors for the correct user type.
+            if user_type == 'company':
+                return render(request, 'login.html', {
+                    'company_form': form,
+                    'user_form': UserLoginForm(prefix='user')
+                })
+            else:
+                return render(request, 'login.html', {
+                    'user_form': form,
+                    'company_form': CompanyLoginForm(prefix='company')
+                })
+    else:
+        return render(request, 'login.html', {
+            'user_form': UserLoginForm(prefix='user'),
+            'company_form': CompanyLoginForm(prefix='company')
+        })
+
 
 def signup_view(request):
     # This view just displays the empty forms for a GET request;

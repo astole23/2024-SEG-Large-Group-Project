@@ -38,6 +38,8 @@ urlpatterns = [
     path('company/<int:company_id>/edit/', views.edit_company, name='edit_company'),
     path('settings/', views.profile_settings, name='settings'),
     path('your-job-posting-endpoint/', views.create_job_posting, name='create_job_posting'),
+    path('company/<int:company_id>/add_job/', views.create_job_posting, name='add_job_listing'),
+
 ]
 
 if settings.DEBUG:
