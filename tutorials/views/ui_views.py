@@ -6,7 +6,7 @@ from datetime import datetime
 import json
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth.decorators import login_required
 from tutorials.models.jobposting import JobPosting
 from tutorials.models.company_review import Review
 from django.contrib.auth import get_user_model
@@ -18,9 +18,17 @@ from tutorials.forms import (
 
 CustomUser = get_user_model()
 
+@login_required
 def employer_dashboard(request):
+    # If user is not a company, block access
+    if not request.user.is_company:
+        messages.error(request, "Access restricted to company accounts only.")
+        return redirect('login')  
+    
+    # Otherwise, proceed as normal
     job_postings = JobPosting.objects.all().order_by('-created_at')
     return render(request, 'employer_dashboard.html', {'job_postings': job_postings})
+
 
 def contact_us(request):
     return render(request, 'contact_us.html')
@@ -33,8 +41,25 @@ def guest(request):
         job_postings = JobPosting.objects.all()
     return render(request, 'guest.html', {'job_postings': job_postings})
 
+@login_required
 def user_dashboard(request):
-    return render(request, 'user_dashboard.html')
+    # If user is a company, block access
+    if request.user.is_company:
+        messages.error(request, "Access restricted to normal users only.")
+        return redirect('login')  
+
+    # Otherwise, show the user dashboard
+    user_info = {}
+    if request.user.is_authenticated:
+        user_info = {
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'full_name': f"{request.user.first_name} {request.user.last_name}"
+        }
+    # Convert to JSON
+    user_info_json = json.dumps(user_info)
+    return render(request, 'user_dashboard.html', {'user_info_json': user_info_json})
+
 
 def search(request):
     industries = [
@@ -230,3 +255,18 @@ def create_job_posting(request, company_id):
         return JsonResponse({'status': 'success', 'job_id': job_posting.id})
     except Exception as e:
         return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
+
+def apply_step1(request):
+    return render(request, 'step1.html')
+
+def apply_step2(request):
+    return render(request, 'step2.html')
+
+def apply_step3(request):
+    return render(request, 'step3.html')
+
+def apply_step4(request):
+    return render(request, 'step4.html')
+
+def application_success(request):
+    return render(request, 'success.html')
