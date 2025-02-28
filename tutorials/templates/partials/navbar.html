@@ -1,0 +1,23 @@
+{% load static %}
+
+<nav class="top-nav">
+  <div class="logo">
+    <a class="navbar-brand" href="/">
+      <img src="{% static 'images/SHY.png' %}" alt="SHY Logo" class="logo-img">    
+    </a>
+  </div>
+
+  <div class="search-container">
+    <span class="search-icon">🔍</span>
+    <input type="search" placeholder="Search jobs..." class="search-input">
+  </div>
+  
+  <div class="user-actions">
+    <button class="login-btn" onclick="window.location.href='/'"><i class="fas fa-house"></i></button>
+    <button class="login-btn" onclick="window.location.href='/login/'">Sign up/Log in</button>
+    <button class="login-btn" onclick="window.location.href='/employer_dashboard/'">Post a Job</button>
+    <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact us</button>
+    <button class="login-btn" onclick="window.location.href='/about_us/'">About us</button>
+    
+  </div>
+</nav>

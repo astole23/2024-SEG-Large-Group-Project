@@ -1,21 +1,11 @@
+{% extends 'base_content.html' %}
+
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - Job Search Platform</title>
-  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
-  <style>
-    /* Example styling for error messages */
-    .error {
-      color: red;
-      font-size: 0.9em;
-      margin-top: 4px;
-    }
-  </style>
-</head>
-<body>
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+
   <div class="container">
     <div class="auth-container">
       <div class="tabs">
@@ -164,5 +154,5 @@
       });
     });
   </script>
-</body>
-</html>
+
+{% endblock %}

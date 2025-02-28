@@ -16,29 +16,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from tutorials.views import views 
+from tutorials.views import ui_views, function_views
 from django.conf import settings
 from django.conf.urls.static import static
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.guest, name='guest'),
-    path('employer_dashboard/', views.employer_dashboard, name='employer_dashboard'),
-    path('contact_us/', views.contact_us, name='contact_us'),
-    path('login/', views.login_view, name='login'),
-    path('login/process/', views.process_login, name='process_login'),
-    path('signup/', views.signup_view, name='signup'),
-    path('signup/process/', views.process_signup, name='process_signup'),
-    path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
-    path('search/', views.search, name='search'),
-    path('about_us/', views.about_us, name='about_us'),
-    path('company/<int:company_id>/', views.company_detail, name='company_detail'),
-    path('company/<int:company_id>/review/', views.leave_review, name='leave_review'),
-    path('company/<int:company_id>/edit/', views.edit_company, name='edit_company'),
-    path('settings/', views.profile_settings, name='settings'),
-    path('your-job-posting-endpoint/', views.create_job_posting, name='create_job_posting'),
-    path('company/<int:company_id>/add_job/', views.create_job_posting, name='add_job_listing'),
+    path('', ui_views.guest, name='guest'),
+    path('employer_dashboard/', ui_views.employer_dashboard, name='employer_dashboard'),
+    path('contact_us/', ui_views.contact_us, name='contact_us'),
+    path('login/', ui_views.login_view, name='login'),
+    path('login/process/', function_views.process_login, name='process_login'),
+    path('signup/', ui_views.signup_view, name='signup'),
+    path('signup/process/', function_views.process_signup, name='process_signup'),
+    path('user_dashboard/', ui_views.user_dashboard, name='user_dashboard'),
+    path('search/', ui_views.search, name='search'),
+    path('about_us/', ui_views.about_us, name='about_us'),
+    path('company/<int:company_id>/', ui_views.company_detail, name='company_detail'),
+    path('company/<int:company_id>/review/', ui_views.leave_review, name='leave_review'),
+    path('company/<int:company_id>/edit/', ui_views.edit_company, name='edit_company'),
+    path('settings/', ui_views.profile_settings, name='settings'),
+    path('your-job-posting-endpoint/', ui_views.create_job_posting, name='create_job_posting'),
+    path('company/<int:company_id>/add_job/', ui_views.create_job_posting, name='add_job_listing'),
 
 ]
 

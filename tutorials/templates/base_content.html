@@ -2,13 +2,9 @@
 {% load static %}
 {% block body %}
   {% include 'partials/navbar.html' %}
-  <body style="padding-top: 80px;">
-    
-    <!-- Page-specific stylesheets -->
-    {% block extra_stylesheets %}
-    {% endblock %}
-    
+  <div class="main-content" style="padding-top: 0;">
     {% block content %}
     {% endblock %}
-  </body>
+  </div>
+  {% include 'partials/footer.html' %}
 {% endblock %}
