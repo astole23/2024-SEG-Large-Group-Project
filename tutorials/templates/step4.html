@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply - Step 4 - Job Search Platform</title>
+  <link rel="stylesheet" href="{% static 'css/application.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Job Search Platform</h1>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+      </nav>
+    </header>
+    
+    <div class="application-container">
+      <div class="application-header">
+        <h2>Job Application</h2>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-step completed">
+            <div class="step-circle"></div>
+            <div class="step-text">Start Application</div>
+          </div>
+          <div class="progress-step completed">
+            <div class="step-circle"></div>
+            <div class="step-text">Personal Data</div>
+          </div>
+          <div class="progress-step completed">
+            <div class="step-circle"></div>
+            <div class="step-text">Job Questions</div>
+          </div>
+          <div class="progress-step active">
+            <div class="step-circle"></div>
+            <div class="step-text">Review & Submit</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="application-content">
+        <form action="/apply/submit" method="post">
+          <div class="application-section">
+            <h3>Review Your Application</h3>
+            <p>Please review all the information below before submitting your application.</p>
+          </div>
+          
+          <div class="review-section">
+            <div class="review-section-header">
+              <h3>Application Method</h3>
+            </div>
+            <div class="review-section-content">
+              <div class="review-item">
+                <div class="review-item-label">Application Type:</div>
+                <div class="review-item-value">Manual Application</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Cover Letter:</div>
+                <div class="review-item-value">Your cover letter text goes here...</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="review-section">
+            <div class="review-section-header">
+              <h3>Personal Information</h3>
+            </div>
+            <div class="review-section-content">
+              <div class="review-item">
+                <div class="review-item-label">Title:</div>
+                <div class="review-item-value">Mr.</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">First Name:</div>
+                <div class="review-item-value">John</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Last Name:</div>
+                <div class="review-item-value">Doe</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Email:</div>
+                <div class="review-item-value">john.doe@example.com</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Phone:</div>
+                <div class="review-item-value">+1 234 567 8900</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="review-section">
+            <div class="review-section-header">
+              <h3>Address</h3>
+            </div>
+            <div class="review-section-content">
+              <div class="review-item">
+                <div class="review-item-label">Country:</div>
+                <div class="review-item-value">USA</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Address Line 1:</div>
+                <div class="review-item-value">123 Main St</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">City/Town:</div>
+                <div class="review-item-value">San Francisco</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Postcode/ZIP:</div>
+                <div class="review-item-value">94105</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="review-section">
+            <div class="review-section-header">
+              <h3>Education</h3>
+            </div>
+            <div class="review-section-content">
+              <div class="review-item">
+                <div class="review-item-label">Institution:</div>
+                <div class="review-item-value">Stanford University</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Degree/Qualification:</div>
+                <div class="review-item-value">Master's in Computer Science</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Field of Study:</div>
+                <div class="review-item-value">Computer Science</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Grade/Result:</div>
+                <div class="review-item-value">3.8 GPA</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Duration:</div>
+                <div class="review-item-value">2018-2022</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="review-section">
+            <div class="review-section-header">
+              <h3>Work Experience</h3>
+            </div>
+            <div class="review-section-content">
+              <div class="review-item">
+                <div class="review-item-label">Company:</div>
+                <div class="review-item-value">Tech Corp</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Position:</div>
+                <div class="review-item-value">Senior Software Developer</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Duration:</div>
+                <div class="review-item-value">2022-Present</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Responsibilities:</div>
+                <div class="review-item-value">Led development team, implemented microservices architecture</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="review-section">
+            <div class="review-section-header">
+              <h3>Skills</h3>
+            </div>
+            <div class="review-section-content">
+              <div class="review-item">
+                <div class="review-item-label">Skill:</div>
+                <div class="review-item-value">JavaScript</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Proficiency Level:</div>
+                <div class="review-item-value">Expert</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Description:</div>
+                <div class="review-item-value">Extensive experience in modern JavaScript frameworks</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="review-section">
+            <div class="review-section-header">
+              <h3>Job Specific Questions</h3>
+            </div>
+            <div class="review-section-content">
+              <div class="review-item">
+                <div class="review-item-label">Eligible to work:</div>
+                <div class="review-item-value">Yes</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Previously employed:</div>
+                <div class="review-item-value">No</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Require sponsorship:</div>
+                <div class="review-item-value">No</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">How did you hear about this position:</div>
+                <div class="review-item-value">LinkedIn</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Why you're a good fit:</div>
+                <div class="review-item-value">I have the skills and experience required for the role.</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Salary expectations:</div>
+                <div class="review-item-value">$100k per year</div>
+              </div>
+              <div class="review-item">
+                <div class="review-item-label">Willing to undergo background check:</div>
+                <div class="review-item-value">Yes</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="application-footer">
+            <a href="/apply/step3/" class="btn btn-secondary">Back</a>
+            <a href="/apply/success/" class="btn btn-secondary">Submit</a>
+            <!-- <button type="submit" class="btn">Submit Application</button> -->
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

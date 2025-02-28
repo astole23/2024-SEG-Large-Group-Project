@@ -77,6 +77,16 @@ const mockJobs = [
   
   function createDashboard() {
     const logoUrl = STATIC_URL + "images/SHY_small.png";
+    // Default fallback if user_info is empty
+    let userInfo = { full_name: "John Doe" };
+
+    // Grab the script tag with id="current-user"
+    const userInfoScript = document.getElementById('current-user');
+    if (userInfoScript) {
+      // Parse its text content as JSON
+      userInfo = JSON.parse(userInfoScript.textContent);
+    }
+
     const app = document.querySelector('#app');
     app.innerHTML = `
       <nav class="top-nav">
@@ -104,7 +114,7 @@ const mockJobs = [
               <img src="https://i.pravatar.cc/128" alt="John Doe" width="64" height="64">
             </div>
             <div class="profile-info">
-              <h1>John Doe</h1>
+              <h1>${userInfo.full_name}</h1>
               <p>Senior Software Developer</p>
               <div class="location">
                 <span>📍</span>

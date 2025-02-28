@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply - Step 1 - Job Search Platform</title>
+  <link rel="stylesheet" href="{% static 'css/application.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Job Search Platform</h1>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+      </nav>
+    </header>
+    
+    <div class="application-container">
+      <div class="application-header">
+        <h2>Job Application</h2>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-step active">
+            <div class="step-circle"></div>
+            <div class="step-text">Start Application</div>
+          </div>
+          <div class="progress-step">
+            <div class="step-circle"></div>
+            <div class="step-text">Personal Data</div>
+          </div>
+          <div class="progress-step">
+            <div class="step-circle"></div>
+            <div class="step-text">Job Questions</div>
+          </div>
+          <div class="progress-step">
+            <div class="step-circle"></div>
+            <div class="step-text">Review & Submit</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="application-content">
+        <form action="/apply/step1" method="post">
+          <div class="application-section">
+            <h3>Application Method</h3>
+            <p>Please select how you would like to apply for this position:</p>
+            <div class="application-types">
+              <div class="application-type-btn selected" data-value="manual">
+                <i class="fas fa-edit fa-2x"></i>
+                <h3>Apply Manually</h3>
+                <p>Fill out all application details manually</p>
+              </div>
+              <div class="application-type-btn" data-value="cv">
+                <i class="fas fa-file-alt fa-2x"></i>
+                <h3>Apply with Profile/CV</h3>
+                <p>Use your existing profile information</p>
+              </div>
+            </div>
+            <input type="hidden" name="application_type" id="application_type" value="manual">
+          </div>
+          
+          <div class="application-section">
+            <h3>Cover Letter (Optional)</h3>
+            <p>You may include a cover letter to support your application:</p>
+            <div class="form-group">
+              <textarea name="cover_letter" placeholder="Enter your cover letter here..."></textarea>
+            </div>
+          </div>
+          
+          <div class="application-footer">
+            <a href="/user_dashboard/" class="btn btn-secondary">Cancel</a>
+            <a href="/apply/step2/" class="btn btn-secondary">Continue</a>
+            <!-- <button type="submit" class="btn">Continue to Personal Data</button> -->
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const applicationTypeBtns = document.querySelectorAll('.application-type-btn');
+      const applicationTypeInput = document.getElementById('application_type');
+      // Set default selection
+      applicationTypeBtns[0].classList.add('selected');
+      applicationTypeBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          applicationTypeBtns.forEach(b => b.classList.remove('selected'));
+          this.classList.add('selected');
+          applicationTypeInput.value = this.getAttribute('data-value');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

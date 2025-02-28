@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply - Step 3 - Job Search Platform</title>
+  <link rel="stylesheet" href="{% static 'css/application.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Job Search Platform</h1>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+      </nav>
+    </header>
+    
+    <div class="application-container">
+      <div class="application-header">
+        <h2>Job Application</h2>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-step completed">
+            <div class="step-circle"></div>
+            <div class="step-text">Start Application</div>
+          </div>
+          <div class="progress-step completed">
+            <div class="step-circle"></div>
+            <div class="step-text">Personal Data</div>
+          </div>
+          <div class="progress-step active">
+            <div class="step-circle"></div>
+            <div class="step-text">Job Questions</div>
+          </div>
+          <div class="progress-step">
+            <div class="step-circle"></div>
+            <div class="step-text">Review & Submit</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="application-content">
+        <form action="/apply/step3" method="post">
+          <div class="application-section">
+            <h3>Job Specific Questions</h3>
+          </div>
+          
+          <div class="form-group">
+            <label>Are you eligible to work in the country or willing to relocate?</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="eligible_yes" name="eligible_to_work" value="yes" required>
+                <label for="eligible_yes">Yes</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="eligible_no" name="eligible_to_work" value="no">
+                <label for="eligible_no">No</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Have you previously been employed by Company or any of its acquired business?</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="previously_yes" name="previously_employed" value="yes" required>
+                <label for="previously_yes">Yes</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="previously_no" name="previously_employed" value="no">
+                <label for="previously_no">No</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Do you require sponsorship for an employment visa?</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="sponsorship_yes" name="require_sponsorship" value="yes" required>
+                <label for="sponsorship_yes">Yes</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="sponsorship_no" name="require_sponsorship" value="no">
+                <label for="sponsorship_no">No</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="how_did_you_hear">How did you hear about this position?</label>
+            <select name="how_did_you_hear" id="how_did_you_hear" required>
+              <option value="">Please select</option>
+              <option value="Company Website">Company Website</option>
+              <option value="Job Board">Job Board</option>
+              <option value="LinkedIn">LinkedIn</option>
+              <option value="Indeed">Indeed</option>
+              <option value="Glassdoor">Glassdoor</option>
+              <option value="Referral">Referral</option>
+              <option value="Career Fair">Career Fair</option>
+              <option value="University/College">University/College</option>
+              <option value="Social Media">Social Media</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="why_good_fit">Why do you think you're a good fit for this role?</label>
+            <textarea name="why_good_fit" id="why_good_fit" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="salary_expectations">Salary expectations</label>
+            <input type="text" name="salary_expectations" id="salary_expectations" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Are you willing to undergo a background check?</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="background_yes" name="background_check" value="yes" required>
+                <label for="background_yes">Yes</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="background_no" name="background_check" value="no">
+                <label for="background_no">No</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="application-footer">
+            <a href="/apply/step2/" class="btn btn-secondary">Back</a>
+            <a href="/apply/step4/" class="btn btn-secondary">Continue</a>
+            <!-- <button type="submit" class="btn">Continue to Review</button> -->
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
