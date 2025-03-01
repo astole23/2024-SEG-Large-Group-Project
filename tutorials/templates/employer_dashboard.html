@@ -1,131 +1,307 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employer Dashboard</title>
-    
-    <!-- Bootstrap CSS (optional for styling) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        /* Custom styles for layout */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .sidebar {
-            height: 100vh;
-            width: 250px;
-            position: fixed;
-            top: 0;
-            right: 0; /* Sidebar on the right */
-            background-color: #343a40;
-            color: white;
-            padding-top: 20px;
-            text-align: center;
-        }
-        
-        .sidebar img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 20px;
-        }
-        .sidebar a {
-            color: white;
-            padding: 10px;
-            display: block;
-            text-decoration: none;
-            font-size: 16px;
-        }
-        .sidebar a:hover {
-            background-color: #575d63;
-        }
-        .content {
-            margin-right: 250px; /* Adjusting content for the sidebar */
-            padding: 20px;
-            height: 100vh;
-            overflow-y: auto; /* Allow scrolling for content */
-        }
-        .header {
-            background-color: #f8f9fa;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .scrollable-section {
-            flex-grow: 1; /* Allow the section to grow and fill available space */
-            overflow-y: scroll; /* Enable vertical scrolling */
-            margin-top: 20px; /* Add spacing between the header and grid */
-        }
-        .grid-button {
-            width: 100%;
-            height: 150px;
-            margin-bottom: 10px;
-            background-color: #007bff;
-            border: none;
-            color: white;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        /* Add custom styling for the grid layout */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 columns */
-            grid-gap: 10px; /* Space between the buttons */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employer Dashboard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <img src="https://via.placeholder.com/80" alt="Profile Photo" class="profile-photo">
-        <a href="#">See posted jobs</a>
-        <a href="#">Create new posting</a>
-        <a href="#">Company Profile</a>
-        <a href="#">Logout</a>
+  <!-- Sidebar (unchanged from your design) -->
+  <div class="sidebar">
+    <div class="sidebar-options">
+      <img src="{% static 'images/empty_profile.png' %}" alt="Profile Photo" class="profile-photo">
+      <a href="#"><i class="fas fa-briefcase"></i> See posted jobs</a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#createJobModal">
+        <i class="fas fa-plus-circle"></i> Create new posting
+      </a>
+      <a href="#"><i class="fas fa-building"></i> Company Profile</a>
+      <a href="#"><i class="fas fa-users"></i> View User Request</a>
+      <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+    <div class="sidebar-logo">
+      <img src="{% static 'images/circle_lilac.png' %}" alt="Small logo" class="small-logo">
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content">
+    <!-- Header (as previously designed) -->
+    <div class="header">
+      <div class="row">
+        <div class="col-md-6">
+          <h4>Welcome *Company Name*</h4>
+        </div>
+        <div class="col-md-6 text-end">
+          <button class="btn btn-primary">Add New Post</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Content Area -->
-    <div class="content">
-        <!-- Header -->
-        <div class="header">
+    <!-- Main Content: Job Posting Grid -->
+    <div class="scrollable-section">
+      <div class="grid-container">
+        {% for job in job_postings %}
+        <div class="grid-button">
+          <div class="job-details">
+            <h5 class="job-title">{{ job.job_title }}</h5>
+            <p class="company-name">{{ job.company_name }}</p>
+            <p class="location">{{ job.location }}</p>
+            <p class="pay-contract">{{ job.salary_range }} | {{ job.contract_type }}</p>
+            <p class="company-overview">{{ job.company_overview|truncatewords:10 }}</p>
+          </div>
+          <!-- Bigger View More Button -->
+          <button class="btn btn-secondary btn-lg mt-2" 
+                  data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">
+            View More
+          </button>
+        </div>
+        {% empty %}
+        <p>No job postings available.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modals: One per job posting -->
+  {% for job in job_postings %}
+  <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <!-- Modal Header using primary color from your CSS variables -->
+        <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+          <h5 class="modal-title" id="jobModalLabel{{ job.id }}">{{ job.job_title }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <!-- Row 1: Basic Job Info -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <p><strong>Company:</strong> {{ job.company_name }}</p>
+                {% if job.child_company_name %}
+                <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                {% endif %}
+                <p><strong>Location:</strong> {{ job.location }}</p>
+                <p><strong>Work Type:</strong> {{ job.work_type }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                <p><strong>Contract:</strong> {{ job.contract_type }}</p>
+                <p><strong>Deadline:</strong> {{ job.application_deadline }}</p>
+              </div>
+            </div>
+            <hr>
+            <!-- Row 2: Job Overview and Responsibilities -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <h6>Job Overview</h6>
+                <p>{{ job.job_overview }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6>Roles &amp; Responsibilities</h6>
+                <p>{{ job.roles_responsibilities }}</p>
+              </div>
+            </div>
+            <hr>
+            <!-- Row 3: Skills -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <h6>Required Skills</h6>
+                <p>{{ job.required_skills }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6>Preferred Skills</h6>
+                <p>{{ job.preferred_skills }}</p>
+              </div>
+            </div>
+            <hr>
+            <!-- Row 4: Additional Details -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <h6>Education</h6>
+                <p>{{ job.education_required }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6>Perks</h6>
+                <p>{{ job.perks }}</p>
+              </div>
+            </div>
+            <hr>
+            <!-- Row 5: Company Details -->
             <div class="row">
-                <div class="col-md-6">
-                    <h4>Welcome to your Employer Dashboard!</h4>
-                </div>
-                <div class="col-md-6 text-end">
-                    <button class="btn btn-primary">Add New Post</button>
-                </div>
+              <div class="col-12">
+                <h6>About the Company</h6>
+                <p><strong>Overview:</strong> {{ job.company_overview }}</p>
+                <p><strong>Why Join Us:</strong> {{ job.why_join_us }}</p>
+                <p><strong>Reviews:</strong> {{ job.company_reviews }}</p>
+                <p class="text-muted"><small>Posted on {{ job.created_at|date:"M d, Y" }}</small></p>
+              </div>
             </div>
+          </div>
         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 
-        <!-- Scrollable Section (Grid of 2x6 buttons) -->
-        <div class="scrollable-section">
-            <div class="grid-container">
-                <!-- 12 Buttons (2 Columns x 6 Rows) -->
-                <button class="grid-button">Button 1</button>
-                <button class="grid-button">Button 2</button>
-                <button class="grid-button">Button 3</button>
-                <button class="grid-button">Button 4</button>
-                <button class="grid-button">Button 5</button>
-                <button class="grid-button">Button 6</button>
-                <button class="grid-button">Button 7</button>
-                <button class="grid-button">Button 8</button>
-                <button class="grid-button">Button 9</button>
-                <button class="grid-button">Button 10</button>
-                <button class="grid-button">Button 11</button>
-                <button class="grid-button">Button 12</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+
+    <!-- Create Job Posting Modal -->
+
+    <div class="modal fade" id="createJobModal" tabindex="-1" aria-labelledby="createJobModalLabel">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+            <h5 class="modal-title" id="createJobModalLabel">Create Job Posting</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+            <form id="createJobForm">
+                <!-- Job Posting Title -->
+                <div class="mb-3">
+                <label for="jobTitle" class="form-label">Job Posting Title</label>
+                <input type="text" class="form-control" id="jobTitle" name="job_title" placeholder="Enter job posting title">
+                </div>
+                <!-- Company Name -->
+                <div class="mb-3">
+                <label for="companyName" class="form-label">Company Name</label>
+                <input type="text" class="form-control" id="companyName" name="company_name" placeholder="Enter company name">
+                </div>
+                <!-- Child-Company Name -->
+                <div class="mb-3">
+                <label for="childCompanyName" class="form-label">Child-Company Name</label>
+                <input type="text" class="form-control" id="childCompanyName" name="child_company_name" placeholder="Enter child-company name">
+                </div>
+                <!-- Location and Work Type -->
+                <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="location" class="form-label">Location (City, Country)</label>
+                    <input type="text" class="form-control" id="location" name="location" placeholder="e.g. New York, USA">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="workType" class="form-label">Work Type</label>
+                    <select class="form-select" id="workType" name="work_type">
+                    <option value="">Select work type</option>
+                    <option value="remote">Remote</option>
+                    <option value="hybrid">Hybrid</option>
+                    <option value="on_site">On-site</option>
+                    </select>
+                </div>
+                </div>
+                <!-- Salary Range and Contract Type -->
+                <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="salaryRange" class="form-label">Pay/Salary Range</label>
+                    <input type="text" class="form-control" id="salaryRange" name="salary_range" placeholder="e.g. $50,000 - $70,000">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="contractType" class="form-label">Contract Type</label>
+                    <select class="form-select" id="contractType" name="contract_type">
+                    <option value="">Select contract type</option>
+                    <option value="full_time">Full-time</option>
+                    <option value="part_time">Part-time</option>
+                    </select>
+                </div>
+                </div>
+                <!-- Job Overview -->
+                <div class="mb-3">
+                <label for="jobOverview" class="form-label">Job Overview</label>
+                <textarea class="form-control" id="jobOverview" name="job_overview" rows="3" placeholder="Provide a brief overview of the job"></textarea>
+                </div>
+                <!-- Roles/Responsibility -->
+                <div class="mb-3">
+                <label for="rolesResponsibilities" class="form-label">Roles/Responsibility</label>
+                <textarea class="form-control" id="rolesResponsibilities" name="roles_responsibilities" rows="3" placeholder="List roles and responsibilities"></textarea>
+                </div>
+                <!-- Required Skills (Tag Input) -->
+                <div class="mb-3">
+                <label for="requiredSkills" class="form-label">Required Skills</label>
+                <input type="text" class="form-control" id="requiredSkillsInput" placeholder="Type a skill and press Enter">
+                <div id="requiredSkillsContainer" class="mt-2">
+                    <!-- Skill tags will appear here -->
+                </div>
+                <!-- Hidden input to store the comma-separated list -->
+                <input type="hidden" name="required_skills" id="requiredSkills">
+                </div>
+                <!-- Preferred Skills (Optional Tag Input) -->
+                <div class="mb-3">
+                <label for="preferredSkills" class="form-label">Preferred Skills (Optional)</label>
+                <input type="text" class="form-control" id="preferredSkillsInput" placeholder="Type a skill and press Enter">
+                <div id="preferredSkillsContainer" class="mt-2">
+                    <!-- Skill tags will appear here -->
+                </div>
+                <input type="hidden" name="preferred_skills" id="preferredSkills">
+                </div>
+                <!-- Education Required (Optional) -->
+                <div class="mb-3">
+                <label for="educationRequired" class="form-label">Education Required (Optional)</label>
+                <input type="text" class="form-control" id="educationRequired" name="education_required" placeholder="Enter education requirements">
+                </div>
+                <!-- Perks and Benefits -->
+                <div class="mb-3">
+                <label for="perksBenefits" class="form-label">Perks and Benefits</label>
+                <textarea class="form-control" id="perksBenefits" name="perks_benefits" rows="3" placeholder="List perks and benefits"></textarea>
+                </div>
+                <!-- Application Deadline -->
+                <div class="mb-3">
+                <label for="applicationDeadline" class="form-label">Application Deadline</label>
+                <input type="date" class="form-control" id="applicationDeadline" name="application_deadline">
+                </div>
+                <!-- Required Documents -->
+                <div class="mb-3">
+                <label for="requiredDocuments" class="form-label">Required Documents</label>
+                <textarea class="form-control" id="requiredDocuments" name="required_documents" rows="2" placeholder="List required documents"></textarea>
+                </div>
+                <!-- Company Overview -->
+                <div class="mb-3">
+                <label for="companyOverview" class="form-label">Company Overview</label>
+                <textarea class="form-control" id="companyOverview" name="company_overview" rows="3" placeholder="Enter company overview"></textarea>
+                </div>
+                <!-- Why Join Us? -->
+                <div class="mb-3">
+                <label for="whyJoinUs" class="form-label">Why Join Us?</label>
+                <textarea class="form-control" id="whyJoinUs" name="why_join_us" rows="3" placeholder="Tell candidates why they should join your company"></textarea>
+                </div>
+                <!-- Company Reviews -->
+                <div class="mb-3">
+                <label for="companyReviews" class="form-label">Company Reviews</label>
+                <textarea class="form-control" id="companyReviews" name="company_reviews" rows="3" placeholder="Include any company reviews or testimonials"></textarea>
+                </div>
+            </form>
+            </div>
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <!-- You can attach an AJAX call to this button to handle form submission without reloading -->
+            <button type="submit" class="btn btn-primary" id="saveJobPosting" form="createJobForm">Save</button>
+        </div>
+        </div>
         </div>
     </div>
+  
 
-    <!-- Bootstrap JS and Popper (optional for interactivity) -->
+
+    <!-- Bootstrap JS and Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/job_form_validation.js' %}"></script>
+
+
+    
+      
+
 </body>
 </html>
+
+{% endblock %}

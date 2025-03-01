@@ -361,3 +361,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/python,django,venv,virtualenv,macos,windows,linux
+tutorials/templates/style.css
+tutorials/templates/style.css
+tutorials/templates/style.css

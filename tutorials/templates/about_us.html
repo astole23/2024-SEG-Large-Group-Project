@@ -1,0 +1,92 @@
+{% extends 'base_content.html' %}
+
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link rel="stylesheet" href="{% static 'about.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- For the chart -->
+</head>
+<body>
+
+    <!-- About Us Area with Full Background -->
+    <div class="aboutbackground">
+        <!-- About Us Content -->
+        <div class="about-content">
+            <h2 class="text-center">About Our Company</h2>
+            <p class="text-center">
+                Welcome to Secure Hire Yap (SHY)! We are a leading job portal dedicated to connecting job seekers with the best employers across the globe. Our mission is to make job searching simpler and more accessible for everyone.
+            </p>
+
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="statistics">
+            <h3 class="text-center">Some Key Statistics</h3>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <h4>55%</h4>
+                    <p>Job seekers say they found a job easier with SHY compared to other job boards.</p>
+                </div>
+                <div class="stat-item">
+                    <h4>85%</h4>
+                    <p>Employers report better candidate matches when using SHY.</p>
+                </div>
+                <div class="stat-item">
+                    <h4>90%</h4>
+                    <p>Users recommend SHY to friends and colleagues in their job search.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section with Spacing Below -->
+        <div class="chart-section">
+            <h3 class="text-center">User Satisfaction by Industry</h3>
+            <div class="chart-box">
+                <canvas id="satisfactionChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Photo Section with Spacing Above -->
+        <div class="photo-section">
+            <h3 class="text-center">Our Team</h3>
+            <div class="photo-box">
+                <img src="https://static.wikia.nocookie.net/characters/images/0/0d/Kevin%2C_Stuart_%26_Bob.png/revision/latest?cb=20230303160023" alt="Our team" class="team-photo">
+            </div>
+            <p class="text-center">Meet the passionate individuals behind SHY. Our diverse and dynamic team is dedicated to helping you find the right career opportunity!</p>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js code for User Satisfaction Chart
+        var ctx = document.getElementById('satisfactionChart').getContext('2d');
+        var satisfactionChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Tech', 'Finance', 'Healthcare', 'Education', 'Retail'],
+                datasets: [{
+                    label: 'User Satisfaction (%)',
+                    data: [90, 85, 80, 70, 75],
+                    backgroundColor: ['#4b0082', '#6a0dad', '#8e44ad', '#9b59b6', '#c71585'],
+                    borderColor: '#ffffff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+{% endblock %}

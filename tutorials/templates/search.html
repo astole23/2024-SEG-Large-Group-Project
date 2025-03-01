@@ -1,0 +1,394 @@
+{% extends 'base_content.html' %}
+
+
+{% load static %}
+{% block content %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+</head>
+
+<body>
+    
+    <div class="search-bar">
+      <form action="{% url 'search' %}" method="GET" style="display: flex; align-items: center;">
+        <input type="text" name="q" placeholder="What are you looking for today?" value="{{ query|default:'' }}">
+        <button type="submit" style="padding: 15px 30px; font-size: 1.25rem; border-radius: 25px; background-color: var(--primary-color); color: white; border: none; margin-left: 10px;">Search</button>
+      </form>
+    </div>
+  
+    
+  
+    <!-- Horizontal Filters Section -->
+    <form action="{% url 'search' %}" method="GET">
+      <!-- Preserve current query -->
+      <input type="hidden" name="q" value="{{ query|default:'' }}">
+      <div class="filters">
+        <!-- 1. Job Type Filter (Custom Checkbox Dropdown) -->
+      <div class="filter-item">
+          <label>💼 Job Type</label>
+          <div class="dropdown-checkbox" id="jobTypeDropdown">
+              <button type="button" class="btn btn-outline" data-default="Select Job Types" onclick="toggleDropdown('jobTypeDropdown', 'Select Job Types')">
+                  Select Job Types
+              </button>
+              <div class="dropdown-content">
+                  {% for job_type in job_types %}
+                      <label>
+                          <input type="checkbox" name="job_type" value="{{ job_type }}" {% if job_type in selected_job_types %}checked{% endif %}>
+                          {{ job_type|title }}
+                      </label>
+                  {% endfor %}
+              </div>
+          </div>
+      
+  
+      </div>
+  
+        <!-- 2. Industry/Category Filter (Custom Checkbox Dropdown) -->
+         <!-- 2. Industry/Category Filter (Custom Checkbox Dropdown) -->
+          <div class="filter-item">
+              <label>🏢 Industry</label>
+              <div class="dropdown-checkbox" id="industryDropdown">
+                  <button type="button" class="btn btn-outline" data-default="Select Industries" onclick="toggleDropdown('industryDropdown', 'Select Industries')">
+                      Select Industries
+                  </button>
+                  <div class="dropdown-content">
+                      {% for industry in industries %}
+                          <label>
+                              <input type="checkbox" name="industry" value="{{ industry }}" {% if industry in selected_industries %}checked{% endif %}>
+                              {{ industry|title }}
+                          </label>
+                      {% endfor %}
+                  </div>
+              </div>
+          </div>
+  
+        
+  
+        <!-- 3. Location Filter (Using cities passed from view) -->
+        <div class="filter-item">
+          <label>📍 Location</label>
+          <div class="dropdown-checkbox" id="locationDropdown">
+              <button type="button" class="btn btn-outline" data-default="Select Locations" onclick="toggleDropdown('locationDropdown', 'Select Locations')">
+                Select Locations
+              </button>
+              <div class="dropdown-content">
+                {% for city in cities %}
+                  <label>
+                    <input type="checkbox" name="location_filter" value="{{ city }}" {% if city in selected_locations %}checked{% endif %}>
+                    {{ city }}
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+            
+        </div>
+  
+        <!-- 4. Salary Range Filter with "Set Price" Button -->
+        <div class="filter-item">
+          <label>💷 Min Salary Range (Annual GBP)</label>
+          <input type="range" class="form-range" id="salary_range_slider" min="20000" max="100000" step="5000" value="{{ request.GET.salary_range|default:'20000' }}">
+          <div id="salaryRangeDisplay">Salary: {{ request.GET.salary_range|default:"20000" }} GBP</div>
+      
+          <!-- Wrap buttons inside a flexbox -->
+          <div class="salary-buttons">
+              <button type="button" id="setPriceButton" class="btn btn-secondary btn-sm">Set Price</button>
+              <button type="button" id="unsetPriceButton" class="btn btn-secondary btn-sm">Unset Price</button>
+          </div>
+      
+          <!-- Hidden input to store salary range when set -->
+          <input type="hidden" name="salary_range" id="salary_range" value="{{ request.GET.salary_range|default:'' }}">
+        </div>
+  
+        
+        <!-- 8. Education Level Filter (Custom Checkbox Dropdown) -->
+        <div class="filter-item">
+          <label>🎓 Education Level</label>
+          <div class="dropdown-checkbox" id="educationDropdown">
+            <button type="button" class="btn btn-outline" data-default="Select Education Levels" onclick="toggleDropdown('educationDropdown', 'Select Education Levels')">Select Education Levels</button>
+            <div class="dropdown-content">
+              <label>
+                  <input type="checkbox" name="education_level" value="high_school" {% if "high_school" in selected_education %}checked{% endif %}>
+                  High School Diploma / GED
+                </label>
+                <label>
+                  <input type="checkbox" name="education_level" value="associate" {% if "associate" in selected_education %}checked{% endif %}>
+                  Associate Degree
+                </label>
+                <label>
+                  <input type="checkbox" name="education_level" value="bachelor" {% if "bachelor" in selected_education %}checked{% endif %}>
+                  Bachelor’s Degree
+                </label>
+                <label>
+                  <input type="checkbox" name="education_level" value="master" {% if "master" in selected_education %}checked{% endif %}>
+                  Master’s Degree
+                </label>
+                <label>
+                  <input type="checkbox" name="education_level" value="phd" {% if "phd" in selected_education %}checked{% endif %}>
+                  PhD / Doctorate
+                </label>
+                <label>
+                  <input type="checkbox" name="education_level" value="certification" {% if "certification" in selected_education %}checked{% endif %}>
+                  Certification Required
+                </label>
+                
+            </div>
+          </div>
+        </div>
+  
+        <!-- 10. Work Flexibility Filter (Custom Checkbox Dropdown) -->
+        <div class="filter-item">
+          <label>🏠 Work Flexibility</label>
+          <div class="dropdown-checkbox" id="flexibilityDropdown">
+            <button type="button" class="btn btn-outline" data-default="Select Work Options" onclick="toggleDropdown('flexibilityDropdown', 'Select Work Options')">Select Work Options</button>
+            <div class="dropdown-content">
+              <label>
+                  <input type="checkbox" name="work_flexibility" value="flexible" {% if "flexible" in selected_work_flexibility %}checked{% endif %}>
+                  Flexible Work Hours
+                </label>
+                <label>
+                  <input type="checkbox" name="work_flexibility" value="hybrid" {% if "hybrid" in selected_work_flexibility %}checked{% endif %}>
+                  Hybrid (Remote & On-site)
+                </label>
+                <label>
+                  <input type="checkbox" name="work_flexibility" value="on_site" {% if "on_site" in selected_work_flexibility %}checked{% endif %}>
+                  On-site
+                </label>
+                <label>
+                  <input type="checkbox" name="work_flexibility" value="remote" {% if "remote" in selected_work_flexibility %}checked{% endif %}>
+                  Remote
+                </label>
+                
+            </div>
+          </div>
+        </div>
+  
+        <!-- 7. Benefits & Perks Filter -->
+      <div class="filter-item">
+          <label>🎁 Benefits & Perks</label>
+          <div class="dropdown-checkbox" id="benefitsDropdown">
+              <button type="button" class="btn btn-outline" data-default="Select Benefits" onclick="toggleDropdown('benefitsDropdown', 'Select Benefits')">Select Benefits</button>
+              <div class="dropdown-content">
+                  {% for benefit in perks_list %}
+                      <label>
+                          <input type="checkbox" name="benefits" value="{{ benefit }}" {% if benefit in selected_perks %}checked{% endif %}>
+                          {{ benefit }}
+                      </label>
+                  {% endfor %}
+              </div>
+          </div>
+      </div>
+  
+  
+        <!-- Apply Filters Button -->
+        <div class="filter-item">
+          <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </div>
+  
+        <!-- Clear Filters Button -->
+          <div class="filter-item">
+              <a href="{% url 'search' %}" class="btn btn-primary">Clear Filters</a>
+          </div>
+      </div>
+    </form>
+  
+    <!-- Display a message with the search query and applied filters -->
+    {% if query %}
+      <div class="search-message">
+        <p>Searching for jobs "{{ query }}"</p>
+      </div>
+      <div class="search-filters" style="text-align: center; margin-bottom: 20px;">
+        <strong>Applied Filters:</strong>
+        {% for key, value in request.GET.items %}
+          {% if key != 'q' and value %}
+            {{ key|title }}: {{ value }}&nbsp;&nbsp;
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  
+    <!-- Search Results -->
+    {% if query %}
+      <div class="scrollable-section">
+        <div class="grid-container">
+          {% for job in job_postings %}
+            <div class="grid-button">
+              <div class="job-details">
+                <h5 class="job-title">{{ job.job_title }}</h5>
+                <p class="company-name">{{ job.company_name }}</p>
+                <p class="location">{{ job.location }}</p>
+                <p class="pay-contract">{{ job.salary_range }} | {{ job.contract_type }}</p>
+                <p class="company-overview">{{ job.company_overview|truncatewords:10 }}</p>
+              </div>
+              <button class="btn btn-secondary btn-lg mt-2" data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">
+                View More
+              </button>
+            </div>
+          {% empty %}
+            <p>No job postings found matching "{{ query }}".</p>
+          {% endfor %}
+        </div>
+      </div>
+  
+      <!-- Modals for Each Job Posting -->
+      {% for job in job_postings %}
+        <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+              <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+                <h5 class="modal-title" id="jobModalLabel{{ job.id }}">{{ job.job_title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+              </div>
+              <div class="modal-body">
+                <div class="container-fluid">
+                  <!-- Row 1: Basic Job Info -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p><strong>Company:</strong> {{ job.company_name }}</p>
+                      {% if job.child_company_name %}
+                        <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                      {% endif %}
+                      <p><strong>Location:</strong> {{ job.location }}</p>
+                      <p><strong>Work Type:</strong> {{ job.work_type }}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                      <p><strong>Contract:</strong> {{ job.contract_type }}</p>
+                      <p><strong>Deadline:</strong> {{ job.application_deadline }}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <!-- Row 2: Job Overview and Responsibilities -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <h6>Job Overview</h6>
+                      <p>{{ job.job_overview }}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <h6>Roles &amp; Responsibilities</h6>
+                      <p>{{ job.roles_responsibilities }}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <!-- Row 3: Skills -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <h6>Required Skills</h6>
+                      <p>{{ job.required_skills }}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <h6>Preferred Skills</h6>
+                      <p>{{ job.preferred_skills }}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <!-- Row 4: Additional Details -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <h6>Education</h6>
+                      <p>{{ job.education_required }}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <h6>Perks</h6>
+                      <p>{{ job.perks }}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <!-- Row 5: Company Details -->
+                  <div class="row">
+                    <div class="col-12">
+                      <h6>About the Company</h6>
+                      <p><strong>Overview:</strong> {{ job.company_overview }}</p>
+                      <p><strong>Why Join Us:</strong> {{ job.why_join_us }}</p>
+                      <p><strong>Reviews:</strong> {{ job.company_reviews }}</p>
+                      <p class="text-muted"><small>Posted on {{ job.created_at|date:"M d, Y" }}</small></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+      
+      {% endfor %}
+    {% endif %}
+  
+    <!-- Include Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Function to toggle dropdown checkbox visibility and update button label
+      function toggleDropdown(id, defaultText) {
+        var dropdown = document.getElementById(id);
+        dropdown.classList.toggle('active');
+        updateDropdownLabel(id, defaultText);
+      }
+  
+      function updateDropdownLabel(dropdownId, defaultText) {
+        var dropdown = document.getElementById(dropdownId);
+        var checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+        var selected = [];
+        checkboxes.forEach(function(checkbox) {
+          if (checkbox.checked) {
+            var labelText = checkbox.parentElement.textContent.trim();
+            selected.push(labelText);
+          }
+        });
+        var button = dropdown.querySelector('button');
+        if (selected.length > 0) {
+          button.textContent = selected.join(', ');
+        } else {
+          button.textContent = defaultText;
+        }
+      }
+  
+      // Attach event listeners to update dropdown labels when a checkbox is changed
+      document.querySelectorAll('.dropdown-checkbox').forEach(function(dropdown) {
+        var defaultText = dropdown.querySelector('button').getAttribute('data-default') || dropdown.querySelector('button').textContent;
+        dropdown.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+          checkbox.addEventListener('change', function() {
+            updateDropdownLabel(dropdown.id, defaultText);
+          });
+        });
+      });
+  
+      // Update salary range display when slider changes
+      const salaryRangeSlider = document.getElementById('salary_range_slider');
+      const salaryDisplay = document.getElementById('salaryRangeDisplay');
+      if (salaryRangeSlider && salaryDisplay) {
+        salaryRangeSlider.addEventListener('input', function() {
+          salaryDisplay.textContent = 'Salary: ' + salaryRangeSlider.value + ' GBP';
+        });
+      }
+  
+      // Set Price button functionality for salary range
+      document.getElementById('setPriceButton').addEventListener('click', function() {
+        var slider = document.getElementById('salary_range_slider');
+        var hiddenInput = document.getElementById('salary_range');
+        hiddenInput.value = slider.value;
+      });
+  
+      //Unset Price button functionality for salary range
+      document.getElementById('unsetPriceButton').addEventListener('click', function() {
+        var slider = document.getElementById('salary_range_slider');
+        var hiddenInput = document.getElementById('salary_range');
+        hiddenInput.value = '';
+      });
+  
+  
+  
+    </script>
+
+    
+</body>
+</html>
+{% endblock %}
