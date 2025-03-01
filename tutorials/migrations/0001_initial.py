@@ -81,6 +81,14 @@ class Migration(migrations.Migration):
                 ('rating', models.PositiveIntegerField(default=1)),
             ],
         ),
+        migrations.CreateModel(
+            name='CustomUser',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('text', models.TextField(max_length=2000)),
+                ('rating', models.PositiveIntegerField(default=1)),
+            ],
+        ),
         migrations.AddConstraint(
             model_name='review',
             constraint=models.CheckConstraint(check=models.Q(('rating__gte', 1), ('rating__lte', 5)), name='rating_range'),

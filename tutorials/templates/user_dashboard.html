@@ -15,8 +15,10 @@
   <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
 </head>
 <body>
+  <script id="current-user" type="application/json">
+    {{ user_info_json|safe }}
+  </script>
   <div id="app"></div>
-
   <script src="{% static 'js/user_dashboard.js' %}"></script>
 </body>
 </html>
