@@ -2,18 +2,9 @@ from django.db import models
 from django.core.validators import FileExtensionValidator, MinLengthValidator, MaxLengthValidator
 from django.core.exceptions import ValidationError
 import os
-from django.db import models
-from django.core.validators import FileExtensionValidator
-from django.core.exceptions import ValidationError
-import os
 from transformers import pipeline
-import fitz
-import os
 import fitz  # PyMuPDF
-import json
 import spacy
-import re
-from django.db import models
 
 # Validate file size
 def validate_file_size(value):
