@@ -35,8 +35,7 @@ class JobPosting(models.Model):
             ('on_site', 'On-site'),
         ]
     )
-    salary_range = models.CharField(
-        max_length=100,
+    salary_range = models.PositiveIntegerField(
         blank=True,
         null=True,
         help_text="Salary offered for the job."

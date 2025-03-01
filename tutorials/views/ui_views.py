@@ -37,6 +37,7 @@ def user_dashboard(request):
     return render(request, 'user_dashboard.html')
 
 def search(request):
+    query = request.GET.get('q', '')
     industries = [
         "business", "management", "sales", "marketing", "technology", "internship",
         "software-development", "engineering", "design", "industry", "finance",
@@ -109,6 +110,14 @@ def search(request):
         'industries': industries,
         'job_types': job_types,
     }
+
+    print("Query:", query)
+    print("Selected job types:", selected_job_types)
+    print("Job postings count before filtering:", JobPosting.objects.count())
+
+    if query:
+        job_postings = job_postings.filter(job_title__icontains=query)
+        print("Count after query filter:", job_postings.count())
     return render(request, 'search.html', context)
 
 def about_us(request):

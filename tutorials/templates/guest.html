@@ -6,10 +6,16 @@
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 
 <div class="container">
-    <div class="search-bar">
-        <input type="text" placeholder="What are you looking for today?">
-        <button>Search</button>
-    </div>
+    <div class="search-bar" style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+        <form action="{% url 'search' %}" method="GET" style="display: flex; align-items: center;">
+          <input type="text" name="q" placeholder="What are you looking for today?" value="{{ query|default:'' }}" 
+                 style="padding: 15px; font-size: 1.25rem; border: 2px solid var(--border-color); border-radius: 25px; width: 600px; max-width: 600px;">
+          <button type="submit" 
+                  style="padding: 15px 30px; font-size: 1.25rem; border-radius: 25px; background-color: var(--primary-color); color: white; border: none; margin-left: 10px;">
+            Search
+          </button>
+        </form>
+      </div>
 
     <div id="who-are-we" class="info-section">
         <h2>Who Are We</h2>
