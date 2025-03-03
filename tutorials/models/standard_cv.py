@@ -5,6 +5,8 @@ import os
 from transformers import pipeline
 import fitz  # PyMuPDF
 import spacy
+import re
+from django.core.files import File
 
 # Validate file size
 def validate_file_size(value):
@@ -90,8 +92,8 @@ def validate_file_size(value):
         raise ValidationError('File size must be less than 1MB.')
 
 # Load NLP model
-nlp = spacy.load("en_core_web_sm")  # Pre-trained model for entity recognition
-summarizer = pipeline("summarization", model="t5-small", tokenizer="t5-small")
+nlp = spacy.load("en_core_web_sm") 
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn", tokenizer="facebook/bart-large-cnn")
 
 # Extract text from PDF
 def extract_text_from_pdf(pdf_file):
@@ -158,6 +160,24 @@ def summarize_sections(sections):
             summarized_sections[key] = ""
 
     return summarized_sections
+
+def clean_text(text):
+    # Remove email addresses
+    text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', '', text)
+    
+    # Remove URLs
+    text = re.sub(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', '', text)
+    
+    # Remove unwanted special characters or digits
+    text = re.sub(r'[^A-Za-z\s]', '', text)
+    
+    # Remove extra spaces
+    text = re.sub(r'\s+', ' ', text)
+    
+    # Strip leading/trailing whitespace
+    text = text.strip()
+    
+    return text
 
 # Django Model
 class CV(models.Model):
