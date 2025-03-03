@@ -2,6 +2,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import random
+import string
 
 class CustomUser(AbstractUser):
     # Common field already provided by AbstractUser:
@@ -23,10 +24,11 @@ class CustomUser(AbstractUser):
     unique_id = models.CharField(max_length=8, unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # For company accounts, generate a unique 8-digit ID if not already set.
+        # For company accounts, generate a unique 8-character code if not already set.
         if self.is_company and not self.unique_id:
+            allowed = string.ascii_uppercase + string.digits + "!@#$%^&*()"
             while True:
-                new_id = str(random.randint(10000000, 99999999))
+                new_id = ''.join(random.choices(allowed, k=8))
                 if not CustomUser.objects.filter(unique_id=new_id).exists():
                     self.unique_id = new_id
                     break

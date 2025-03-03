@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Submitted - Job Search Platform</title>
+  <link rel="stylesheet" href="{% static 'css/application.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Job Search Platform</h1>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+      </nav>
+    </header>
+    
+    <div class="application-container">
+      <div class="application-header">
+        <h2>Application Submitted</h2>
+      </div>
+      
+      <div class="success-container">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <h2>Thank You!</h2>
+        <p>Your application has been successfully submitted.</p>
+        
+        <p>Your unique application ID is:</p>
+        <div class="application-id">ABC123XYZ</div>
+        
+        <p>Please save this ID for future reference. You can use it to check the status of your application.</p>
+        
+        <p>We will review your application and get back to you soon.</p>
+        
+        <div style="margin-top: 30px;">
+          <a href="/" class="btn">Return to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -6,7 +6,8 @@ import string
 from django.core.management.base import BaseCommand
 from tutorials.models.jobposting import JobPosting
 import faker
-from tutorials.models.accounts import User,Company
+from tutorials.models.accounts import CustomUser as User, CompanyUser as Company, CustomUser
+
 from phonenumbers import parse, is_possible_number, is_valid_number, PhoneNumberFormat, format_number
 
 
@@ -316,25 +317,29 @@ def fetch_adzuna_jobs():
                     details = generate_roles_and_skills(category)
            
 
-                    # Ensure company account exists or create one
-                    company, created = Company.objects.get_or_create(
-                        company_name=company_name,
-                        defaults={
-                            "email": generate_unique_email(company_name),
-                            "password": fake.password(),
-                            "industry": category.capitalize(),
-                            "phone": job.get("phone_number", fake.phone_number()),
-                            "unique_id":generate_unique_company_id()  # Assigning the generated unique code
-    
-                        }
-                    )
+                    # Look up any companies with this name
+                    companies = Company.objects.filter(company_name=company_name)
+                    if companies.exists():
+                        company = companies.first()
+                        created = False
+                    else:
+                        company = Company.objects.create(
+                            username=generate_unique_company_username(company_name),
+                            email=generate_unique_email(company_name),
+                            password=fake.password(),
+                            industry=category.capitalize(),
+                            phone=job.get("phone_number", fake.phone_number()),
+                            unique_id=generate_unique_company_id(),
+                        )
+                        created = True
+
                     
 
                     job_list.append({
                         "job_title": job_title,
                         "company_name": job.get("company", {}).get("display_name", "Unknown Company"),
                         "location": job.get("location", {}).get("display_name", "Remote"),
-                        "salary_range": f"{random.randint(23000 // 1000, 100000 // 1000) * 1000} GBP",
+                        "salary_range": random.randint(23000 // 1000, 100000 // 1000) * 1000,
                         "job_overview": job.get("description", "No description available."),
                         "roles_responsibilities": details["roles_responsibilities"],
                         "required_skills": details["required_skills"],
@@ -380,8 +385,8 @@ def generate_clean_phone_number():
 def generate_unique_company_id():
     """Generate a unique 5-character alphanumeric code for a company."""
     while True:
-        # Generate a random 5-character code (letters and digits)
-        id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        # Generate a random 8-character code (letters and digits)
+        id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
         # Ensure it's unique by checking the database
         if not Company.objects.filter(unique_id=id).exists():
@@ -401,6 +406,18 @@ def generate_unique_email(company_name):
         counter += 1
 
     return unique_email
+
+def generate_unique_company_username(company_name):
+    base_username = company_name.replace(" ", "").lower()
+    username = base_username
+    counter = 1
+    while Company.objects.filter(username=username).exists():
+         username = f"{base_username}{counter}"
+         counter += 1
+    return username
+
+
+
 # Django Command
 class Command(BaseCommand):
     help = "Fetches 150 job postings from Adzuna API and saves them to the database."
@@ -464,6 +481,7 @@ class Command(BaseCommand):
         """Seed the User model with dummy data."""
         for _ in range(count):  # ✅ This should loop correctly
             email = fake.unique.email()  # Ensure unique email
+            username = generate_unique_company_username(email)
             user, created = User.objects.get_or_create(
                 email=email,
                 defaults={
@@ -471,6 +489,8 @@ class Command(BaseCommand):
                     "last_name": fake.last_name(),
                     "phone": fake.phone_number(),
                     "password": fake.password(length=10),
+                    "username": username,
+                    
                 }
             )
             if created:
@@ -484,6 +504,7 @@ class Command(BaseCommand):
         job_count = 0
 
         job_postings = fetch_adzuna_jobs()
+      
         for job in job_postings:
             try:
                 JobPosting.objects.create(
@@ -504,8 +525,8 @@ class Command(BaseCommand):
                     why_join_us=random.choice(WHY_JOIN_US_OPTIONS),
                     company_reviews=round(random.uniform(3.5, 5.0), 1),
                     child_company_name="",
-                    required_documents="Updated CV",
                     
+                    required_documents="Updated CV",
 
                  )
                 job_count += 1
