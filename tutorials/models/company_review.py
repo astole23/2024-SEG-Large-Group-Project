@@ -11,3 +11,4 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review ({self.rating}/5): {self.text[:50]}"  # Show a preview of the review
+
