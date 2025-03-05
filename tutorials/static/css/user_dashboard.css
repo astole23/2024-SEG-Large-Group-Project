@@ -9,6 +9,8 @@
   --text-secondary: #64748b;
   --danger-color: #ef4444;
   --modal-overlay: rgba(0, 0, 0, 0.5);
+  --font-primary: 'Inter', sans-serif;
+  --font-secondary: 'Arial', sans-serif;
 }
 
 * {
@@ -27,7 +29,7 @@ body {
 /* Main Content */
 .dashboard {
   max-width: 1200px;
-  margin: 2rem auto;
+  margin: 2rem auto; 
   padding: 0 2rem;
   display: grid;
   grid-template-columns: 1fr 300px;

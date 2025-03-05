@@ -11,6 +11,8 @@
     --text-secondary: #64748b;
     --danger-color: #ef4444;
     --modal-overlay: rgba(0, 0, 0, 0.5);
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
   }
   
   * {
