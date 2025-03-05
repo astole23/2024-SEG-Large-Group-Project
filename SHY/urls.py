@@ -39,12 +39,24 @@ urlpatterns = [
     path('settings/', ui_views.profile_settings, name='settings'),
     path('your-job-posting-endpoint/', ui_views.create_job_posting, name='create_job_posting'),
     path('company/<int:company_id>/add_job/', ui_views.create_job_posting, name='add_job_listing'),
+    path('apply/start/<int:job_posting_id>/', ui_views.start_application, name='start_application'),
     path('apply/step1/', ui_views.apply_step1, name='apply_step1'),
     path('apply/step2/', ui_views.apply_step2, name='apply_step2'),
     path('apply/step3/', ui_views.apply_step3, name='apply_step3'),
     path('apply/step4/', ui_views.apply_step4, name='apply_step4'),
     path('apply/success/', ui_views.application_success, name='application_success'),
+    path('notifications/', ui_views.notifications, name='notifications'),
+    path('notifications/mark_read/<int:notification_id>/', ui_views.mark_notification_read, name='mark_notification_read'),
+    # User applications
+    path('user/applications/', ui_views.user_applications, name='user_applications'),
+    path('user/applications/<int:application_id>/', ui_views.user_application_detail, name='user_application_detail'),
 
+    # Company applications
+    path('company/applications/', ui_views.company_applications, name='company_applications'),
+    path('company/applications/<int:application_id>/', ui_views.company_application_detail, name='company_application_detail'),
+    path('company/applications/update/<int:application_id>/<str:new_status>/', ui_views.update_application_status, name='update_application_status'),
+
+    path('api/job_postings/', ui_views.job_postings_api, name='job_postings_api'),
 ]
 
 if settings.DEBUG:
