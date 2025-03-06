@@ -20,23 +20,37 @@
     padding: 0;
     box-sizing: border-box;
   }
-  
-  .body {
+
+  /* Ensure html and body occupy full viewport height */
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  /* Apply flex layout directly to the body */
+  body {
+    display: flex;
+    flex-direction: column;
     font-family: Inter, system-ui, sans-serif;
     background-color: var(--background-color);
     color: var(--text-primary);
     line-height: 1.5;
-    overflow: hidden;
-    padding-top: 0;    
+  }
+
+  /* Wrapper container that holds main content and footer */
+  .wrapper {
     display: flex;
     flex-direction: column;
     margin: 0;
     height: 100vh;
+    flex: 1;  /* This makes the wrapper fill the remaining space */
   }
 
+  /* Main content area which will expand as needed */
   .main-content {
     flex: 1;
   }
+
 
   /* Header and Navigation */
   .top-nav {
