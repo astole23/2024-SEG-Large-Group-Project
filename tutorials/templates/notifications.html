@@ -1,4 +1,8 @@
+{% extends 'base_content.html' %}
+
 {% load static %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,16 +10,11 @@
   <title>Your Notifications - Job Search Platform</title>
   <link rel="stylesheet" href="{% static 'css/application.css' %}">
 </head>
+
+{% block content %}
+
 <body>
   <div class="container">
-    <header>
-      <h1>Job Search Platform</h1>
-      <nav>
-        <a href="/">Home</a>
-        <a href="/logout">Logout</a>
-        <a href="{% url 'user_dashboard' %}">Dashboard</a>
-      </nav>
-    </header>
     <h2>Your Notifications</h2>
     <div class="notifications-list">
       {% if notifications %}
@@ -63,3 +62,5 @@
   </script>
 </body>
 </html>
+
+{% endblock %}
