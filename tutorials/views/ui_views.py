@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime
@@ -28,14 +28,20 @@ CustomUser = get_user_model()
 @login_required
 def employer_dashboard(request):
     # Only allow company users
+    """
     if not request.user.is_company:
         messages.error(request, "Access restricted to company accounts only.")
         return redirect('login')  
-    
+    """
     # Filter job postings by the logged-in company
     job_postings = JobPosting.objects.filter(company=request.user).order_by('-created_at')
     return render(request, 'employer_dashboard.html', {'job_postings': job_postings})
 
+def user_logout(request):
+    # Log the user out
+    logout(request)
+    # Redirect them to the homepage or login page
+    return redirect('/')
 
 
 def contact_us(request):
