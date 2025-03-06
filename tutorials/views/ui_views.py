@@ -162,6 +162,9 @@ def search(request):
 def about_us(request):
     return render(request, 'about_us.html')
 
+def my_jobs(request):
+    return render(request, 'my_jobs.html')
+
 def profile_settings(request):
     return render(request, 'settings.html')
 
@@ -224,6 +227,7 @@ def edit_company(request, company_id):
             'message': 'Company details updated!'
         })
     return render(request, 'edit_company.html', {'company': company})
+
 
 
 

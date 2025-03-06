@@ -1,0 +1,110 @@
+:root {
+    --primary-color: #462191;
+    --secondary-color: #475569;
+    --tertiary-color: #4621918e;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    padding-top: 80px;
+    padding-bottom: 50px;
+}
+
+/* Progress Bar */
+.progress-container {
+    margin: 20px 0 30px;
+}
+
+.progress-bar {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 30px;
+    counter-reset: step;
+}
+
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 4px;
+    width: 100%;
+    background-color: #e0e0e0;
+    z-index: 1;
+}
+
+.progress-step {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+}
+
+/* New checkbox style replacing the circles */
+.step-checkbox {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 10px; /* center and add spacing below */
+    display: block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid #ccc;
+    border-radius: 50%;  /* circle shape; change to 3px if you want square checkboxes */
+    outline: none;
+    cursor: default;
+}
+
+/* Active (current) step */
+.progress-step.active .step-checkbox:checked,
+.step-checkbox:checked {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+/* Completed step */
+.progress-step.completed .step-checkbox:checked {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+.step-text {
+    font-size: 14px;
+    color: #7f8c8d;
+    text-align: center;
+}
+
+.progress-step.active .step-text {
+    color: #3498db;
+    font-weight: bold;
+}
+
+.progress-step.completed .step-text {
+    color: #2ecc71;
+}

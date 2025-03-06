@@ -58,6 +58,8 @@ urlpatterns = [
     path('company/applications/update/<int:application_id>/<str:new_status>/', ui_views.update_application_status, name='update_application_status'),
 
     path('api/job_postings/', ui_views.job_postings_api, name='job_postings_api'),
+    path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
+
 ]
 
 if settings.DEBUG:
