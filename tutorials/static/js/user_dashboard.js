@@ -78,13 +78,22 @@ const mockJobs = [
   function createDashboard() {
     const logoUrl = STATIC_URL + "images/SHY_small.png";
     // Default fallback if user_info is empty
-    let userInfo = { full_name: "John Doe" };
+    let userInfo = { full_name: "John Doe", profile_pic: "https://i.pravatar.cc/128" };
+
 
     // Grab the script tag with id="current-user"
     const userInfoScript = document.getElementById('current-user');
     if (userInfoScript) {
       // Parse its text content as JSON
       userInfo = JSON.parse(userInfoScript.textContent);
+    }
+
+    // Update profile picture in dashboard
+    document.querySelector('.profile-picture img').src = userInfo.profile_pic;
+
+    const navProfilePic = document.getElementById('nav-profile-pic');
+    if (navProfilePic) {
+        navProfilePic.src = userInfo.profile_pic;
     }
 
     const app = document.querySelector('#app');

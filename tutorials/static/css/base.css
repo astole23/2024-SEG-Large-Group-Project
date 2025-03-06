@@ -36,7 +36,6 @@
 
   .main-content {
     flex: 1;
-    padding-top: 0;
   }
 
   /* Header and Navigation */
@@ -99,6 +98,14 @@
     background: rgba(0, 0, 0, 0.05);  /* Slightly darker hover effect */
     border-radius: 5px;
   }
+
+  .nav-profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
 
   /* FOOTER */
   .footer {
