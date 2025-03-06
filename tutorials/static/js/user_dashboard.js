@@ -160,12 +160,7 @@ const mockJobs = [
       userInfo = JSON.parse(userInfoScript.textContent);
     }
 
-    
-
-    const navProfilePic = document.getElementById('nav-profile-pic');
-    if (navProfilePic) {
-        navProfilePic.src = userInfo.profile_pic;
-    }
+  
 
     const app = document.querySelector('#app');
     app.innerHTML = `
@@ -510,9 +505,6 @@ const mockJobs = [
         </div>
       </div>
     `;
-
-    // Update profile picture in dashboard
-    document.querySelector('.profile-picture img').src = userInfo.profile_pic;
 
     fetchJobPostings().then(jobs => {
       renderJobListings(jobs);
