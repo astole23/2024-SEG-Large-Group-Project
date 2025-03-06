@@ -133,6 +133,7 @@ textarea {
 
 /* Progress Bar */
 .progress-container {
+    margin-top: 20px;
     margin-bottom: 30px;
 }
 

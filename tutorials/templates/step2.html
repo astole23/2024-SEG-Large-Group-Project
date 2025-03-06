@@ -12,6 +12,7 @@
     <h1>Personal Information</h1>
     
     <form action="/apply/step2/" method="post">
+      {% csrf_token %}
       <!-- Contact Information -->
       <div class="application-section">
         <h3>Contact Information</h3>
@@ -129,9 +130,7 @@
 
       <div class="application-footer">
         <a href="/apply/step1/" class="btn btn-secondary">Back</a>
-        <a href="/apply/step3/" class="btn btn-secondary">Continue</a>
-        <!-- If you prefer a single form submission, replace the above link with a real button:
-             <button type="submit" class="btn">Continue</button> -->
+        <button type="submit" class="btn">Continue</button> 
       </div>
     </form>
   </div>
