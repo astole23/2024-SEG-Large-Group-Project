@@ -45,7 +45,8 @@
       </div>
       
       <div class="application-content">
-        <form action="/apply/step3" method="post">
+        <form action="/apply/step3/" method="post">
+          {% csrf_token %}
           <div class="application-section">
             <h3>Job Specific Questions</h3>
           </div>
@@ -135,8 +136,7 @@
           
           <div class="application-footer">
             <a href="/apply/step2/" class="btn btn-secondary">Back</a>
-            <a href="/apply/step4/" class="btn btn-secondary">Continue</a>
-            <!-- <button type="submit" class="btn">Continue to Review</button> -->
+            <button type="submit" class="btn">Continue to Review</button>
           </div>
         </form>
       </div>

@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from tutorials.models.jobposting import JobPosting
+from tutorials.models.applications import JobApplication, Notification
+
 
 CustomUser = get_user_model()
 
@@ -73,3 +75,7 @@ class UserAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         # Only show users that are not companies.
         return qs.filter(is_company=False)
+
+
+admin.site.register(JobApplication)
+admin.site.register(Notification)

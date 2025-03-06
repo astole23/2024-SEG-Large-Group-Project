@@ -74,6 +74,76 @@ const mockJobs = [
       equalOpportunities: 'Prefer not to say'
     }
   };
+
+  // Function to fetch job postings from the API (or use a fallback)
+  function fetchJobPostings() {
+    // If you have an API endpoint, use it. Otherwise, fall back to mock data.
+    return fetch('/api/job_postings/')
+      .then(response => response.json())
+      .catch(error => {
+        console.error('Error fetching job postings:', error);
+        // Fallback: use the existing mockJobs data
+        return [
+          { id: 1, job_title: 'React Developer', company_name: 'Apple', location: 'Cupertino, CA', salary_range: '$120k - $180k', contract_type: 'Full-time', job_overview: 'Develop user interfaces...', roles_responsibilities: 'Build components, debug code...', required_skills: 'React, JavaScript' },
+          { id: 2, job_title: 'Frontend Engineer', company_name: 'Meta', location: 'Remote', salary_range: '$130k - $190k', contract_type: 'Contract', job_overview: 'Design modern web apps...', roles_responsibilities: 'UI design, testing...', required_skills: 'HTML, CSS, JS' },
+          { id: 3, job_title: 'Full Stack Developer', company_name: 'Amazon', location: 'Seattle, WA', salary_range: '$140k - $200k', contract_type: 'Full-time', job_overview: 'Work across the stack...', roles_responsibilities: 'API design, integration...', required_skills: 'Python, React, SQL' }
+        ];
+      });
+  }
+
+  function renderJobListings(jobs) {
+    const listingsContainer = document.getElementById('temporary-job-listings-container');
+    listingsContainer.innerHTML = ''; // Clear any existing content
+
+    jobs.forEach(job => {
+      // Create a job card similar to the employer grid
+      const card = document.createElement('div');
+      card.className = 'job-card';
+      card.innerHTML = `
+        <h5 class="job-title">${job.job_title}</h5>
+        <p class="company-name">${job.company_name}</p>
+        <p class="location"><span>📍</span> ${job.location}</p>
+        <p class="pay-contract">${job.salary_range} | ${job.contract_type}</p>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
+          View &amp; Apply
+        </button>
+      `;
+      listingsContainer.appendChild(card);
+
+      // Create a corresponding modal for job details
+      const modalDiv = document.createElement('div');
+      modalDiv.className = 'modal fade';
+      modalDiv.id = `jobModal${job.id}`;
+      modalDiv.tabIndex = -1;
+      modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
+      modalDiv.setAttribute('aria-hidden', 'true');
+      modalDiv.innerHTML = `
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+          <div class="modal-content">
+            <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+              <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Company:</strong> ${job.company_name}</p>
+              <p><strong>Location:</strong> ${job.location}</p>
+              <p><strong>Salary:</strong> ${job.salary_range}</p>
+              <p><strong>Contract:</strong> ${job.contract_type}</p>
+              <p><strong>Job Overview:</strong> ${job.job_overview}</p>
+              <p><strong>Roles &amp; Responsibilities:</strong> ${job.roles_responsibilities}</p>
+              <p><strong>Required Skills:</strong> ${job.required_skills}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
+            </div>
+          </div>
+        </div>
+      `;
+      // Append modal to body (or another container outside the dashboard if preferred)
+      document.body.appendChild(modalDiv);
+    });
+  }
   
   function createDashboard() {
     const logoUrl = STATIC_URL + "images/SHY_small.png";
@@ -111,7 +181,12 @@ const mockJobs = [
         </div>
         <div class="user-actions">
           <button id="signOutBtn" class="btn signout-btn">Sign Out</button>
-          <span>🔔</span>
+          <div class="notifications-dropdown">
+            <a href="/notifications/" id="notifications-icon">
+              <i class="fas fa-bell"></i>
+              <span id="unread-count">${unreadCount}</span>
+            </a>
+          </div>
           <span>👤</span>
         </div>
       </nav>
@@ -276,9 +351,17 @@ const mockJobs = [
           <div class="quick-actions">
             <button class="btn btn-primary">Update CV</button>
             <button class="btn btn-outline">Browse Jobs</button>
+            <button class="btn btn-outline" id="viewApplicationsBtn">My Applications</button>
+
           </div>
         </aside>
       </div>
+
+      <!-- Temporary section for testing available job listings -->
+      <section class="temporary-job-listings">
+        <h2>Available Job Listings (Temporary)</h2>
+        <div id="temporary-job-listings-container"></div>
+      </section>
   
       <!-- CV Edit Modal -->
       <div id="cvModal" class="modal">
@@ -426,6 +509,10 @@ const mockJobs = [
         </div>
       </div>
     `;
+
+    fetchJobPostings().then(jobs => {
+      renderJobListings(jobs);
+    });
   
     // Populate suggested jobs
     const suggestedJobsContainer = document.getElementById('suggested-jobs');
@@ -449,7 +536,14 @@ const mockJobs = [
       
       window.location.href = '/';
     });
-  
+
+    const viewApplicationsBtn = document.getElementById('viewApplicationsBtn');
+    if (viewApplicationsBtn) {
+        viewApplicationsBtn.addEventListener('click', () => {
+            window.location.href = '/user/applications/';
+        });
+    }
+
     // CV section toggle functionality
     const cvToggle = document.getElementById('cvToggle');
     const cvContent = document.getElementById('cvContent');
