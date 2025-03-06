@@ -146,6 +146,8 @@ const mockJobs = [
   }
   
   function createDashboard() {
+    console.log("Dashboard is loading");
+
     const logoUrl = STATIC_URL + "images/SHY_small.png";
     // Default fallback if user_info is empty
     let userInfo = { full_name: "John Doe", profile_pic: "https://i.pravatar.cc/128" };
@@ -158,8 +160,7 @@ const mockJobs = [
       userInfo = JSON.parse(userInfoScript.textContent);
     }
 
-    // Update profile picture in dashboard
-    document.querySelector('.profile-picture img').src = userInfo.profile_pic;
+    
 
     const navProfilePic = document.getElementById('nav-profile-pic');
     if (navProfilePic) {
@@ -509,6 +510,9 @@ const mockJobs = [
         </div>
       </div>
     `;
+
+    // Update profile picture in dashboard
+    document.querySelector('.profile-picture img').src = userInfo.profile_pic;
 
     fetchJobPostings().then(jobs => {
       renderJobListings(jobs);
