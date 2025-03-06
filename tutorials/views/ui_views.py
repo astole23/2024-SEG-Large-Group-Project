@@ -495,9 +495,14 @@ def application_success(request):
 
 @login_required
 def notifications(request):
-    # Retrieve notifications for the current user, ordered by most recent first.
     notifs = Notification.objects.filter(recipient=request.user).order_by('-created_at')
+    # If the request is AJAX or the URL includes ?format=json, return JSON
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('format') == 'json':
+         unread_count = notifs.filter(is_read=False).count()
+         return JsonResponse({'unread_count': unread_count})
+    # Otherwise, render the full notifications page
     return render(request, 'notifications.html', {'notifications': notifs})
+
 
 
 

@@ -148,7 +148,6 @@ const mockJobs = [
   function createDashboard() {
     console.log("Dashboard is loading");
 
-    const logoUrl = STATIC_URL + "images/SHY_small.png";
     // Default fallback if user_info is empty
     let userInfo = { full_name: "John Doe", profile_pic: "https://i.pravatar.cc/128" };
 
@@ -164,29 +163,6 @@ const mockJobs = [
 
     const app = document.querySelector('#app');
     app.innerHTML = `
-      <nav class="top-nav">
-        <div class="logo">
-          <a class="navbar-brand" href="/">
-            <img src="${logoUrl}" alt="SHY Logo" class="logo" style="max-height: 80px;">
-          </a>
-          <span>SHY</span>
-        </div>
-        <div class="search-container">
-          <span class="search-icon">🔍</span>
-          <input type="search" placeholder="Search jobs..." class="search-input">
-        </div>
-        <div class="user-actions">
-          <button id="signOutBtn" class="btn signout-btn">Sign Out</button>
-          <div class="notifications-dropdown">
-            <a href="/notifications/" id="notifications-icon">
-              <i class="fas fa-bell"></i>
-              <span id="unread-count">${unreadCount}</span>
-            </a>
-          </div>
-          <span>👤</span>
-        </div>
-      </nav>
-  
       <div class="dashboard">
         <main>
           <section class="profile-section">
@@ -527,12 +503,6 @@ const mockJobs = [
       suggestedJobsContainer.appendChild(jobElement);
     });
 
-    const signOutBtn = document.getElementById('signOutBtn');
-    signOutBtn.addEventListener('click', () => {
-      
-      window.location.href = '/';
-    });
-
     const viewApplicationsBtn = document.getElementById('viewApplicationsBtn');
     if (viewApplicationsBtn) {
         viewApplicationsBtn.addEventListener('click', () => {
@@ -716,12 +686,6 @@ const mockJobs = [
       if (file) {
         alert(`Document uploaded: ${file.name}`);
       }
-    });
-  
-    // Search functionality
-    const searchInput = document.querySelector('.search-input');
-    searchInput.addEventListener('input', (e) => {
-      console.log('Searching for:', e.target.value);
     });
   
     // Close modal when clicking outside
