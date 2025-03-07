@@ -54,7 +54,7 @@
   /* Header and Navigation */
   .top-nav {
     background:  white;
-    padding: 1rem 2rem;
+    padding: 0rem 1rem;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -111,7 +111,7 @@
     background: transparent;
     border: none;
     color: var(--text-primary);
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     cursor: pointer;
     padding: 0.5rem 1rem;
     transition: background 0.2s ease-in-out;
