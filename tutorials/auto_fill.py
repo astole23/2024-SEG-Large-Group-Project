@@ -22,14 +22,6 @@ def extract_text_from_pdf(pdf_file):
         text += page.get_text() + "\n"
     return text.strip()
 
-# Clean extracted text
-def clean_text(text):
-    text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', '', text)  # Remove emails
-    text = re.sub(r'http[s]?://[^\s]+', '', text)  # Remove URLs
-    text = re.sub(r'[^A-Za-z0-9\s,.-]', '', text)  # Remove special characters
-    text = re.sub(r'\s+', ' ', text).strip()  # Remove extra spaces
-    return text
-
 def classify_resume_with_together(text):
     prompt = f"""
     You are an AI trained to summarize resumes into clearly defined sections.
@@ -79,7 +71,6 @@ class CV(models.Model):
         if self.pdf_file:
             # Extract and clean text from the PDF
             pdf_text = extract_text_from_pdf(self.pdf_file.path)
-            pdf_text = clean_text(pdf_text)
             
             # Classify the resume text using Together AI
             structured_data = classify_resume_with_together(pdf_text)
