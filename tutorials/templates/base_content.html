@@ -2,9 +2,13 @@
 {% load static %}
 {% block body %}
 {% if user.is_authenticated %}
-    {% include 'partials/auth_navbar.html' %}
+  {% if user.is_company %}
+    {% include 'partials/company_navbar.html' %}
   {% else %}
-    {% include 'partials/navbar.html' %}
+    {% include 'partials/auth_navbar.html' %}
+  {% endif %}
+{% else %}
+  {% include 'partials/navbar.html' %}
 {% endif %}
 
   <div class="main-content" style="padding-top: 0;">
