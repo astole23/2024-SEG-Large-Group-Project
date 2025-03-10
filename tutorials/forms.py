@@ -4,6 +4,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from tutorials.models.jobposting import JobPosting
 from .models.company_review import Review
 
+
+
 User = get_user_model()
 
 # Form to edit or create a complete company profile (for company users)
@@ -90,10 +92,18 @@ class UserSignUpForm(UserCreationForm):
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control', 'placeholder': 'Confirm Password'
     }))
+    user_industry = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter industries (press Enter to add)'})
+    )
+    user_location = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter locations (press Enter to add)'})
+    )
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'user_industry', 'user_location')
 
 
 class CompanySignUpForm(UserCreationForm):

@@ -3,12 +3,20 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 import random
 import string
+import json
+
+
+
 
 class CustomUser(AbstractUser):
     # Common field already provided by AbstractUser:
     #   username, first_name, last_name, email, password, etc.
     
     phone = models.CharField(max_length=20, blank=True, null=True)
+    user_industry = models.JSONField(default=list, blank=True, null=True)  # Stores a list of industries
+    user_location = models.JSONField(default=list, blank=True, null=True)  # Sto
+    
+
     
     # If True, the account is for a company; if False, a regular user.
     is_company = models.BooleanField(default=False)
@@ -19,6 +27,7 @@ class CustomUser(AbstractUser):
     location = models.CharField(max_length=100, blank=True, null=True)
     logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+
     
     # Unique identifier for companies.
     unique_id = models.CharField(max_length=8, unique=True, blank=True, null=True)

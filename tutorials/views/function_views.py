@@ -55,6 +55,7 @@ def process_signup(request):
             form = CompanySignUpForm(request.POST, prefix='company')
             if form.is_valid():
                 form.save()
+                
                 messages.success(request, "Company registered successfully!")
                 return redirect("employer_dashboard")
             else:
@@ -64,7 +65,11 @@ def process_signup(request):
         elif user_type == "user":
             form = UserSignUpForm(request.POST, prefix='user')
             if form.is_valid():
+                user = form.save(commit=False)
+                user.user_industry = form.cleaned_data['user_industry']  # Store as JSON list
+                user.user_location = form.cleaned_data['user_location']
                 form.save()
+              
                 messages.success(request, "User registered successfully!")
                 return redirect("user_dashboard")
             else:
