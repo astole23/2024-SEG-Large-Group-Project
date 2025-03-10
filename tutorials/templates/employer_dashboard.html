@@ -35,7 +35,7 @@
     <div class="header">
       <div class="row">
         <div class="col-md-6">
-          <h4>Welcome *Company Name*</h4>
+          <h4>Welcome {{ user.company_name }}</h4>
         </div>
         <div class="col-md-6 text-end">
           <button class="btn btn-primary">Add New Post</button>
@@ -46,113 +46,114 @@
     <!-- Main Content: Job Posting Grid -->
     <div class="scrollable-section">
       <div class="grid-container">
-        {% for job in job_postings %}
-        <div class="grid-button">
-          <div class="job-details">
-            <h5 class="job-title">{{ job.job_title }}</h5>
-            <p class="company-name">{{ job.company_name }}</p>
-            <p class="location">{{ job.location }}</p>
-            <p class="pay-contract">{{ job.salary_range }} | {{ job.contract_type }}</p>
-            <p class="company-overview">{{ job.company_overview|truncatewords:10 }}</p>
-          </div>
-          <!-- Bigger View More Button -->
-          <button class="btn btn-secondary btn-lg mt-2" 
-                  data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">
-            View More
-          </button>
-        </div>
-        {% empty %}
-        <p>No job postings available.</p>
-        {% endfor %}
+        {% with user_jobs=job_postings|dictsort:'company_name' %}
+          {% if user_jobs %}
+            {% for job in user_jobs %}
+              {% if job.company_name == user.company_name %}
+                <div class="grid-button card shadow-sm p-3 mb-4">
+                  <h5>{{ job.job_title }}</h5>
+                  <p>{{ job.company_name }}</p>
+                  <p>{{ job.location }}</p>
+                  <p>{{ job.work_type }}</p>
+                  <p>{{ job.company_overview|truncatewords:10 }}</p>
+                  <button class="btn btn-secondary mt-2" data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">View More</button>
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">No job postings available.</p>
+          {% endif %}
+        {% endwith %}
       </div>
     </div>
-  </div>
 
 
   <!-- Modals: One per job posting -->
   {% for job in job_postings %}
-  <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-      <div class="modal-content">
-        <!-- Modal Header using primary color from your CSS variables -->
-        <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-          <h5 class="modal-title" id="jobModalLabel{{ job.id }}">{{ job.job_title }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
-        </div>
-        <div class="modal-body">
-          <div class="container-fluid">
-            <!-- Row 1: Basic Job Info -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <p><strong>Company:</strong> {{ job.company_name }}</p>
-                {% if job.child_company_name %}
-                <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
-                {% endif %}
-                <p><strong>Location:</strong> {{ job.location }}</p>
-                <p><strong>Work Type:</strong> {{ job.work_type }}</p>
-              </div>
-              <div class="col-md-6">
-                <p><strong>Salary:</strong> {{ job.salary_range }}</p>
-                <p><strong>Contract:</strong> {{ job.contract_type }}</p>
-                <p><strong>Deadline:</strong> {{ job.application_deadline }}</p>
+    {%if job.company_name == user.company_name %}
+      <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+          <div class="modal-content">
+            <!-- Modal Header using primary color from your CSS variables -->
+            <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+              <h5 class="modal-title" id="jobModalLabel{{ job.id }}">{{ job.job_title }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+            </div>
+            <div class="modal-body">
+              <div class="container-fluid">
+                <!-- Row 1: Basic Job Info -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <p><strong>Company:</strong> {{ job.company_name }}</p>
+                    {% if job.child_company_name %}
+                    <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                    {% endif %}
+                    <p><strong>Location:</strong> {{ job.location }}</p>
+                    <p><strong>Work Type:</strong> {{ job.work_type }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                    <p><strong>Contract:</strong> {{ job.contract_type }}</p>
+                    <p><strong>Deadline:</strong> {{ job.application_deadline }}</p>
+                  </div>
+                </div>
+                <hr>
+                <!-- Row 2: Job Overview and Responsibilities -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <h6>Job Overview</h6>
+                    <p>{{ job.job_overview }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <h6>Roles &amp; Responsibilities</h6>
+                    <p>{{ job.roles_responsibilities }}</p>
+                  </div>
+                </div>
+                <hr>
+                <!-- Row 3: Skills -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <h6>Required Skills</h6>
+                    <p>{{ job.required_skills }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <h6>Preferred Skills</h6>
+                    <p>{{ job.preferred_skills }}</p>
+                  </div>
+                </div>
+                <hr>
+                <!-- Row 4: Additional Details -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <h6>Education</h6>
+                    <p>{{ job.education_required }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <h6>Perks</h6>
+                    <p>{{ job.perks }}</p>
+                  </div>
+                </div>
+                <hr>
+                <!-- Row 5: Company Details -->
+                <div class="row">
+                  <div class="col-12">
+                    <h6>About the Company</h6>
+                    <p><strong>Overview:</strong> {{ job.company_overview }}</p>
+                    <p><strong>Why Join Us:</strong> {{ job.why_join_us }}</p>
+                    <p><strong>Reviews:</strong> {{ job.company_reviews }}</p>
+                    <p class="text-muted"><small>Posted on {{ job.created_at|date:"M d, Y" }}</small></p>
+                  </div>
+                </div>
               </div>
             </div>
-            <hr>
-            <!-- Row 2: Job Overview and Responsibilities -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <h6>Job Overview</h6>
-                <p>{{ job.job_overview }}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Roles &amp; Responsibilities</h6>
-                <p>{{ job.roles_responsibilities }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 3: Skills -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <h6>Required Skills</h6>
-                <p>{{ job.required_skills }}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Preferred Skills</h6>
-                <p>{{ job.preferred_skills }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 4: Additional Details -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <h6>Education</h6>
-                <p>{{ job.education_required }}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Perks</h6>
-                <p>{{ job.perks }}</p>
-              </div>
-            </div>
-            <hr>
-            <!-- Row 5: Company Details -->
-            <div class="row">
-              <div class="col-12">
-                <h6>About the Company</h6>
-                <p><strong>Overview:</strong> {{ job.company_overview }}</p>
-                <p><strong>Why Join Us:</strong> {{ job.why_join_us }}</p>
-                <p><strong>Reviews:</strong> {{ job.company_reviews }}</p>
-                <p class="text-muted"><small>Posted on {{ job.created_at|date:"M d, Y" }}</small></p>
-              </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
-        </div>
       </div>
-    </div>
-  </div>
+    {% endif %}
   {% endfor %}
 
 

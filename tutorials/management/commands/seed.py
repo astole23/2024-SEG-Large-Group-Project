@@ -14,25 +14,27 @@ from phonenumbers import parse, is_possible_number, is_valid_number, PhoneNumber
 #Already generated list of users
 user_fixtures = [
     {
-        'company_name': '@JohnLTD',
-        'email': 'johnLTD@example.org',
-        'industry': 'construction',
+        'username': 'JohnLTD',
+        'company_name': 'JohnLTD',
+        'email': 'johnltd@example.org',
+        'industry': 'Construction',
         'phone': '+447652567298',
+        'is_company': True,  # Ensures the unique_id is auto-generated in save()
         'user_type': 'company',
-        'password': 'password',
-        'unique_id' : '*****'
+        'password': 'password'
     },
     {
-        'username': '@janedoe',
+        'username': 'janedoe',
         'email': 'jane.doe@example.org',
         'first_name': 'Jane',
         'last_name': 'Doe',
         'phone': '+447866352809',
+        # For normal users, we don't set is_company or company-specific fields.
         'user_type': 'user',
         'password': 'password'
     },
     {
-        'username': '@admin',
+        'username': 'admin',
         'email': 'admin@example.org',
         'user_type': 'admin',
         'password': 'password'
@@ -425,58 +427,42 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.seed_users(100)  # Seed 100 users
         self.seed_jobs()      # Seed job postings
-        '''
-        for user_data in user_fixtures:
-            self.create_known_users(user_data)
-        self.stdout.write(self.style.SUCCESS("✅ Database seeding complete!"))
-        '''
+        self.create_known_users(user_fixtures)  # Create known users
 
-    '''
+    
     def create_known_users(self, data):
-        """Attempt to create a user and handle any exceptions."""
-        try:
-            if data['user_type'] == 'admin':
-                # Create a superuser if the user_type is admin
-                User.objects.create_superuser(
-                    username=data['username'],
-                    email=data['email'],
-                    password=data['password'],
-                    user_type=data['user_type']  
-                )
-                print(f"Superuser created: {data['username']}")
-            elif data['user_type'] == 'company':
-                # Create a company user
-                User.objects.create_user(
-                    company_name=data['company_name'],
-                    email=data['email'],
-                    industry=data['industry'],
-                    phone=data['phone'],
-                    password=data['password'],
-                    user_type=data['user_type'],
-                    unique_id=data['unique_id']
-                  
-                )
-                print(f"Company created: {data['username']}")
-            elif data['user_type'] == 'user':
-                # Create a regular user
-                User.objects.create_user(
-                    username=data['username'],
-                    email=data['email'],
-                    first_name=data['first_name'],
-                    last_name=data['last_name'],
-                    phone=data['phone'],
-                    password=data['password'],
-                    user_type=data['user_type']
-                )
-                print(f"User created: {data['username']}")
+        for fixture in user_fixtures:
+            user_type = fixture.pop('user_type', 'user')
+            raw_password = fixture.pop('password')
+            # Pop is_company if provided, defaulting to False for non-company accounts.
+            is_company = fixture.pop('is_company', False)
+
+            username = fixture.get('username')
+
+            # Create users based on their type.
+            if user_type == 'company':
+                # For company accounts, ensure the flag is set.
+                fixture['is_company'] = True
+                user, created = Company.objects.get_or_create(username=username, defaults=fixture)
+            elif user_type == 'admin':
+                # Admin accounts are created as CustomUser with superuser and staff flags.
+                fixture['is_company'] = False
+                user, created = CustomUser.objects.get_or_create(username=username, defaults=fixture)
+                if created:
+                    user.is_staff = True
+                    user.is_superuser = True
             else:
-                print(f"Invalid user type: {data['user_type']}")
-        except Exception as e:
-            print(f"Error creating user {data['username']}: {e}")
-            raise e  # Re-raise the error to prevent silent failures
+                # For normal users, ensure is_company remains False.
+                fixture['is_company'] = False
+                user, created = User.objects.get_or_create(username=username, defaults=fixture)
 
+            if created:
+                user.set_password(raw_password)
+                user.save()
+                self.stdout.write(self.style.SUCCESS(f"Created user: {username}"))
+            else:
+                self.stdout.write(self.style.WARNING(f"User already exists: {username}"))
 
-    '''
     def seed_users(self, count):
         """Seed the User model with dummy data."""
         for _ in range(count):  # ✅ This should loop correctly
