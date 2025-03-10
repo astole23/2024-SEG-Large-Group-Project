@@ -70,7 +70,13 @@ class CVApplication(models.Model):
         upload_to='uploads/cvs/', 
         validators=[FileExtensionValidator(['pdf']), validate_file_size]
     )
-    
+
+    # AI-Extracted Resume Data
+    structured_experience_education = models.TextField(blank=True, null=True)
+    structured_skills = models.TextField(blank=True, null=True)
+    structured_projects = models.TextField(blank=True, null=True)
+    structured_languages = models.TextField(blank=True, null=True)
+
     def save(self, *args, **kwargs):
         if not self.full_name:
             self.full_name = os.path.splitext(self.cv_file.name)[0]
@@ -78,3 +84,4 @@ class CVApplication(models.Model):
     
     def __str__(self):
         return self.full_name
+
