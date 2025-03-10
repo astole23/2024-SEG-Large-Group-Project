@@ -15,6 +15,7 @@ import certifi
 import ssl
 import smtplib
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -68,6 +69,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.csrf',
+                'tutorials.context_processors.notifications_processor',
             ],
         },
     },
@@ -138,5 +140,6 @@ DEFAULT_FROM_EMAIL = 'Shy platform  <halamankolch@gmail.com>'
 
 smtplib.SMTP_SSL.context = ssl.create_default_context(cafile=certifi.where()) 
 
-
+load_dotenv()
+TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
 

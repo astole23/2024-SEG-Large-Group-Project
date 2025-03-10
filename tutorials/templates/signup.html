@@ -16,7 +16,6 @@
       <div class="tab-content">
         <!-- Job Seeker Sign Up -->
         <div class="tab-pane active" id="user-tab">
-          <h2>Job Seeker Sign Up</h2>
           <form action="{% url 'process_signup' %}" method="post">
             {% csrf_token %}
             <!-- Hidden field to pass user type -->
@@ -75,7 +74,6 @@
         
         <!-- Company Sign Up -->
         <div class="tab-pane" id="company-tab">
-          <h2>Company Sign Up</h2>
           <form action="{% url 'process_signup' %}" method="post">
             {% csrf_token %}
             <!-- Hidden field to pass user type -->

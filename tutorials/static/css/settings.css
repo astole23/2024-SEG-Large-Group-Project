@@ -6,6 +6,8 @@
     --border-color: #e2e8f0;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
 }
 
 * {
@@ -28,4 +30,180 @@ body {
     flex: 1;
 }
 
-/* Antonio add ur styling here */
+
+/* Side Navigation Styling */
+.side-nav {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%); /* Center the menu vertically */
+    background-color: var(--primary-color);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    z-index: 1000;
+}
+
+.side-nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.side-nav ul li {
+    margin-bottom: 1rem;
+}
+
+.side-nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.side-nav ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding-left: 0.5rem;
+    border-radius: 5px;
+}
+
+/* General padding for all sections */
+.settings-background, .settings-content {
+    padding: 2rem;
+    margin-left: 220px; /* Adjust to provide space for the sidebar */
+}
+
+.settings-section {
+    background-color: var(--card-background);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem;
+}
+
+/* Account Settings Form */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+/* Privacy Management Section */
+.settings-section ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+.settings-section ul li {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Communication Settings */
+.form-check-input {
+    margin-left: 1rem;
+}
+
+/* General Text */
+.text-center {
+    text-align: center;
+}
+/* Spacer to push content below the navbar */
+.content-spacer {
+    height: 80px; /* Adjust this height based on your navbar height */
+}
+
+/* General padding for all sections */
+.settings-background, .settings-content {
+    padding: 2rem;
+    max-width: 800px; /* Limit the width of the settings content */
+    margin: 0 auto;
+    min-height: 100vh; /* Ensure it takes up the full height of the viewport */
+}
+
+.settings-section {
+    background-color: var(--card-background);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem; /* Space between sections */
+}
+
+/* Account Settings Form */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+/* Privacy Management Section */
+.settings-section ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+.settings-section ul li {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Communication Settings */
+.form-check-input {
+    margin-left: 1rem;
+}
+
+/* General Text */
+.text-center {
+    text-align: center;
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: #4b0082;
+    color: white;
+    padding: 1rem 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.navbar-nav {
+    display: flex;
+    gap: 1rem;
+}
+
+.navbar-nav .nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-nav .nav-link.active {
+    background-color: #6a0dad;
+}

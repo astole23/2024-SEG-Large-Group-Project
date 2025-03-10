@@ -1,4 +1,16 @@
 /* Global Styles */
+:root {
+    --primary-color: #462191;
+    --secondary-color: #475569;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -121,6 +133,7 @@ textarea {
 
 /* Progress Bar */
 .progress-container {
+    margin-top: 20px;
     margin-bottom: 30px;
 }
 

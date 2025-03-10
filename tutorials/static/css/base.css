@@ -11,6 +11,8 @@
     --text-secondary: #64748b;
     --danger-color: #ef4444;
     --modal-overlay: rgba(0, 0, 0, 0.5);
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
   }
   
   * {
@@ -18,24 +20,36 @@
     padding: 0;
     box-sizing: border-box;
   }
-  
-  .body {
+
+  /* Ensure html and body occupy full viewport height */
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  /* Apply flex layout directly to the body */
+  body {
+    display: flex;
+    flex-direction: column;
     font-family: Inter, system-ui, sans-serif;
     background-color: var(--background-color);
     color: var(--text-primary);
     line-height: 1.5;
-    overflow: hidden;
-    padding-top: 0;    
+  }
+
+  /* Wrapper container that holds main content and footer */
+  .wrapper {
     display: flex;
     flex-direction: column;
     margin: 0;
-    height: 100%;
+    max-height: 100vh;
   }
 
+  /* Main content area which will expand as needed */
   .main-content {
     flex: 1;
-    padding-top: 0;
   }
+
 
   /* Header and Navigation */
   .top-nav {
@@ -93,10 +107,28 @@
     transition: background 0.2s ease-in-out;
   }
 
+  .icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    transition: background 0.2s ease-in-out;
+  }
+
   .login-btn:hover {
     background: rgba(0, 0, 0, 0.05);  /* Slightly darker hover effect */
     border-radius: 5px;
   }
+
+  .nav-profile-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
 
   /* FOOTER */
   .footer {
@@ -135,3 +167,38 @@
     color: #666;
   }
   
+  /* Style the dropdown container */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Hide the dropdown content by default */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  z-index: 10;
+  right: 10%;
+}
+
+/* Style dropdown links */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Add hover effect for links */
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}

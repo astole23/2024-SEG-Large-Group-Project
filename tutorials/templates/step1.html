@@ -45,7 +45,8 @@
       </div>
       
       <div class="application-content">
-        <form action="/apply/step1" method="post">
+        <form action="/apply/step1/" method="post">
+          {% csrf_token %}
           <div class="application-section">
             <h3>Application Method</h3>
             <p>Please select how you would like to apply for this position:</p>
@@ -74,8 +75,7 @@
           
           <div class="application-footer">
             <a href="/user_dashboard/" class="btn btn-secondary">Cancel</a>
-            <a href="/apply/step2/" class="btn btn-secondary">Continue</a>
-            <!-- <button type="submit" class="btn">Continue to Personal Data</button> -->
+            <button type="submit" class="btn">Continue to Personal Data</button>
           </div>
         </form>
       </div>

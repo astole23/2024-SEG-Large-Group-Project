@@ -1,0 +1,121 @@
+:root {
+    --primary-color: #462191;
+    --secondary-color: #475569;
+    --tertiary-color: #4621918e;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    padding-top: 80px;
+    padding-bottom: 50px;
+}
+
+/* White container for the application */
+.application-container {
+    background-color: var(--card-background);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+/* Progress Bar Container with white background */
+.progress-container {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    position: relative;
+}
+
+/* Horizontal progress bar with a line across */
+.progress-bar {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    counter-reset: step;
+}
+
+/* Line running across the checkboxes */
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 4px;
+    width: 100%;
+    background-color: #e0e0e0;
+    z-index: 1;
+}
+
+.progress-step {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+}
+
+/* Custom checkbox style (circle) */
+.step-checkbox {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 10px; /* centers the checkbox and adds space below */
+    display: block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid #ccc;
+    border-radius: 50%; /* creates a circular shape */
+    outline: none;
+    cursor: pointer;
+}
+
+/* Checkbox checked state */
+.step-checkbox:checked {
+    background-color: var(--tertiary-color);
+    border-color: var(--tertiary-color);
+}
+
+/* Optional: different color for completed steps */
+.progress-step.completed .step-checkbox:checked {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+.step-text {
+    font-size: 14px;
+    color: #7f8c8d;
+    text-align: center;
+}
+
+.progress-step.completed .step-text {
+    color: #2ecc71;
+}

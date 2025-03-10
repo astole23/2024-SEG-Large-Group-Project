@@ -364,3 +364,5 @@ $RECYCLE.BIN/
 tutorials/templates/style.css
 tutorials/templates/style.css
 tutorials/templates/style.css
+
+.env

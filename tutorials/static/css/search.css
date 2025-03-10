@@ -6,6 +6,8 @@
     --border-color: #e2e8f0;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
 }
 
 * {

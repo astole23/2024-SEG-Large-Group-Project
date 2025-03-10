@@ -1,0 +1,35 @@
+{% extends 'base_content.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/my_jobs.css' %}">
+
+<div class="application-container">
+    <div class="application-header">
+      <h2>Track My Job Applications</h2>
+    </div>
+  
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-step active">
+          <input type="checkbox" class="step-checkbox">
+          <div class="step-text">Applied</div>
+        </div>
+        <div class="progress-step">
+          <input type="checkbox" class="step-checkbox">
+          <div class="step-text">Assesment</div>
+        </div>
+        <div class="progress-step">
+          <input type="checkbox" class="step-checkbox">
+          <div class="step-text">Interview</div>
+        </div>
+        <div class="progress-step">
+          <input type="checkbox" class="step-checkbox">
+          <div class="step-text">Job Offer</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}

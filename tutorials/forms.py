@@ -8,7 +8,9 @@ User = get_user_model()
 
 # Form to edit or create a complete company profile (for company users)
 class CompanyProfileForm(forms.ModelForm):
+    
     class Meta:
+        
         model = User
         # Include the fields specific to company profiles
         fields = ['company_name', 'industry', 'email', 'phone', 'location', 'logo', 'description']

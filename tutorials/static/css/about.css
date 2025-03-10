@@ -6,6 +6,8 @@
     --border-color: #e2e8f0;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
 }
 
 * {
@@ -30,7 +32,6 @@ body {
 
 /* Antonio add ur styling here */
 
-/*About Us*/
 .aboutbackground {
     margin-right: 0;
     padding: 40px 20px;
@@ -166,3 +167,4 @@ body {
 .photo-section p {
     margin-top: 2rem; /* Add margin on top of the text */
 }
+
