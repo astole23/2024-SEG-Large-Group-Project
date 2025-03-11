@@ -16,8 +16,6 @@ class JobPosting(models.Model):
         blank=True  # Allow form submissions without this field
     )
 
-
-    company_name = models.CharField(max_length=255, editable=False)
     
     child_company_name = models.CharField(
         max_length=255,

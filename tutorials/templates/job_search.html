@@ -1,35 +1,24 @@
+<!-- job_postings.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Postings</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-
-<div class="container mt-4">
-    <h1 class="mb-4">Job Postings</h1>
-
-    <!-- Display a message if no job postings are found -->
-    {% if job_postings %}
-        <div class="row">
-            {% for job in job_postings %}
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ job.title }}</h5>
-                            <p class="card-text"><strong>Location:</strong> {{ job.location }}</p>
-                            <p class="card-text"><strong>Industry:</strong> {{ job.industry }}</p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No matching job postings found.</p>
-    {% endif %}
-</div>
-
+    <h1>Job Postings</h1>
+    <ul>
+        {% for job in job_data %}
+            <li>
+                <strong>{{ job.job_title }}</strong><br>
+                <strong>Location:</strong> {{ job.job_location }}<br>
+                <strong>Company:</strong> {{ job.company_name }}<br>
+                <strong>Company Location:</strong> {{ job.company_location }}<br>
+                <hr>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

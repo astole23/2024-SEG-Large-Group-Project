@@ -11,7 +11,7 @@ CustomUser = get_user_model()
 class JobPostingAdmin(admin.ModelAdmin):
     list_display = (
         'job_title',
-        'company_name',
+        'company__company_name',
         'location',
         'salary_range',
         'contract_type',
@@ -20,11 +20,11 @@ class JobPostingAdmin(admin.ModelAdmin):
     list_filter = (
         'contract_type',
         'location',
-        'company_name',
+        'company__company_name',
     )
     search_fields = (
         'job_title',
-        'company_name',
+        'company__company_name',
         'location',
     )
     ordering = ('-application_deadline',)

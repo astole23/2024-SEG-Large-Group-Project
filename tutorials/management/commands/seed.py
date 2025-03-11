@@ -43,7 +43,6 @@ user_fixtures = [
 
 
 
-
 fake = faker.Faker()
 # Adzuna API credentials
 ADZUNA_APP_ID = "dac9af71"
@@ -317,23 +316,25 @@ def fetch_adzuna_jobs():
                     company_name = job.get("company", {}).get("display_name", "Unknown Company")
                     location = job.get("location", {}).get("display_name", "Remote")
                     details = generate_roles_and_skills(category)
-           
 
                     # Look up any companies with this name
                     companies = Company.objects.filter(company_name=company_name)
                     if companies.exists():
-                        company = companies.first()
+                        company = companies.first()  # Use existing company
                         created = False
                     else:
                         company = Company.objects.create(
                             username=generate_unique_company_username(company_name),
+                            company_name = company_name,
                             email=generate_unique_email(company_name),
                             password=fake.password(),
                             industry=category.capitalize(),
                             phone=job.get("phone_number", fake.phone_number()),
                             unique_id=generate_unique_company_id(),
+                            is_company = True
                         )
                         created = True
+                        print(f"✅ Created new company: {company.company_name}, Industry: {company.industry}, Email: {company.email}")
 
                     
 
@@ -491,36 +492,37 @@ class Command(BaseCommand):
 
         job_postings = fetch_adzuna_jobs()
       
-        for job in job_postings:
-            try:
-                JobPosting.objects.create(
-                    job_title=job["job_title"],
-                    company_name=job["company_name"],
-                    location=job["location"],
-                    salary_range=job["salary_range"],
-                    contract_type=random.choice(["Full-time", "Part-time", "Apprenticeship", "Internship"]),
-                    work_type=random.choice(["Remote", "Hybrid", "On-site"]),
-                    job_overview=job["job_overview"],
-                    education_required=random.choice(EDUCATION_OPTIONS),
-                    perks=", ".join(random.sample(PERKS_OPTIONS, k=random.randint(3, 9))),
-                    application_deadline=random.choice(APPLICATION_DEADLINE_OPTIONS),
-                    roles_responsibilities=job["roles_responsibilities"],
-                    required_skills=job["required_skills"],
-                    preferred_skills=job["preferred_skills"],
-                    company_overview=job["company_overview"],
-                    why_join_us=random.choice(WHY_JOIN_US_OPTIONS),
-                    company_reviews=round(random.uniform(3.5, 5.0), 1),
-                    child_company_name="",
+        existing_companies = User.objects.filter(is_company=True)
+
+# Check if there are any existing companies
+        if existing_companies.exists():
+            existing_companies_list = list(existing_companies)  # Convert queryset to list
+            for job in job_postings:
+                try:
+                    company = random.choice(existing_companies_list)  # Choose a random company
                     
-                    required_documents="Updated CV",
-
-                 )
-                job_count += 1
-                print(f"✅ Added: {job['job_title']} at {job['company_name']}")
-            except Exception as e:
-                print(f"❌ Error: {e}")
-            finally:
-                pass
-
-        self.stdout.write(self.style.SUCCESS(f"✅ Success : {job_count}"))
-    
+                    JobPosting.objects.create(
+                        job_title=job["job_title"],
+                        company=company,  
+                        location=job["location"],
+                        salary_range=job["salary_range"],
+                        contract_type=random.choice(["Full-time", "Part-time", "Apprenticeship", "Internship"]),
+                        work_type=random.choice(["Remote", "Hybrid", "On-site"]),
+                        job_overview=job["job_overview"],
+                        education_required=random.choice(EDUCATION_OPTIONS),
+                        perks=", ".join(random.sample(PERKS_OPTIONS, k=random.randint(3, 9))),
+                        application_deadline=random.choice(APPLICATION_DEADLINE_OPTIONS),
+                        roles_responsibilities=job["roles_responsibilities"],
+                        required_skills=job["required_skills"],
+                        preferred_skills=job["preferred_skills"],
+                        company_overview=random.choice(WHY_JOIN_US_OPTIONS),
+                        why_join_us=random.choice(WHY_JOIN_US_OPTIONS),
+                        company_reviews=round(random.uniform(3.5, 5.0), 1),
+                        required_documents="Updated CV",
+                    )
+                    job_count += 1
+                    print(f"✅ Added: {job['job_title']} at {company.company_name}")
+                except Exception as e:
+                    print(f"❌ Error: {e}")
+        else:
+            print("no companies")
