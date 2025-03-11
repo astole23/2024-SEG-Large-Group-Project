@@ -50,10 +50,10 @@ ADZUNA_APP_KEY = "0d149e6c79fe0dbc54e9bece78c8ff87"
 
 # Categories for diversified job fetching
 CATEGORIES = [
-    "business", "management", "sales", "marketing", "technology", "internship", "software-development",
-    "engineering", "design", "industry", "finance", "accounting", "healthcare",
+    "business", "management", "sales", "marketing", "technology", "software-development",
+    "engineering", "design", "finance", "accounting", "healthcare",
     "education", "legal", "customer-service", "retail", "hospitality", "construction",
-    "media", "logistics", "human-resources", "writing", "consulting", "ngo", "data-science",
+    "media", "logistics", "human-resources", "writing", "consulting",  "data-science",
 ]
 
 # Randomized options for fields
@@ -150,9 +150,9 @@ WHY_JOIN_US_OPTIONS = [
     "Help build a brighter future with a company that cares."
 ]
 
-# Function to generate roles, responsibilities, and skills based on job title
+    # Define pools for each category
 def generate_roles_and_skills(category):
-    #Generate roles, responsibilities, required skills, and preferred skills based on the category
+    # Generate roles, responsibilities, required skills, and preferred skills based on the category
 
     # Define pools for each category
     category_specific_data = {
@@ -179,6 +179,98 @@ def generate_roles_and_skills(category):
                 "Expertise in competitive market analysis",
             ],
         },
+        "management": {
+            "responsibilities": [
+                "Lead and motivate a team to achieve company objectives.",
+                "Develop and implement management strategies to improve performance.",
+                "Monitor and assess team performance, providing feedback as needed.",
+                "Manage budgets and allocate resources effectively.",
+                "Communicate company goals to all team members.",
+            ],
+            "required_skills": [
+                "Strong leadership and decision-making abilities",
+                "Excellent interpersonal and communication skills",
+                "Experience in project management",
+                "Ability to work under pressure and meet deadlines",
+                "Proficiency in management software (e.g., Asana, Trello)",
+            ],
+            "preferred_skills": [
+                "Master's degree in management or related field",
+                "Experience with Agile or Scrum methodologies",
+                "Familiarity with performance management tools",
+                "Knowledge of financial management and budgeting",
+                "Experience in conflict resolution and team building",
+            ],
+        },
+        "sales": {
+            "responsibilities": [
+                "Generate leads and build relationships with clients.",
+                "Identify and pursue new sales opportunities.",
+                "Present products and services to potential clients.",
+                "Negotiate and close sales contracts.",
+                "Provide post-sales support and maintain client relationships.",
+            ],
+            "required_skills": [
+                "Strong negotiation and communication skills",
+                "Ability to meet and exceed sales targets",
+                "Customer-focused approach",
+                "Proficiency in CRM software",
+                "Experience in B2B or B2C sales",
+            ],
+            "preferred_skills": [
+                "Experience in digital marketing and sales funnels",
+                "Knowledge of sales analytics tools",
+                "Familiarity with the product lifecycle",
+                "Experience in the relevant industry",
+                "Fluency in multiple languages",
+            ],
+        },
+        "marketing": {
+            "responsibilities": [
+                "Develop and implement marketing campaigns.",
+                "Analyze market trends and identify opportunities.",
+                "Manage digital marketing efforts across multiple channels.",
+                "Create and distribute marketing content.",
+                "Monitor and report on marketing performance metrics.",
+            ],
+            "required_skills": [
+                "Strong written and verbal communication skills",
+                "Proficiency in digital marketing tools (e.g., Google Analytics, SEMrush)",
+                "Knowledge of SEO and SEM strategies",
+                "Experience with social media platforms and advertising",
+                "Ability to analyze and interpret marketing data",
+            ],
+            "preferred_skills": [
+                "Experience with email marketing and automation",
+                "Creative skills for content creation (e.g., graphic design)",
+                "Experience in branding and product positioning",
+                "Knowledge of A/B testing and market research methods",
+                "Familiarity with content management systems (e.g., WordPress)",
+            ],
+        },
+        "technology": {
+            "responsibilities": [
+                "Develop, test, and maintain software applications.",
+                "Collaborate with cross-functional teams to design solutions.",
+                "Write clean, efficient, and scalable code.",
+                "Troubleshoot technical issues and provide solutions.",
+                "Keep up to date with the latest technology trends.",
+            ],
+            "required_skills": [
+                "Proficiency in programming languages (e.g., Python, Java, JavaScript)",
+                "Experience with databases and data management",
+                "Strong problem-solving and analytical skills",
+                "Knowledge of web development frameworks",
+                "Familiarity with version control systems (e.g., Git)",
+            ],
+            "preferred_skills": [
+                "Experience with cloud computing platforms (e.g., AWS, Azure)",
+                "Knowledge of DevOps and automation tools",
+                "Familiarity with machine learning and AI technologies",
+                "Experience with cybersecurity principles",
+                "Experience with mobile application development",
+            ],
+        },
         "software-development": {
             "responsibilities": [
                 "Write clean, efficient, and maintainable code.",
@@ -202,54 +294,383 @@ def generate_roles_and_skills(category):
                 "Experience with blockchain technologies",
             ],
         },
+        "engineering": {
+            "responsibilities": [
+                "Design and develop engineering systems and processes.",
+                "Analyze and test prototypes to ensure reliability and efficiency.",
+                "Collaborate with cross-functional teams on product design.",
+                "Monitor project timelines and ensure deadlines are met.",
+                "Provide engineering support for troubleshooting and maintenance.",
+            ],
+            "required_skills": [
+                "Proficiency in engineering design tools and CAD software",
+                "Strong mathematical and analytical skills",
+                "Experience in materials selection and testing",
+                "Knowledge of engineering standards and regulations",
+                "Excellent problem-solving abilities",
+            ],
+            "preferred_skills": [
+                "Experience with industrial automation",
+                "Familiarity with manufacturing processes",
+                "Experience with systems engineering",
+                "Knowledge of environmental regulations",
+                "Strong project management skills",
+            ],
+        },
+        "finance": {
+            "responsibilities": [
+                "Prepare financial reports and budgets.",
+                "Analyze financial data and provide insights for decision-making.",
+                "Monitor and manage cash flow.",
+                "Ensure compliance with financial regulations.",
+                "Advise senior management on financial strategy.",
+            ],
+            "required_skills": [
+                "Strong analytical and mathematical skills",
+                "Proficiency in financial software (e.g., QuickBooks, Excel)",
+                "Knowledge of financial modeling and forecasting",
+                "Experience with tax regulations and filings",
+                "Ability to interpret financial statements",
+            ],
+            "preferred_skills": [
+                "CPA or CFA certification",
+                "Experience with mergers and acquisitions",
+                "Knowledge of international finance",
+                "Fluency in multiple languages",
+                "Strong communication and negotiation skills",
+            ],
+        },
+        "accounting": {
+            "responsibilities": [
+                "Prepare and maintain financial records.",
+                "Ensure accuracy in financial statements and reports.",
+                "Reconcile accounts and resolve discrepancies.",
+                "Assist with budgeting and forecasting.",
+                "Ensure compliance with accounting regulations and standards.",
+            ],
+            "required_skills": [
+                "Proficiency in accounting software (e.g., QuickBooks, Xero)",
+                "Strong attention to detail and accuracy",
+                "Ability to manage multiple tasks and deadlines",
+                "Knowledge of accounting principles and practices",
+                "Experience with tax preparation and filings",
+            ],
+            "preferred_skills": [
+                "CPA certification",
+                "Experience with auditing and financial reviews",
+                "Knowledge of IFRS standards",
+                "Ability to work in a fast-paced environment",
+                "Familiarity with financial planning and analysis",
+            ],
+        },
         "healthcare": {
             "responsibilities": [
-                "Provide high-quality patient care and medical services.",
-                "Collaborate with healthcare teams to ensure comprehensive care.",
-                "Maintain accurate and up-to-date patient records.",
-                "Educate patients about health management and prevention.",
-                "Participate in ongoing medical training and certifications.",
+                "Provide patient care and monitor health conditions.",
+                "Diagnose and treat illnesses or injuries.",
+                "Educate patients on health and wellness topics.",
+                "Collaborate with medical teams for patient care plans.",
+                "Maintain accurate medical records.",
             ],
             "required_skills": [
-                "Strong understanding of medical terminology and procedures",
-                "Excellent interpersonal and communication skills",
-                "Knowledge of patient care protocols",
-                "Proficiency in using electronic medical records systems",
-                "Ability to work in high-pressure environments",
+                "Strong medical knowledge and clinical skills",
+                "Ability to work under pressure",
+                "Excellent communication skills",
+                "Attention to detail and strong organizational skills",
+                "Empathy and compassion for patients",
             ],
             "preferred_skills": [
-                "Specialization in a specific field (e.g., cardiology, pediatrics)",
-                "Experience in emergency medicine",
-                "Knowledge of public health policies",
-                "Certification in advanced medical techniques",
-                "Familiarity with telemedicine platforms",
+                "Experience with electronic health records (EHR) systems",
+                "Knowledge of healthcare regulations and compliance",
+                "Specialized certifications (e.g., CPR, ACLS)",
+                "Experience in a healthcare leadership role",
+                "Fluency in multiple languages",
             ],
         },
-        "marketing": {
+        "education": {
             "responsibilities": [
-                "Develop and execute marketing campaigns.",
-                "Analyze market trends and competitor strategies.",
-                "Collaborate with sales teams to align marketing objectives.",
-                "Manage social media platforms and digital content.",
-                "Measure campaign performance and generate reports.",
+                "Develop and implement lesson plans.",
+                "Teach students in a classroom setting.",
+                "Evaluate student performance and provide feedback.",
+                "Collaborate with colleagues and parents.",
+                "Support students' personal and academic growth.",
             ],
             "required_skills": [
-                "Strong knowledge of digital marketing strategies",
-                "Proficiency in SEO and SEM tools",
-                "Excellent copywriting and content creation skills",
-                "Experience with social media management tools",
-                "Ability to analyze and interpret marketing data",
+                "Strong communication and teaching skills",
+                "Ability to adapt teaching methods to individual needs",
+                "Classroom management skills",
+                "Knowledge of educational technologies",
+                "Ability to assess and evaluate student progress",
             ],
             "preferred_skills": [
-                "Experience in graphic design and video editing",
-                "Familiarity with influencer marketing strategies",
-                "Knowledge of CRM and email marketing tools",
-                "Experience in managing marketing budgets",
-                "Strong public speaking and presentation skills",
+                "Teaching certification",
+                "Experience with special needs education",
+                "Familiarity with online teaching platforms",
+                "Knowledge of curriculum development",
+                "Fluency in multiple languages",
             ],
         },
-        # Add other categories similarly...
+        "legal": {
+            "responsibilities": [
+                "Provide legal advice and counsel to clients.",
+                "Draft and review contracts and legal documents.",
+                "Represent clients in court or legal proceedings.",
+                "Research legal issues and stay updated on laws.",
+                "Negotiate settlements and dispute resolutions.",
+            ],
+            "required_skills": [
+                "Strong knowledge of law and legal procedures",
+                "Excellent verbal and written communication skills",
+                "Attention to detail and analytical skills",
+                "Ability to work under pressure and meet deadlines",
+                "Negotiation and conflict resolution skills",
+            ],
+            "preferred_skills": [
+                "Law degree and relevant legal certifications",
+                "Experience in corporate or criminal law",
+                "Knowledge of international law",
+                "Experience in litigation and trial preparation",
+                "Fluency in multiple languages",
+            ],
+        },
+        "customer-service": {
+            "responsibilities": [
+                "Provide assistance to customers and resolve inquiries.",
+                "Handle complaints and provide effective solutions.",
+                "Ensure customer satisfaction and maintain relationships.",
+                "Process orders, returns, and exchanges.",
+                "Provide product and service information to customers.",
+            ],
+            "required_skills": [
+                "Excellent communication and problem-solving skills",
+                "Ability to handle challenging situations calmly",
+                "Strong interpersonal and active listening skills",
+                "Experience with customer service software (e.g., Zendesk)",
+                "Patience and empathy towards customers",
+            ],
+            "preferred_skills": [
+                "Experience in customer support or call center roles",
+                "Knowledge of CRM tools and systems",
+                "Fluency in multiple languages",
+                "Experience with conflict resolution",
+                "Ability to work in a fast-paced environment",
+            ],
+        },
+        "retail": {
+            "responsibilities": [
+                "Assist customers with product selection and purchases.",
+                "Manage stock and inventory levels.",
+                "Process transactions and handle cash.",
+                "Maintain a clean and organized store environment.",
+                "Provide excellent customer service and handle complaints.",
+            ],
+            "required_skills": [
+                "Strong customer service skills",
+                "Basic math skills for handling transactions",
+                "Knowledge of product features and benefits",
+                "Ability to work in a fast-paced environment",
+                "Experience in point-of-sale (POS) systems",
+            ],
+            "preferred_skills": [
+                "Experience in retail management",
+                "Knowledge of merchandising and inventory management",
+                "Fluency in multiple languages",
+                "Experience with e-commerce platforms",
+                "Knowledge of store safety and security procedures",
+            ],
+        },
+        "hospitality": {
+            "responsibilities": [
+                "Provide excellent customer service to guests.",
+                "Ensure that facilities and services meet guest expectations.",
+                "Handle guest inquiries, complaints, and special requests.",
+                "Coordinate events and services for guests.",
+                "Maintain cleanliness and organization of the property.",
+            ],
+            "required_skills": [
+                "Strong communication and customer service skills",
+                "Ability to work under pressure and handle multiple tasks",
+                "Attention to detail and problem-solving abilities",
+                "Knowledge of hospitality industry standards",
+                "Experience in event planning or coordination",
+            ],
+            "preferred_skills": [
+                "Experience in hospitality management",
+                "Knowledge of hotel booking systems",
+                "Fluency in multiple languages",
+                "Experience with food and beverage management",
+                "Ability to work flexible hours, including weekends",
+            ],
+        },
+        "construction": {
+            "responsibilities": [
+                "Plan and supervise construction projects from start to finish.",
+                "Ensure compliance with safety regulations and building codes.",
+                "Manage construction crews and subcontractors.",
+                "Monitor project progress and budgets.",
+                "Ensure quality control throughout the project.",
+            ],
+            "required_skills": [
+                "Knowledge of construction methods and techniques",
+                "Strong project management skills",
+                "Experience with construction tools and equipment",
+                "Ability to read and interpret blueprints and drawings",
+                "Familiarity with safety standards and regulations",
+            ],
+            "preferred_skills": [
+                "Construction management degree",
+                "Experience with project management software",
+                "Ability to lead teams effectively",
+                "Knowledge of sustainable building practices",
+                "Experience in commercial or residential construction",
+            ],
+        },
+        "media": {
+            "responsibilities": [
+                "Create and manage media content for various platforms.",
+                "Develop and implement media campaigns.",
+                "Analyze media trends and audience insights.",
+                "Collaborate with creative teams to produce content.",
+                "Manage relationships with media outlets and partners.",
+            ],
+            "required_skills": [
+                "Strong communication and writing skills",
+                "Experience with media production tools (e.g., Adobe Creative Suite)",
+                "Knowledge of social media platforms and trends",
+                "Ability to analyze and interpret media metrics",
+                "Experience with content marketing and distribution",
+            ],
+            "preferred_skills": [
+                "Experience in broadcast or print journalism",
+                "Knowledge of digital media strategies",
+                "Familiarity with SEO and SEM",
+                "Creative skills for video and audio production",
+                "Experience in public relations and media outreach",
+            ],
+        },
+        "logistics": {
+            "responsibilities": [
+                "Manage the movement of goods and materials.",
+                "Coordinate shipments and deliveries to ensure timely arrival.",
+                "Track inventory levels and manage stock.",
+                "Optimize supply chain processes for efficiency.",
+                "Negotiate with suppliers and third-party vendors.",
+            ],
+            "required_skills": [
+                "Strong organizational and multitasking abilities",
+                "Knowledge of logistics management software",
+                "Excellent communication and negotiation skills",
+                "Ability to work under pressure and meet deadlines",
+                "Experience with inventory control and supply chain management",
+            ],
+            "preferred_skills": [
+                "Experience with warehouse management systems (WMS)",
+                "Fluency in multiple languages",
+                "Experience with freight and shipping regulations",
+                "Knowledge of international logistics",
+                "Ability to manage large-scale distribution networks",
+            ],
+        },
+        "human-resources": {
+            "responsibilities": [
+                "Manage recruitment and hiring processes.",
+                "Develop and implement employee training programs.",
+                "Handle employee relations and resolve conflicts.",
+                "Ensure compliance with labor laws and company policies.",
+                "Support employee development and performance management.",
+            ],
+            "required_skills": [
+                "Strong interpersonal and communication skills",
+                "Knowledge of HR policies and labor laws",
+                "Experience with recruitment and onboarding",
+                "Strong problem-solving and conflict resolution skills",
+                "Ability to handle sensitive information with discretion",
+            ],
+            "preferred_skills": [
+                "Experience with HR software (e.g., Workday, BambooHR)",
+                "Certifications in HR management (e.g., SHRM-CP)",
+                "Experience in employee engagement and retention strategies",
+                "Fluency in multiple languages",
+                "Experience in performance management and coaching",
+            ],
+        },
+        "writing": {
+            "responsibilities": [
+                "Create content for blogs, websites, and other publications.",
+                "Research and write articles on various topics.",
+                "Edit and proofread content to ensure clarity and accuracy.",
+                "Collaborate with editors and designers on content production.",
+                "Meet deadlines for content delivery.",
+            ],
+            "required_skills": [
+                "Strong writing and editing skills",
+                "Ability to research and create compelling content",
+                "Attention to detail and accuracy",
+                "Experience with content management systems (e.g., WordPress)",
+                "Ability to write for various audiences and formats",
+            ],
+            "preferred_skills": [
+                "Experience with SEO and keyword research",
+                "Knowledge of content marketing strategies",
+                "Fluency in multiple languages",
+                "Experience with multimedia content (e.g., video, audio)",
+                "Ability to write in different writing styles (e.g., technical, creative)",
+            ],
+        },
+        "consulting": {
+            "responsibilities": [
+                "Provide expert advice to organizations on business issues.",
+                "Analyze client needs and develop tailored strategies.",
+                "Conduct market research and competitor analysis.",
+                "Develop and present reports and recommendations to clients.",
+                "Assist in implementing solutions and strategies.",
+            ],
+            "required_skills": [
+                "Strong analytical and problem-solving skills",
+                "Excellent communication and presentation abilities",
+                "Ability to manage client relationships",
+                "Knowledge of business operations and strategy",
+                "Experience with data analysis and market research",
+            ],
+            "preferred_skills": [
+                "Consulting certification or relevant experience",
+                "Experience in a specific industry (e.g., finance, healthcare)",
+                "Fluency in multiple languages",
+                "Experience with project management tools",
+                "Ability to manage multiple clients and projects",
+            ],
+        },
+        "data-science": {
+            "responsibilities": [
+                "Analyze large datasets to identify trends and insights.",
+                "Develop machine learning models for data-driven decision-making.",
+                "Create data visualizations to communicate findings.",
+                "Collaborate with cross-functional teams to define data needs.",
+                "Clean and preprocess data for analysis.",
+            ],
+            "required_skills": [
+                "Proficiency in programming languages (e.g., Python, R)",
+                "Experience with data analysis and visualization tools",
+                "Knowledge of machine learning algorithms and frameworks",
+                "Strong statistical and analytical skills",
+                "Experience with data wrangling and preprocessing",
+            ],
+            "preferred_skills": [
+                "Experience with big data tools (e.g., Hadoop, Spark)",
+                "Knowledge of deep learning frameworks (e.g., TensorFlow, PyTorch)",
+                "Familiarity with cloud platforms (e.g., AWS, GCP)",
+                "Experience with SQL and NoSQL databases",
+                "Fluency in multiple languages",
+            ],
+        },
     }
+
+    # Return corresponding data for the category
+    return category_specific_data.get(category, {
+        "responsibilities": [],
+        "required_skills": [],
+        "preferred_skills": [],
+    })
+
 
     # Fallback to generic skills and responsibilities if the category is not mapped
     generic_data = {
