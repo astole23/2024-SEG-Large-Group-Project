@@ -59,6 +59,7 @@ urlpatterns = [
 
     path('api/job_postings/', ui_views.job_postings_api, name='job_postings_api'),
     path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
+    path('job-postings/', ui_views.search, name='search',),
 
 ]
 
