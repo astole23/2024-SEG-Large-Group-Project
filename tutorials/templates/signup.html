@@ -83,6 +83,14 @@
                   <div class="error">{{ user_form.user_location.errors }}</div>
               {% endif %}
           </div>
+          <input type="checkbox" id="agree-terms" name="agree_terms" required>
+            <label for="agree-terms">
+                
+                I agree to the <a  href="{% url 'settings' %}" target="_blank">Terms and Conditions</a>
+                
+            </label>
+            <br>
+            <br>
       
             
             <button type="submit" class="btn">Sign Up</button>
@@ -127,6 +135,14 @@
                 <div class="error">{{ company_form.password2.errors }}</div>
               {% endif %}
             </div>
+            <input type="checkbox" id="agree-terms" name="agree_terms" required>
+            <label for="agree-terms">
+                
+                I agree to the <a  href="{% url 'settings' %}" target="_blank">Terms and Conditions</a>
+                
+            </label>
+            <br>
+            <br>
             
             
             
@@ -134,6 +150,7 @@
           </form>
         </div>
       </div>
+      
       
       <div class="auth-footer">
         <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
