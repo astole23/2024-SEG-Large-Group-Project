@@ -298,7 +298,9 @@ def fetch_adzuna_jobs():
     print("🔍 Fetching jobs from Adzuna API...")
 
     try:
-        for category in CATEGORIES:
+        while len(job_list) < 1000:
+            category = random.choice(CATEGORIES)
+            
             for page in range(1, 6):
                 url = f"https://api.adzuna.com/v1/api/jobs/gb/search/{page}"
                 params = {
@@ -308,49 +310,52 @@ def fetch_adzuna_jobs():
                     "what": category,
                     "content-type": "application/json"
                 }
-                response = requests.get(url, params=params, timeout=10)
-                response.raise_for_status()
-                data = response.json()
 
-                for job in data.get("results", []):
-                    job_title = job.get("title", "Unknown Job")
-                    company_name = job.get("company", {}).get("display_name", "Unknown Company")
-                    location = job.get("location", {}).get("display_name", "Remote")
-                    details = generate_roles_and_skills(category)
-           
+                try:
+                    response = requests.get(url, params=params, timeout=10)
+                    response.raise_for_status()
+                    data = response.json()
+                except Exception as e:
+                    print(f"Error fetching from Adzuna for category {category}, page {page}: {e}")
+                    break
 
-                    # Look up any companies with this name
-                    companies = Company.objects.filter(company_name=company_name)
-                    if companies.exists():
-                        company = companies.first()
-                        created = False
-                    else:
-                        company = Company.objects.create(
-                            username=generate_unique_company_username(company_name),
-                            email=generate_unique_email(company_name),
-                            password=fake.password(),
-                            industry=category.capitalize(),
-                            phone=job.get("phone_number", fake.phone_number()),
-                            unique_id=generate_unique_company_id(),
-                        )
-                        created = True
+                for i in range(10):
+                    for job in data.get("results", []):
+                        job_title = job.get("title", "Unknown Job")
+                        company_name = job.get("company", {}).get("display_name", "Unknown Company")
+                        location = job.get("location", {}).get("display_name", "Remote")
+                        details = generate_roles_and_skills(category)
 
-                    
+                        companies = Company.objects.filter(company_name=company_name)
+                        if companies.exists():
+                            company = companies.first()
+                        else:
+                            company = Company.objects.create(
+                                username=generate_unique_company_username(company_name),
+                                email=generate_unique_email(company_name),
+                                password=fake.password(),
+                                industry=category.capitalize(),
+                                phone=job.get("phone_number", fake.phone_number()),
+                                unique_id=generate_unique_company_id(),
+                            )
 
-                    job_list.append({
-                        "job_title": job_title,
-                        "company_name": job.get("company", {}).get("display_name", "Unknown Company"),
-                        "location": job.get("location", {}).get("display_name", "Remote"),
-                        "salary_range": random.randint(23000 // 1000, 100000 // 1000) * 1000,
-                        "job_overview": job.get("description", "No description available."),
-                        "roles_responsibilities": details["roles_responsibilities"],
-                        "required_skills": details["required_skills"],
-                        "preferred_skills": details["preferred_skills"],
-                        "company_overview": random.choice(WHY_JOIN_US_OPTIONS),
-                    })
+                        job_list.append({
+                            "job_title": job_title,
+                            "company_name": company_name,
+                            "location": location,
+                            "salary_range": random.randint(23000 // 1000, 100000 // 1000) * 1000,
+                            "job_overview": job.get("description", "No description available."),
+                            "roles_responsibilities": details["roles_responsibilities"],
+                            "required_skills": details["required_skills"],
+                            "preferred_skills": details["preferred_skills"],
+                            "company_overview": random.choice(WHY_JOIN_US_OPTIONS),
+                        })
 
-                if len(job_list) >= 150:
-                    return job_list
+                        if len(job_list) >= 1000:
+                            break  # Exit early from job loop
+
+                if len(job_list) >= 1000:
+                    break  # Exit early from page loop if needed
     except requests.RequestException as e:
         print(f"❌ Error: {e}")
     return job_list
