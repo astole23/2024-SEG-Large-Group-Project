@@ -41,8 +41,6 @@ user_fixtures = [
     },
 ]
 
-
-
 fake = faker.Faker()
 # Adzuna API credentials
 ADZUNA_APP_ID = "dac9af71"
@@ -663,14 +661,6 @@ def generate_roles_and_skills(category):
             ],
         },
     }
-
-    # Return corresponding data for the category
-    return category_specific_data.get(category, {
-        "responsibilities": [],
-        "required_skills": [],
-        "preferred_skills": [],
-    })
-
 
     # Fallback to generic skills and responsibilities if the category is not mapped
     generic_data = {
