@@ -86,3 +86,31 @@ def process_signup(request):
         "user_form": user_form,
         "company_form": company_form
     })
+
+def remove_duplicates_by_keys(data_list, keys):
+    seen = set()
+    result = []
+    for item in data_list:
+        identifier = tuple(item.get(key, "").strip().lower() for key in keys)
+        if identifier not in seen:
+            seen.add(identifier)
+            result.append(item)
+    return result
+
+def split_skills(skills_list):
+    tech_keywords = {
+        "Python", "Java", "C++", "SQL", "JavaScript", "HTML", "CSS", "React", "Django", "Pygame", "Tkinter",
+        "Git", "GitHub", "Excel", "APIs", "WireShark", "Microsoft Teams", "Databases", "Testing", "Debugging",
+        "C#", "Node.js", "TypeScript", "Ruby", "Kotlin", "Swift", "Bash", "PowerShell", "NoSQL", "MongoDB",
+        "PostgreSQL", "MySQL", "REST", "GraphQL", "CI/CD", "Docker", "Kubernetes", "Linux", "AWS", "Azure", "GCP",
+        "Firebase", "Flutter", "Unity", "Unreal Engine", "Jenkins", "Agile", "Scrum", "JIRA", "Notion",
+        "NumPy", "Pandas", "Matplotlib", "TensorFlow", "PyTorch", "OpenCV"
+    }
+    technical = []
+    soft = []
+    for skill in skills_list:
+        if any(k.lower() in skill.lower() for k in tech_keywords):
+            technical.append(skill)
+        else:
+            soft.append(skill)
+    return technical, soft

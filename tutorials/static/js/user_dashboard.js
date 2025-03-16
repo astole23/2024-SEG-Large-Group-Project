@@ -21,59 +21,11 @@ const mockJobs = [
   ];
   
   // Mock CV data
-  const mockCV = {
-    personalInfo: {
-      fullName: 'John Doe',
-      email: 'john.doe@example.com',
-      phone: '+1 234 567 8900',
-      address: '123 Tech Street, San Francisco, CA 94105'
-    },
-    rightToWork: {
-      hasRightToWork: 'Yes',
-      visaDetails: 'N/A'
-    },
-    education: [
-      {
-        university: 'Stanford University',
-        degreeType: "Master's",
-        fieldOfStudy: 'Computer Science',
-        grade: '3.8 GPA',
-        dates: '2018-2022',
-        modules: 'Advanced Algorithms, Machine Learning, Distributed Systems',
-        highSchool: 'Tech High School'
-      }
-    ],
-    workExperience: [
-      {
-        employer: 'Tech Corp',
-        jobTitle: 'Senior Software Developer',
-        dates: '2022-Present',
-        responsibilities: 'Led development team, implemented microservices architecture'
-      }
-    ],
-    skills: {
-      keySkills: 'Leadership, Communication, Problem Solving',
-      technicalSkills: 'JavaScript, Python, SQL, React',
-      languages: 'English (Native), Spanish (Intermediate)'
-    },
-    motivation: {
-      interest: 'Passionate about creating innovative solutions',
-      fitForRole: 'Extensive experience in full-stack development',
-      aspirations: 'Aiming to lead technical teams and architect solutions'
-    },
-    availability: {
-      startDate: '2024-01-01',
-      duration: 'Full-time',
-      willRelocate: 'Yes'
-    },
-    references: {
-      reference1: 'Jane Smith, CTO, Tech Corp, jane@techcorp.com',
-      reference2: 'Bob Johnson, Lead Developer, Innovation Inc'
-    },
-    optional: {
-      equalOpportunities: 'Prefer not to say'
-    }
-  };
+  const userCVScript = document.getElementById('cv-data');
+  const mockCV = userCVScript ? JSON.parse(userCVScript.textContent) : {};
+  console.log("Loaded CV from backend:", mockCV);
+
+  console.log("Loaded CV data:", mockCV); // 👈 Optional: Helps you debug what’s coming in
 
   // Function to fetch job postings from the API (or use a fallback)
   function fetchJobPostings() {
@@ -88,8 +40,9 @@ const mockJobs = [
           { id: 2, job_title: 'Frontend Engineer', company_name: 'Meta', location: 'Remote', salary_range: '$130k - $190k', contract_type: 'Contract', job_overview: 'Design modern web apps...', roles_responsibilities: 'UI design, testing...', required_skills: 'HTML, CSS, JS' },
           { id: 3, job_title: 'Full Stack Developer', company_name: 'Amazon', location: 'Seattle, WA', salary_range: '$140k - $200k', contract_type: 'Full-time', job_overview: 'Work across the stack...', roles_responsibilities: 'API design, integration...', required_skills: 'Python, React, SQL' }
         ];
-      });
-  }
+        });
+      };
+  
 
   function renderJobListings(jobs) {
     const listingsContainer = document.getElementById('temporary-job-listings-container');
@@ -124,6 +77,10 @@ const mockJobs = [
               <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="alert alert-info alert-dismissible fade show" id="cvStatusAlert" style="display: none;" role="alert">
+              <span id="cvStatusMessage">Status message here</span>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             <div class="modal-body">
               <p><strong>Company:</strong> ${job.company_name}</p>
               <p><strong>Location:</strong> ${job.location}</p>
@@ -145,20 +102,18 @@ const mockJobs = [
     });
   }
   
-  function createDashboard() {
-    console.log("Dashboard is loading");
+  console.log("Parsed CV from backend:", mockCV);
 
-    // Default fallback if user_info is empty
-    let userInfo = { full_name: "John Doe", profile_pic: "https://i.pravatar.cc/128" };
+  function createDashboard() {
+    
+
 
 
     // Grab the script tag with id="current-user"
     const userInfoScript = document.getElementById('current-user');
-    if (userInfoScript) {
-      // Parse its text content as JSON
-      userInfo = JSON.parse(userInfoScript.textContent);
-    }
-
+    const userInfo = userInfoScript ? JSON.parse(userInfoScript.textContent) : {};
+    console.log("Dashboard is loading");
+    console.log("User info:", userInfo);
   
 
     const app = document.querySelector('#app');
@@ -210,39 +165,61 @@ const mockJobs = [
                 <div class="cv-preview">
                   <div class="cv-section">
                     <h4>Personal Information</h4>
-                    <p><strong>Name:</strong> ${mockCV.personalInfo.fullName}</p>
-                    <p><strong>Email:</strong> ${mockCV.personalInfo.email}</p>
-                    <p><strong>Phone:</strong> ${mockCV.personalInfo.phone}</p>
-                    <p><strong>Address:</strong> ${mockCV.personalInfo.address}</p>
+                    <p><strong>Name:</strong> ${mockCV.personalInfo?.fullName || 'N/A'}</p>
+                    <p><strong>Email:</strong> ${mockCV.personalInfo?.email  || 'N/A'}</p>
+                    <p><strong>Phone:</strong> ${mockCV.personalInfo?.phone  || 'N/A'}</p>
+                    <p><strong>Address:</strong> ${mockCV.personalInfo?.address  || 'N/A'}</p>
                   </div>
                   <div class="cv-section">
                     <h4>Education</h4>
-                    ${mockCV.education.map(edu => `
+                    ${(mockCV.education || []).map(edu => `
                       <div class="education-entry">
-                        <p><strong>University:</strong> ${edu.university}</p>
-                        <p><strong>Degree:</strong> ${edu.degreeType} in ${edu.fieldOfStudy}</p>
-                        <p><strong>Grade:</strong> ${edu.grade}</p>
-                        <p><strong>Period:</strong> ${edu.dates}</p>
+                        <p><strong>University:</strong> ${edu.university  || 'N/A'}</p>
+                        <p><strong>Degree:</strong> ${edu.degreeType} in ${edu.fieldOfStudy  || 'N/A'}</p>
+                        <p><strong>Grade:</strong> ${edu.grade  || 'N/A'}</p>
+                        <p><strong>Period:</strong> ${edu.dates  || 'N/A'}</p>
                       </div>
                     `).join('')}
                   </div>
                   <div class="cv-section">
                     <h4>Work Experience</h4>
-                    ${mockCV.workExperience.map(exp => `
+                    ${(mockCV.workExperience || []).map(exp =>  `
                       <div class="experience-entry">
-                        <p><strong>Role:</strong> ${exp.jobTitle}</p>
-                        <p><strong>Company:</strong> ${exp.employer}</p>
-                        <p><strong>Period:</strong> ${exp.dates}</p>
-                        <p><strong>Responsibilities:</strong> ${exp.responsibilities}</p>
+                        <p><strong>Role:</strong> ${exp.jobTitle  || 'N/A'}</p>
+                        <p><strong>Company:</strong> ${exp.employer  || 'N/A'}</p>
+                        <p><strong>Period:</strong> ${exp.dates  || 'N/A'}</p>
+                        <p><strong>Responsibilities:</strong> ${exp.responsibilities  || 'N/A'}</p>
                       </div>
                     `).join('')}
                   </div>
                   <div class="cv-section">
                     <h4>Skills</h4>
-                    <p><strong>Technical:</strong> ${mockCV.skills.technicalSkills}</p>
-                    <p><strong>Key Skills:</strong> ${mockCV.skills.keySkills}</p>
-                    <p><strong>Languages:</strong> ${mockCV.skills.languages}</p>
+                    <div><strong>Technical:</strong>
+                      <ul>
+                        ${(mockCV.skills?.technicalSkills || '')
+                          .split(',')
+                          .filter(s => s.trim())
+                          .map(skill => `<li>${skill.trim()}</li>`).join('')}
+                      </ul>
+                    </div>
+                    <div><strong>Key Skills:</strong>
+                      <ul>
+                        ${(mockCV.skills?.keySkills || '')
+                          .split(',')
+                          .filter(s => s.trim())
+                          .map(skill => `<li>${skill.trim()}</li>`).join('')}
+                      </ul>
+                    </div>
+                    <div><strong>Languages:</strong>
+                      <ul>
+                        ${(mockCV.skills?.languages || '')
+                          .split(',')
+                          .filter(s => s.trim())
+                          .map(lang => `<li>${lang.trim()}</li>`).join('')}
+                      </ul>
+                    </div>
                   </div>
+
                 </div>
                 <button class="btn btn-primary" id="editCVBtn">Edit Online CV</button>
               </div>
@@ -321,8 +298,9 @@ const mockJobs = [
             <a href="#" class="view-all">View all suggestions</a>
           </section>
           <div class="quick-actions">
-            <button class="btn btn-primary">Update CV</button>
-            <button class="btn btn-outline">Browse Jobs</button>
+            <button class="btn btn-primary" id="updateCvBtn">Update CV</button>
+
+            <button class="btn btn-outline" id="browseJobsBtn">Browse Jobs</button>
             <button class="btn btn-outline" id="viewApplicationsBtn">My Applications</button>
 
           </div>
@@ -509,6 +487,21 @@ const mockJobs = [
             window.location.href = '/user/applications/';
         });
     }
+    const browseJobsBtn = document.getElementById('browseJobsBtn');
+    if (browseJobsBtn) {
+      browseJobsBtn.addEventListener('click', () => {
+        window.location.href = '/search/';
+      });
+    }
+
+
+    const updateCvBtn = document.getElementById('updateCvBtn');
+    if (updateCvBtn) {
+      updateCvBtn.addEventListener('click', () => {
+        document.getElementById('cvUpload').click();  // Trigger file select
+      });
+    }
+
 
     // CV section toggle functionality
     const cvToggle = document.getElementById('cvToggle');
@@ -522,10 +515,67 @@ const mockJobs = [
   
     // Modal functionality
     const modal = document.getElementById('cvModal');
+    
     const editCVBtn = document.getElementById('editCVBtn');
-    const closeModal = document.querySelector('.close-modal');
+    console.log("📝 Edit CV button clicked - opening modal");
+    console.log("Existing CV data:", mockCV);
+
+    if (editCVBtn) {
+      editCVBtn.addEventListener('click', () => {
+        modal.style.display = 'block';
+
+        // ✅ Full CV form loading logic goes here:
+        educationEntries.innerHTML = '';
+        workExperienceEntries.innerHTML = '';
+
+        (mockCV.education || []).forEach(edu => {
+          educationEntries.insertAdjacentHTML('beforeend', createEducationEntry(edu));
+        });
+
+        (mockCV.workExperience || []).forEach(exp => {
+          workExperienceEntries.insertAdjacentHTML('beforeend', createWorkExperienceEntry(exp));
+        });
+
+        if (mockCV.personalInfo) {
+          Object.keys(mockCV.personalInfo).forEach(key => {
+            const input = document.getElementById(key);
+            if (input) input.value = mockCV.personalInfo[key];
+          });
+        }
+
+        // You can add more population logic here if needed
+      });
+    }
+
+
+
+    const closeModalBtn = document.querySelector('.close-modal');
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+        console.log("❌ Modal closed via close icon");
+
+      });
+}
+
     const cancelEdit = document.getElementById('cancelEdit');
+    if (cancelEdit) {
+      cancelEdit.addEventListener('click', () => {
+        modal.style.display = 'none';
+        console.log("🚫 Modal canceled via Cancel button");
+
+      });
+    }
+
     const cvForm = document.getElementById('cvForm');
+    if (cvForm) {
+      cvForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        showCVStatus("CV updated.", "success");
+        modal.style.display = 'none';
+      });
+    }
+
   
     // Function to create education entry HTML
     function createEducationEntry(data = {}) {
@@ -615,67 +665,266 @@ const mockJobs = [
       container.remove();
     };
   
-    editCVBtn.addEventListener('click', () => {
-      modal.style.display = 'block';
-      
-      // Clear existing entries
-      educationEntries.innerHTML = '';
-      workExperienceEntries.innerHTML = '';
-      
-      // Populate education entries
-      mockCV.education.forEach(edu => {
-        educationEntries.insertAdjacentHTML('beforeend', createEducationEntry(edu));
-      });
-      
-      // Populate work experience entries
-      mockCV.workExperience.forEach(exp => {
-        workExperienceEntries.insertAdjacentHTML('beforeend', createWorkExperienceEntry(exp));
-      });
-      
-      // Populate other form fields
-      Object.keys(mockCV.personalInfo).forEach(key => {
-        const input = document.getElementById(key);
-        if (input) input.value = mockCV.personalInfo[key];
-      });
-      // Add more form population logic for other sections
-    });
-  
-    closeModal.addEventListener('click', () => {
-      modal.style.display = 'none';
-    });
-  
-    cancelEdit.addEventListener('click', () => {
-      modal.style.display = 'none';
-    });
-  
-    cvForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      // Handle form submission
-      alert('CV updated successfully!');
-      modal.style.display = 'none';
-    });
   
     // File upload handling
     const cvUploadBtn = document.getElementById('cvUploadBtn');
     const cvUploadInput = document.getElementById('cvUpload');
+
+    if (cvUploadBtn && cvUploadInput) {
+      cvUploadBtn.addEventListener('click', () => {
+        cvUploadInput.click();
+      });
+
+      cvUploadInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('cv_file', file);
+
+        try {
+          const res = await fetch('/upload_raw_cv/', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await res.json();
+          if (result.success) {
+            showCVStatus("CV uploaded successfully!", "success");
+
+            // Optionally update file name + timestamp in UI
+            document.querySelector('.document-info h3').textContent = file.name;
+            document.querySelector('.document-info p').textContent = "Updated just now";
+          } else {
+            showCVStatus("Upload failed.", "danger");
+          }
+        } catch (err) {
+          console.error("❌ Error uploading raw CV:", err);
+          showCVStatus("Error uploading CV", "danger");
+        }
+      });
+    }
+
     const docUploadBtn = document.getElementById('docUploadBtn');
-    const docUploadInput = document.getElementById('docUpload');
+    docUploadInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+    
+      const formData = new FormData();
+      formData.append('document', file);
+    
+      try {
+        const currentDocs = document.querySelectorAll('.document-item');
+        if (currentDocs.length >= 5) {
+          showCVStatus("Max 5 documents allowed", "danger");
+          return;
+        }
+
+        const res = await fetch('/upload_user_document/', {
+          method: 'POST',
+          body: formData
+        });
+        const result = await res.json();
+    
+        if (result.success) {
+          showCVStatus("Document uploaded!", "success");
+          addDocumentToList(file.name, result.uploaded_at);
+        } else {
+          showCVStatus(result.error || "Upload failed", "danger");
+        }
+      } catch (err) {
+        showCVStatus("Upload error", "danger");
+      }
+    });
+    
+    function addDocumentToList(fileName, uploadedAt) {
+      const list = document.querySelector('.documents-list');
+      const div = document.createElement('div');
+      div.className = 'document-item';
+      div.innerHTML = `
+        <span class="document-icon">📎</span>
+        <div class="document-info">
+          <h3>${fileName}</h3>
+          <p>Updated just now</p>
+        </div>
+        <div class="document-actions">
+          <button class="btn-outline btn-small" onclick="window.open('/media/user_documents/${fileName}', '_blank')">View</button>
+          <button class="btn-outline btn-small delete-btn" onclick="deleteDocument('${fileName}', this)">Delete</button>
+        </div>
+      `;
+      list.appendChild(div);
+    }
+    
+    async function deleteDocument(fileName, btn) {
+      const formData = new FormData();
+      formData.append('filename', fileName);
+    
+      const res = await fetch('/delete_user_document/', {
+        method: 'POST',
+        body: formData
+      });
+    
+      const result = await res.json();
+      if (result.success) {
+        showCVStatus("Document deleted", "success");
+        btn.closest('.document-item').remove();
+      } else {
+        showCVStatus("Delete failed", "danger");
+      }
+    }
+    
   
     cvUploadBtn.addEventListener('click', () => {
       cvUploadInput.click();
+      console.log("📄 Upload CV button clicked - triggering file input");
+
     });
   
-    cvUploadInput.addEventListener('change', (e) => {
+    cvUploadInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
+      console.log("Selected file:", file);
+
+      if (!file) {
+        showCVStatus("No file selected. Please upload a PDF.", "danger");
+        return;
+      }
+
+      console.log("File type:", file.type);
+
+
       if (file) {
         if (file.type === 'application/pdf') {
-          alert(`CV uploaded: ${file.name}`);
+          showCVStatus("CV uploaded: My_CV.pdf", "success");
         } else {
-          alert('Please upload a PDF file for your CV');
+          showCVStatus("Upload failed: Please upload a PDF", "danger");
           e.target.value = '';
         }
       }
+
+      const formData = new FormData();
+      formData.append('cv_file', file);
+    
+      try {
+        const res = await fetch('/upload_cv/', {
+          method: 'POST',
+          body: formData,
+        });
+    
+        const result = await res.json();
+        console.log("📤 Uploading CV to /upload_cv/");
+        console.log("✅ Server response received:", result);
+
+        if (result.success) {
+          showCVStatus("CV uploaded! Auto-filling form...", "success");
+          autofillCVForm(result.data);  // 👈 Trigger the form fill
+          document.getElementById('cvModal').style.display = 'block'; // Open the CV modal
+        } else {
+          showCVStatus("Upload failed", "danger");
+        }
+      } catch (err) {
+        console.error(err);
+        console.error("❌ Error during upload fetch:", err);
+
+        showCVStatus("Error made during upload", "danger");
+      }
     });
+
+    function autofillCVForm(data) {
+      if (!data) return;
+    
+      console.log("🔄 Autofilling form with data:", data);
+    
+      // =====================
+      // Smart skills splitting
+      // =====================
+      const rawSkills = data.Skills || '';
+      let technicalSkills = '';
+      let keySkills = '';
+    
+      const softSkillMarkers = ["soft skills", "non-technical skills", "transferable skills"];
+      let splitFound = false;
+    
+      softSkillMarkers.forEach(marker => {
+        const index = rawSkills.toLowerCase().indexOf(marker);
+        if (index !== -1 && !splitFound) {
+          technicalSkills = rawSkills.slice(0, index).trim();
+          keySkills = rawSkills.slice(index).replace(new RegExp(`${marker}:?`, 'i'), '').trim();
+          splitFound = true;
+        }
+      });
+    
+      if (!splitFound) {
+        technicalSkills = rawSkills;
+      }
+    
+      // =====================
+      // Fill skill fields
+      // =====================
+      document.getElementById('technicalSkills').value = technicalSkills || '';
+      document.getElementById('keySkills').value = keySkills || '';
+    
+      // =====================
+      // Languages + Motivation
+      // =====================
+      document.getElementById('languages').value = data.Languages || '';
+      document.getElementById('interest').value = "Autofilled from CV";
+      document.getElementById('fitForRole').value = data["Experience & Education"] || '';
+      document.getElementById('aspirations').value = data.Projects || '';
+    
+      // =====================
+      // Personal Info (optional, if available)
+      // =====================
+      // Personal Info (from AI-parsed data)
+      if (data.personalInfo) {
+        const { fullName, email, phone, address } = data.personalInfo;
+        document.getElementById('fullName').value = fullName || '';
+        document.getElementById('email').value = email || '';
+        document.getElementById('phone').value = phone || '';
+        document.getElementById('address').value = address || '';
+      }
+
+    
+      // =====================
+      // Education
+      // =====================
+      const educationData = data.education || data.Education || [];
+      const educationContainer = document.getElementById('educationEntries');
+      educationContainer.innerHTML = '';
+    
+      educationData.forEach(edu => {
+        const entryHTML = createEducationEntry(edu);
+        educationContainer.insertAdjacentHTML('beforeend', entryHTML);
+      });
+    
+      // =====================
+      // Work Experience
+      // =====================
+
+      const workData = data.workExperience || data["Work Experience"] || [];
+
+      const workContainer = document.getElementById('workExperienceEntries');
+      workContainer.innerHTML = '';
+    
+      workData.forEach(exp => {
+        const entryHTML = createWorkExperienceEntry(exp);
+        workContainer.insertAdjacentHTML('beforeend', entryHTML);
+      });
+    }
+    
+    function showCVStatus(message, type = "success") {
+      const alertBox = document.getElementById("cvStatusAlert");
+      const messageSpan = document.getElementById("cvStatusMessage");
+    
+      if (!alertBox || !messageSpan) {
+        alert(message);
+        return;
+      }
+    
+      messageSpan.textContent = message;
+      alertBox.className = `alert alert-${type} alert-dismissible fade show`;
+      alertBox.style.display = "block";
+    }
+    
+    
+    
   
     docUploadBtn.addEventListener('click', () => {
       docUploadInput.click();
@@ -683,9 +932,12 @@ const mockJobs = [
   
     docUploadInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
+      console.log("Selected file:", file);
       if (file) {
         alert(`Document uploaded: ${file.name}`);
       }
+      console.log("📎 Additional document selected:", file.name);
+
     });
   
     // Close modal when clicking outside
@@ -695,6 +947,6 @@ const mockJobs = [
       }
     });
   }
-  
-  // Initialize the dashboard when the DOM is loaded
+
+
   document.addEventListener('DOMContentLoaded', createDashboard);

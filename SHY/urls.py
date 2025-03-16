@@ -51,7 +51,11 @@ urlpatterns = [
     # User applications
     path('user/applications/', ui_views.user_applications, name='user_applications'),
     path('user/applications/<int:application_id>/', ui_views.user_application_detail, name='user_application_detail'),
-
+    # urls.py
+    path('upload_cv/', ui_views.upload_cv, name='upload_cv'),
+    path('upload_raw_cv/', ui_views.upload_raw_cv, name='upload_raw_cv'),
+    path("upload_user_document/", ui_views.upload_user_document, name="upload_user_document"),
+    path("delete_user_document/", ui_views.delete_user_document, name="delete_user_document"),
     # Company applications
     path('company/applications/', ui_views.company_applications, name='company_applications'),
     path('company/applications/<int:application_id>/', ui_views.company_application_detail, name='company_application_detail'),
@@ -59,6 +63,7 @@ urlpatterns = [
 
     path('api/job_postings/', ui_views.job_postings_api, name='job_postings_api'),
     path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
+    path('job-postings/', ui_views.search, name='search',),
 
  path('job-postings/', job_search.job_recommendation, name='job_postings'),
 

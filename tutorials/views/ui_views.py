@@ -18,11 +18,14 @@ from tutorials.forms import (
 )
 from tutorials.models.applications import JobApplication
 from tutorials.models.applications import Notification
-
+from tutorials.forms import CVApplicationForm
+from tutorials.models.standard_cv import CVApplication, UserCV
 import logging
-
-
-
+from tutorials.auto_fill import extract_text_from_pdf, classify_resume_with_together
+import tempfile
+from tutorials.views.function_views import remove_duplicates_by_keys , split_skills
+import os
+from tutorials.models.user_dashboard import UploadedCV, UserDocument
 CustomUser = get_user_model()
 
 @login_required
@@ -47,6 +50,13 @@ def user_logout(request):
 def contact_us(request):
     return render(request, 'contact_us.html')
 
+def normalize_to_string_list(value):
+    if isinstance(value, list):
+        return ", ".join(v.strip() for v in value)
+    elif isinstance(value, str):
+        return value.strip()
+    return ""
+
 def guest(request):
     query = request.GET.get('q', '')
     if query:
@@ -57,22 +67,40 @@ def guest(request):
 
 @login_required
 def user_dashboard(request):
-    # If user is a company, block access
     if request.user.is_company:
         messages.error(request, "Access restricted to normal users only.")
-        return redirect('login')  
+        return redirect('login')
 
-    # Otherwise, show the user dashboard
-    user_info = {}
-    if request.user.is_authenticated:
-        user_info = {
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'full_name': f"{request.user.first_name} {request.user.last_name}"
+    user_info = {
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'full_name': f"{request.user.first_name} {request.user.last_name}"
+    }
+
+    try:
+        cv = UserCV.objects.get(user=request.user)
+        structured = {
+            "skills": cv.key_skills,
+            "technical_skills": cv.technical_skills,
+            "languages": cv.languages
         }
-    # Convert to JSON
-    user_info_json = json.dumps(user_info)
-    return render(request, 'user_dashboard.html', {'user_info_json': user_info_json})
+        cv_data = {
+            'personalInfo': cv.personal_info or {},
+            'education': cv.education or [],
+            'workExperience': cv.work_experience or [],
+            'skills': {
+                'key_skills': normalize_to_string_list(structured.get("skills", "")),
+                'technical_skills': normalize_to_string_list(structured.get("technical_skills", "")),
+                'languages': normalize_to_string_list(structured.get("languages", ""))
+            },
+        }
+    except UserCV.DoesNotExist:
+        cv_data = {}
+
+    return render(request, 'user_dashboard.html', {
+        'user_info_json': json.dumps(user_info),
+        'cv_data_json': json.dumps(cv_data)
+    })
 
 
 def search(request):
@@ -530,12 +558,6 @@ def mark_notification_read(request, notification_id):
     notif.save()
     return JsonResponse({'status': 'success'})
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from tutorials.models.applications import JobApplication, Notification
-from tutorials.models.jobposting import JobPosting
-
 # 1. User Applications: List of applications submitted by the logged-in user
 @login_required
 def user_applications(request):
@@ -601,3 +623,170 @@ def job_postings_api(request):
     )
     # Return the results as a JSON response.
     return JsonResponse(list(job_postings), safe=False)
+
+@csrf_exempt
+@require_POST
+@login_required
+def upload_cv(request):
+    user = request.user
+    file = request.FILES.get('cv_file')
+
+    if not file:
+        return JsonResponse({'success': False, 'error': 'No file uploaded'}, status=400)
+
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            for chunk in file.chunks():
+                temp_file.write(chunk)
+            temp_path = temp_file.name
+
+        text = extract_text_from_pdf(temp_path)
+        ai_output = classify_resume_with_together(text)
+        try:
+            structured = json.loads(ai_output)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Failed to parse CV data from AI'}, status=500)
+
+        skills_raw = structured.get("skills", [])
+        technical_skills, soft_skills = split_skills(skills_raw)
+
+        cv, _ = CVApplication.objects.get_or_create(user=user)
+        cv.full_name = user.get_full_name()
+        cv.email = user.email or 'unknown@example.com'
+        cv.phone = structured.get("personal_info", {}).get("phone", "N/A")
+        cv.address = structured.get("personal_info", {}).get("address", "N/A")
+        cv.postcode = structured.get("personal_info", {}).get("postcode", "N/A")
+        cv.key_skills = ", ".join(sorted(soft_skills))
+        cv.technical_skills = ", ".join(sorted(technical_skills))
+        cv.languages = ", ".join(structured.get("languages", []))
+        cv.motivation_statement = structured.get("motivations", "")
+        cv.fit_for_role = structured.get("fit_for_role", "")
+        cv.career_aspirations = structured.get("career_aspirations", "")
+
+        raw_date = structured.get("preferred_start_date", "")
+        parsed_date = parse_date(raw_date) if raw_date else None
+        cv.preferred_start_date = parsed_date
+
+        cv.cv_file.save(file.name, file)
+        cv.save()
+
+        user_cv, _ = UserCV.objects.get_or_create(user=user)
+        user_cv.personal_info = structured.get("personal_info", {})
+
+        if user_cv.education is None:
+            user_cv.education = []
+        if user_cv.work_experience is None:
+            user_cv.work_experience = []
+
+        existing_edu = {json.dumps(e, sort_keys=True) for e in user_cv.education}
+        for edu in structured.get("education", []):
+            new_edu = {
+                'university': edu.get("university", ""),
+                'degreeType': edu.get("degree_type", ""),
+                'fieldOfStudy': edu.get("field_of_study", ""),
+                'grade': edu.get("grade", ""),
+                'dates': edu.get("dates", ""),
+                'modules': edu.get("modules", "")
+            }
+            if json.dumps(new_edu, sort_keys=True) not in existing_edu:
+                user_cv.education.append(new_edu)
+
+        existing_exp = {json.dumps(e, sort_keys=True) for e in user_cv.work_experience}
+        for exp in structured.get("work_experience", []):
+            new_exp = {
+                'employer_name': exp.get("company", ""),
+                'job_title': exp.get("job_title", ""),
+                'responsibilities': exp.get("responsibilities", ""),
+                'dates': exp.get("dates", "")
+            }
+            if json.dumps(new_exp, sort_keys=True) not in existing_exp:
+                user_cv.work_experience.append(new_exp)
+
+        existing_skills = set(user_cv.key_skills.split(",")) if user_cv.key_skills else set()
+        new_skills = set(soft_skills)
+        user_cv.key_skills = ", ".join(sorted(existing_skills.union(new_skills)))
+
+        user_cv.technical_skills = user_cv.technical_skills or ", ".join(technical_skills)
+        user_cv.languages = user_cv.languages or ", ".join(structured.get("languages", []))
+        user_cv.interest = user_cv.interest or cv.motivation_statement
+        user_cv.fit_for_role = user_cv.fit_for_role or cv.fit_for_role
+        user_cv.aspirations = user_cv.aspirations or cv.career_aspirations
+
+        user_cv.save()
+        os.remove(temp_path)
+
+        return JsonResponse({
+            'success': True,
+            'message': 'CV updated from upload.',
+            'data': {
+                'personalInfo': user_cv.personal_info,
+                'education': user_cv.education,
+                'workExperience': user_cv.work_experience,
+                'skills': {
+                    'keySkills': user_cv.key_skills,
+                    'technicalSkills': user_cv.technical_skills,
+                    'languages': user_cv.languages
+                }
+            }
+        })
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+@csrf_exempt
+@login_required
+@require_POST
+def upload_raw_cv(request):
+    user = request.user
+    file = request.FILES.get('cv_file')
+    if not file:
+        return JsonResponse({'success': False, 'error': 'No file uploaded'}, status=400)
+
+    try:
+        uploaded_cv, _ = UploadedCV.objects.get_or_create(user=user)
+
+        # Delete old file if it exists
+        if uploaded_cv.file and os.path.exists(uploaded_cv.file.path):
+            os.remove(uploaded_cv.file.path)
+
+        # Save new one
+        uploaded_cv.file.save(file.name, file)
+        uploaded_cv.save()
+
+        return JsonResponse({
+            'success': True,
+            'filename': uploaded_cv.file.name,
+            'uploaded_at': uploaded_cv.uploaded_at.strftime("%Y-%m-%d %H:%M")
+        })
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@csrf_exempt
+@login_required
+@require_POST
+def upload_user_document(request):
+    if request.FILES.get('document'):
+        if request.user.documents.count() >= 5:
+            return JsonResponse({'success': False, 'error': 'Maximum 5 documents allowed'}, status=400)
+
+        doc = UserDocument.objects.create(user=request.user, file=request.FILES['document'])
+        return JsonResponse({
+            'success': True,
+            'filename': doc.file.name,
+            'url': doc.file.url,
+            'uploaded_at': doc.uploaded_at.strftime("%Y-%m-%d %H:%M")
+        })
+
+    return JsonResponse({'success': False, 'error': 'No file provided'}, status=400)
+
+@csrf_exempt
+@login_required
+@require_POST
+def delete_user_document(request):
+    file_name = request.POST.get('filename')
+    doc = UserDocument.objects.filter(user=request.user, file__icontains=file_name).first()
+    if doc:
+        doc.file.delete()
+        doc.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False, 'error': 'Document not found'})
