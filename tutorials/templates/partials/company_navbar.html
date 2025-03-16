@@ -7,10 +7,12 @@
     </a>
   </div>
 
+  {% if not is_guest %}
   <div class="search-container">
     <span class="search-icon">🔍</span>
     <input type="search" placeholder="Search jobs..." class="search-input">
   </div>
+  {% endif %}
   
   <div class="user-actions">
     <button class="icon-btn" onclick="window.location.href='/'"><i class="fas fa-house"></i></button>
