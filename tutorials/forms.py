@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from tutorials.models.jobposting import JobPosting
 from .models.company_review import Review
+from .models.standard_cv import CVApplication
 
 
 
@@ -139,3 +140,8 @@ class CompanySignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class CVApplicationForm(forms.ModelForm):
+    class Meta:
+        model = CVApplication
+        fields = '__all__'

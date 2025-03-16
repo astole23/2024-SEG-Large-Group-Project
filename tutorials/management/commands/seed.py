@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 from tutorials.models.jobposting import JobPosting
 import faker
 from tutorials.models.accounts import CustomUser as User, CompanyUser as Company, CustomUser
-
+from tutorials.models.standard_cv import UserCV
 from phonenumbers import parse, is_possible_number, is_valid_number, PhoneNumberFormat, format_number
 
 
@@ -298,7 +298,7 @@ def fetch_adzuna_jobs():
     print("🔍 Fetching jobs from Adzuna API...")
 
     try:
-        while len(job_list) < 1000:
+        while len(job_list) < 150:
             category = random.choice(CATEGORIES)
             
             for page in range(1, 6):
@@ -351,10 +351,10 @@ def fetch_adzuna_jobs():
                             "company_overview": random.choice(WHY_JOIN_US_OPTIONS),
                         })
 
-                        if len(job_list) >= 1000:
+                        if len(job_list) >= 150:
                             break  # Exit early from job loop
 
-                if len(job_list) >= 1000:
+                if len(job_list) >= 150:
                     break  # Exit early from page loop if needed
     except requests.RequestException as e:
         print(f"❌ Error: {e}")
@@ -460,6 +460,53 @@ class Command(BaseCommand):
                 # For normal users, ensure is_company remains False.
                 fixture['is_company'] = False
                 user, created = User.objects.get_or_create(username=username, defaults=fixture)
+                if user_type == "user":
+                    UserCV.objects.update_or_create(
+                        user=user,
+                        defaults={
+                            "personal_info": {
+                                "fullName": f"{user.first_name} {user.last_name}",
+                                "email": user.email,
+                                "phone": user.phone,
+                                "address": "123 University St, London, UK"
+                            },
+                            "key_skills": "Problem Solving, Teamwork, Time Management",
+                            "technical_skills": "Python, Django, PostgreSQL, HTML, CSS",
+                            "languages": "English, French",
+                            "education": [
+                                {
+                                    "university": "University of Oxford",
+                                    "degreeType": "Bachelor's",
+                                    "fieldOfStudy": "Computer Science",
+                                    "grade": "1st Class Honours",
+                                    "dates": "2018 - 2021",
+                                    "modules": "Algorithms, Data Structures, AI"
+                                },
+                                {
+                                    "university": "University of Cambridge",
+                                    "degreeType": "Master's",
+                                    "fieldOfStudy": "Artificial Intelligence",
+                                    "grade": "Distinction",
+                                    "dates": "2021 - 2022",
+                                    "modules": "Machine Learning, NLP, Deep Learning"
+                                }
+                            ],
+                            "work_experience": [
+                                {
+                                    "employer": "Google",
+                                    "jobTitle": "Software Engineering Intern",
+                                    "dates": "Summer 2021",
+                                    "responsibilities": "Built internal tools using Python and Flask."
+                                },
+                                {
+                                    "employer": "Meta",
+                                    "jobTitle": "Backend Developer",
+                                    "dates": "2022 - 2023",
+                                    "responsibilities": "Worked on REST APIs and database optimization."
+                                }
+                            ]
+                        }
+                    )
 
             if created:
                 user.set_password(raw_password)
@@ -481,8 +528,9 @@ class Command(BaseCommand):
                     "phone": fake.phone_number(),
                     "password": fake.password(length=10),
                     "username": username,
-                    
                 }
+
+                
             )
             if created:
                 print(f"✅ Created User: {user.first_name} {user.last_name} - {user.email}")

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from tutorials.models.jobposting import JobPosting
+from tutorials.models.standard_cv import CVApplication
 from tutorials.models.applications import JobApplication, Notification
 
 
