@@ -180,16 +180,32 @@ def login_view(request):
     })
 
 def signup_view(request):
-    # This view just displays the empty forms for a GET request;
-    # the actual POST is handled in process_signup.
-    user_form = UserSignUpForm(prefix='user')
-    company_form = CompanySignUpForm(prefix='company')
+    if request.method == 'POST':
+
+        user_form = UserSignUpForm(request.POST, prefix='user')
+        company_form = CompanySignUpForm(request.POST, prefix='company')
+
+        if user_form.is_valid() and company_form.is_valid():
+            user = user_form.save(commit=False)
+            user.user_industry = user_form.cleaned_data['user_industry'].split(',')
+            user.user_location = user_form.cleaned_data['user_location'].split(',')
+            user.save()
+
+            company = company_form.save(commit=False)
+
+            if company_form.cleaned_data.get('is_company'):
+                company.save()
+
+            return redirect('user_dashboard')
+
+    else:
+        user_form = UserSignUpForm(prefix='user')
+        company_form = CompanySignUpForm(prefix='company')
 
     return render(request, 'signup.html', {
         'user_form': user_form,
         'company_form': company_form
     })
-
 
 def company_detail(request, company_id):
     """
@@ -576,7 +592,6 @@ def job_postings_api(request):
     job_postings = JobPosting.objects.all().values(
         'id',
         'job_title',
-        'company_name',
         'location',
         'salary_range',
         'contract_type',

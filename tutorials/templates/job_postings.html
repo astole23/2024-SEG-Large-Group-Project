@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Recommendations</title>
+</head>
+<body>
+    <h1>Recommended Job Postings</h1>
+    {% if sorted_matches %}
+        <ul>
+            {% for job_title, score in sorted_matches %}
+                <li>{{ job_title }} - Similarity Score: {{ score }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No job recommendations available.</p>
+    {% endif %}
+</body>
+</html>

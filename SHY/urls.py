@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from tutorials.views import ui_views, function_views, matching_jobs
+from tutorials.views import job_search, ui_views, function_views
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -60,7 +60,7 @@ urlpatterns = [
     path('api/job_postings/', ui_views.job_postings_api, name='job_postings_api'),
     path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
 
- path('job-postings/', matching_jobs.job_search, name='job_postings'),
+ path('job-postings/', job_search.job_recommendation, name='job_postings'),
 
 ]
 

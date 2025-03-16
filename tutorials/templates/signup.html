@@ -16,7 +16,7 @@
       <div class="tab-content">
         <!-- Job Seeker Sign Up -->
         <div class="tab-pane active" id="user-tab">
-          <form action="{% url 'process_signup' %}" method="post">
+          <form action="{% url 'signup' %}" method="post">
             {% csrf_token %}
             <!-- Hidden field to pass user type -->
             <input type="hidden" name="user_type" value="user">
@@ -185,9 +185,9 @@
 
     // Convert Tagify data to JSON before form submission
     document.querySelector("form").addEventListener("submit", function () {
-        document.querySelector("#industry-input").value = JSON.stringify(industryInput.value.map(tag => tag.value));
-        document.querySelector("#location-input").value = JSON.stringify(locationInput.value.map(tag => tag.value));
-    });
+      document.querySelector("#industry-input").value = JSON.stringify(industryInput.value.map(tag => tag.value));
+      document.querySelector("#location-input").value = JSON.stringify(locationInput.value.map(tag => tag.value));
+});
     function clearPlaceholder(element) {
         element.placeholder = '';  // Remove placeholder when typing
     }
