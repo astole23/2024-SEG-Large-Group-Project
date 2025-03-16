@@ -1,36 +1,44 @@
 from django.shortcuts import render
 from tutorials.models.jobposting import JobPosting
 from tutorials.models.accounts import CustomUser
-from tutorials.matchmaking_helper import match_job_to_cv_bert
+from tutorials.matchmaking_helper import match_job_to_cv_together, is_location_match
 
 def job_recommendation(request):
-    # Get the current user
     user = request.user
-    
-    # Get the user's declared industries
-    user_industry = user.user_industry  # List of industries user is interested in
+    user_industry = user.user_industry
+    user_locations = user.user_location
 
-    # Print the user industry to the console for debugging purposes
-    print(f"User Industry: {user_industry}")
-
-    # Check if user_industry is empty
     if not user_industry:
         return render(request, 'job_postings.html', {'error_message': 'No industries specified for the user.'})
 
-    # Filter job postings based on the user's industries
-    job_postings = JobPosting.objects.all()
+    job_postings = list(JobPosting.objects.all())
+    job_lookup = {job.job_title: job for job in job_postings}
+    job_titles = list(job_lookup.keys())
 
-    # Print the job postings to the console for debugging purposes
-    print(f"Job Postings: {job_postings}")
+    # 🔍 Debugging before calling Together AI
+    print(f"🔍 Sending to match_job_to_cv_together: {user_industry}, {job_titles}")
 
-    # Get the job titles from the filtered job postings
-    job_titles = [job.job_title for job in job_postings]
+    sorted_matches = match_job_to_cv_together(user_industry, job_titles)
+    unique_jobs = {}
 
-    # Print job titles for debugging
-    print(f"Job Titles: {job_titles}")
+    print("\n🔍 Job Matching Debug Info:\n")
 
-    # Perform matchmaking (you might want to match the user’s declared job titles with the job postings)
-    sorted_matches = match_job_to_cv_bert(user_industry, job_titles)
+    for job_title, base_score in sorted_matches:
+        job = job_lookup.get(job_title)
+        if not job or job_title in unique_jobs:
+            continue
 
-    # You can now return these sorted matches in your context
-    return render(request, 'job_postings.html', {'sorted_matches': sorted_matches})
+        location_bonus = is_location_match(user_locations, job.location)
+        final_score = base_score + location_bonus
+
+        unique_jobs[job_title] = (job, final_score)
+
+    # ✅ Convert to sorted list
+    matched_jobs = sorted(unique_jobs.values(), key=lambda x: x[1], reverse=True)
+
+    # ✅ Print out the matched job names
+    print("\n📝 Final Recommended Jobs:")
+    for job, score in matched_jobs:
+        print(f"- {job.job_title} ({job.company.company_name}) | Location: {job.location} | Score: {score:.2f}")
+
+    return render(request, 'job_postings.html', {'sorted_matches': matched_jobs})
