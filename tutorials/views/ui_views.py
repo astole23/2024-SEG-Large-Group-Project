@@ -16,6 +16,10 @@ from tutorials.forms import (
     UserSignUpForm, CompanySignUpForm,
     CompanyProfileForm, UserUpdateForm, MyPasswordChangeForm
 )
+from django.contrib.auth.hashers import make_password
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from tutorials.models.accounts import CustomUser
 from tutorials.models.applications import JobApplication
 from tutorials.models.applications import Notification
 from tutorials.forms import CVApplicationForm
@@ -224,32 +228,46 @@ def login_view(request):
     })
 
 def signup_view(request):
+
     if request.method == 'POST':
-
         user_form = UserSignUpForm(request.POST, prefix='user')
-        company_form = CompanySignUpForm(request.POST, prefix='company')
 
-        if user_form.is_valid() and company_form.is_valid():
+        # Only process company form if the checkbox is present
+        is_company = 'is_company' in request.POST
+        company_form = CompanySignUpForm(request.POST, prefix='company') if is_company else None
+
+
+        # Only save user if form is valid
+        if user_form.is_valid():
             user = user_form.save(commit=False)
+
+            # Assign custom fields
             user.user_industry = user_form.cleaned_data['user_industry'].split(',')
             user.user_location = user_form.cleaned_data['user_location'].split(',')
+            user.set_password(user_form.cleaned_data['password1'])  # Hash password
+
+            # Mark user as a company if applicable
+            user.is_company = is_company
             user.save()
 
-            company = company_form.save(commit=False)
-
-            if company_form.cleaned_data.get('is_company'):
+            # If it's a company, validate and save company details
+            if is_company and company_form and company_form.is_valid():
+                company = company_form.save(commit=False)
+                company.is_company = True
                 company.save()
 
-            return redirect('user_dashboard')
+            # Authenticate and log in the user
+            authenticated_user = authenticate(username=user.username, password=user_form.cleaned_data['password1'])
+            if authenticated_user:
+                login(request, authenticated_user)
+                return redirect('user_dashboard')
 
     else:
         user_form = UserSignUpForm(prefix='user')
         company_form = CompanySignUpForm(prefix='company')
 
-    return render(request, 'signup.html', {
-        'user_form': user_form,
-        'company_form': company_form
-    })
+    return render(request, 'signup.html', {'user_form': user_form, 'company_form': company_form})
+
 
 def company_detail(request, company_id):
     """

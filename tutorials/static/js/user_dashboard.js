@@ -29,19 +29,22 @@ const mockJobs = [
 
   // Function to fetch job postings from the API (or use a fallback)
   function fetchJobPostings() {
-    // If you have an API endpoint, use it. Otherwise, fall back to mock data.
-    return fetch('/api/job_postings/')
-      .then(response => response.json())
-      .catch(error => {
-        console.error('Error fetching job postings:', error);
-        // Fallback: use the existing mockJobs data
-        return [
-          { id: 1, job_title: 'React Developer', company_name: 'Apple', location: 'Cupertino, CA', salary_range: '$120k - $180k', contract_type: 'Full-time', job_overview: 'Develop user interfaces...', roles_responsibilities: 'Build components, debug code...', required_skills: 'React, JavaScript' },
-          { id: 2, job_title: 'Frontend Engineer', company_name: 'Meta', location: 'Remote', salary_range: '$130k - $190k', contract_type: 'Contract', job_overview: 'Design modern web apps...', roles_responsibilities: 'UI design, testing...', required_skills: 'HTML, CSS, JS' },
-          { id: 3, job_title: 'Full Stack Developer', company_name: 'Amazon', location: 'Seattle, WA', salary_range: '$140k - $200k', contract_type: 'Full-time', job_overview: 'Work across the stack...', roles_responsibilities: 'API design, integration...', required_skills: 'Python, React, SQL' }
-        ];
-        });
-      };
+    return fetch('/job_recommendations/', { 
+        headers: { 'X-Requested-With': 'XMLHttpRequest' } // ✅ Ensure Django treats it as an AJAX request
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.recommended_jobs || data.recommended_jobs.length === 0) {
+            console.warn('No job recommendations available.');
+            return [];
+        }
+        return data.recommended_jobs;
+    })
+    .catch(error => {
+        console.error('Error fetching job recommendations:', error);
+        return []; // Return empty array if API fails
+    });
+  }
   
 
   function renderJobListings(jobs) {
