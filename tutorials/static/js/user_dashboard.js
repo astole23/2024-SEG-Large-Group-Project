@@ -704,6 +704,8 @@ const mockJobs = [
     }
 
     const docUploadBtn = document.getElementById('docUploadBtn');
+    const docUploadInput = document.getElementById('docUpload');
+
     docUploadInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;

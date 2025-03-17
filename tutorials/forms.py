@@ -95,7 +95,7 @@ class UserSignUpForm(UserCreationForm):
     }))
     user_industry = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter industries (press Enter to add)'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter industries (press Enter to add)', 'id': 'industry-input'})
     )
     user_location = forms.CharField(
         required=False,
