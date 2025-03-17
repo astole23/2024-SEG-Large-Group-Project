@@ -190,6 +190,21 @@ def search(request):
 def about_us(request):
     return render(request, 'about_us.html')
 
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')
+
+def status(request):
+    return render(request, 'status.html')
+
+def privacy(request):
+    return render(request, 'privacy.html')
+
+def user_agreement(request):
+    return render(request, 'user_agreement.html')
+
+def faq(request):
+    return render(request, 'faq.html')
+
 def my_jobs(request):
     return render(request, 'my_jobs.html')
 
