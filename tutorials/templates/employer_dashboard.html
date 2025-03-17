@@ -8,14 +8,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employer Dashboard</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/employer_dashboard.css' %}">
 </head>
+
+
 <body>
 
-  <!-- Sidebar (unchanged from your design) -->
-  <div class="sidebar">
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
     <div class="sidebar-options">
-      <img src="{% static 'images/empty_profile.png' %}" alt="Profile Photo" class="profile-photo">
       <a href="#"><i class="fas fa-briefcase"></i> See posted jobs</a>
       <a href="#" data-bs-toggle="modal" data-bs-target="#createJobModal">
         <i class="fas fa-plus-circle"></i> Create new posting
@@ -25,13 +26,10 @@
       <a href="#"><i class="fas fa-users"></i> View User Request</a>
       <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
-    <div class="sidebar-logo">
-      <img src="{% static 'images/circle_lilac.png' %}" alt="Small logo" class="small-logo">
-    </div>
   </div>
 
   <!-- Content Area -->
-  <div class="content">
+  <div class="content" id="content">
     <!-- Header (as previously designed) -->
     <div class="header">
       <div class="row">
