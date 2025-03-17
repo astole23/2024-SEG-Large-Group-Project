@@ -209,7 +209,16 @@ def my_jobs(request):
     return render(request, 'my_jobs.html')
 
 def profile_settings(request):
-    return render(request, 'settings.html')
+    if request.method == 'POST':
+
+        form = UserUpdateForm(request.POST, instance = request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect('settings')
+        else:
+            form = UserUpdateForm(instance = request.user)
+            return render(request, 'settings.html', {'form': form})
 
 def login_view(request):
     # Since this view only needs to display the forms (the POST is handled in process_login),
