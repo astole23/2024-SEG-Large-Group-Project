@@ -2,6 +2,7 @@ from django.shortcuts import render
 from tutorials.models.jobposting import JobPosting
 from tutorials.models.accounts import CustomUser
 from tutorials.matchmaking_helper import match_job_to_cv_together, is_location_match
+from tutorials.models.standard_cv import CVApplication
 
 def job_recommendation(request):
     user = request.user
@@ -15,11 +16,21 @@ def job_recommendation(request):
     job_lookup = {job.job_title: job for job in job_postings}
     job_titles = list(job_lookup.keys())
 
-    # 🔍 Debugging before calling Together AI
-    print(f"🔍 Sending to match_job_to_cv_together: {user_industry}, {job_titles}")
+    try:
+        user_cv = CVApplication.objects.get(user=user)
+        field_of_study = [user_cv.education[0]["field_of_study"]] if user_cv.education else []
+        previous_jobs = [exp["jobTitle"] for exp in user_cv.job_title] if user_cv.job_title else []
+    except CVApplication.DoesNotExist:
+        field_of_study = []
+        previous_jobs = []
 
-    sorted_matches = match_job_to_cv_together(user_industry, job_titles)
-    unique_jobs = {}
+    user_values = user_industry + field_of_study + previous_jobs
+
+    # 🔍 Debugging before calling Together AI
+    print(f"🔍 Sending to match_job_to_cv_together: {user_values}, {job_titles}")
+
+    sorted_matches = match_job_to_cv_together(user_values, job_titles)
+    unique_jobs = {} 
 
     print("\n🔍 Job Matching Debug Info:\n")
 
