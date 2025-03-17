@@ -14,7 +14,7 @@ from django.utils.dateparse import parse_date
 from tutorials.forms import (
     UserLoginForm, CompanyLoginForm,
     UserSignUpForm, CompanySignUpForm,
-    CompanyProfileForm
+    CompanyProfileForm, UserUpdateForm, MyPasswordChangeForm
 )
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
@@ -31,6 +31,8 @@ from tutorials.views.function_views import remove_duplicates_by_keys , split_ski
 import os
 from tutorials.models.user_dashboard import UploadedCV, UserDocument
 CustomUser = get_user_model()
+
+from django.contrib.auth import update_session_auth_hash
 
 @login_required
 def employer_dashboard(request):
@@ -194,11 +196,25 @@ def search(request):
 def about_us(request):
     return render(request, 'about_us.html')
 
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')
+
+def status(request):
+    return render(request, 'status.html')
+
+def privacy(request):
+    return render(request, 'privacy.html')
+
+def user_agreement(request):
+    return render(request, 'user_agreement.html')
+
+def faq(request):
+    return render(request, 'faq.html')
+
 def my_jobs(request):
     return render(request, 'my_jobs.html')
 
-def profile_settings(request):
-    return render(request, 'settings.html')
+
 
 def login_view(request):
     # Since this view only needs to display the forms (the POST is handled in process_login),
@@ -212,47 +228,39 @@ def login_view(request):
     })
 
 def signup_view(request):
+
     if request.method == 'POST':
         user_form = UserSignUpForm(request.POST, prefix='user')
 
-        is_company = 'is_company' in request.POST  # Check if the user is a company
+        # Only process company form if the checkbox is present
+        is_company = 'is_company' in request.POST
         company_form = CompanySignUpForm(request.POST, prefix='company') if is_company else None
 
-        if user_form.is_valid():
-            user = user_form.save(commit=False)  # Don't save yet
 
-            # Assign industry and location as lists
+        # Only save user if form is valid
+        if user_form.is_valid():
+            user = user_form.save(commit=False)
+
+            # Assign custom fields
             user.user_industry = user_form.cleaned_data['user_industry'].split(',')
             user.user_location = user_form.cleaned_data['user_location'].split(',')
             user.set_password(user_form.cleaned_data['password1'])  # Hash password
 
-            # If it's a company, assign company-related fields
+            # Mark user as a company if applicable
             user.is_company = is_company
-            if is_company:
-                user.company_name = request.POST.get('company_name', '').strip()
-                user.industry = request.POST.get('industry', '').strip()
-                user.location = request.POST.get('location', '').strip()
-
-            # ✅ Save the user (company or not)
             user.save()
 
-            # If it's a company, ensure any additional company data is saved
+            # If it's a company, validate and save company details
             if is_company and company_form and company_form.is_valid():
                 company = company_form.save(commit=False)
                 company.is_company = True
                 company.save()
 
-            # ✅ Authenticate and log in the user
+            # Authenticate and log in the user
             authenticated_user = authenticate(username=user.username, password=user_form.cleaned_data['password1'])
             if authenticated_user:
                 login(request, authenticated_user)
-                print(f"✅ User logged in: {authenticated_user.username}")
-
-                # 🔄 Redirect based on user type
-                if is_company:
-                    return redirect('company_detail')  # Redirect companies here
-                else:
-                    return redirect('user_dashboard')  # Redirect regular users here
+                return redirect('user_dashboard')
 
     else:
         user_form = UserSignUpForm(prefix='user')
@@ -363,7 +371,6 @@ def create_job_posting(request):
             # Set the company using the logged-in user
             company=request.user,
             # Automatically set company_name from the logged-in user
-            company_name=request.user.company_name or request.user.username,
             child_company_name=data.get('child_company_name'),
             location=data.get('location'),
             work_type=data.get('work_type'),
@@ -816,3 +823,49 @@ def delete_user_document(request):
         doc.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'error': 'Document not found'})
+
+
+@login_required
+def profile_settings(request):
+    if request.method == 'POST':
+        if 'update_details' in request.POST:
+            details_form = UserUpdateForm(request.POST, instance=request.user)
+            password_form = MyPasswordChangeForm(user=request.user)  # blank
+            if details_form.is_valid():
+                details_form.save()
+                messages.success(request, "Your details have been updated.")
+                return redirect('settings')
+            else:
+                error_list = []
+                for field, errors in details_form.errors.items():
+                    error_list.append(f"{field}: {', '.join(errors)}")
+                error_message = " ".join(error_list)
+                print("Details form errors:", error_message)
+                messages.error(request, "Update failed: " + error_message)
+        elif 'change_password' in request.POST:
+            details_form = UserUpdateForm(instance=request.user)  # keep details form intact
+            password_form = MyPasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                old_hash = request.user.password  # Debug: print the current password hash
+                user = password_form.save()  # This should update the password
+                new_hash = user.password      # Debug: print the new password hash
+                print("Old hash:", old_hash)
+                print("New hash:", new_hash)
+                update_session_auth_hash(request, user)
+                messages.success(request, "Your password has been changed.")
+                return redirect('settings')
+            else:
+                error_list = []
+                for field, errors in password_form.errors.items():
+                    error_list.append(f"{field}: {', '.join(errors)}")
+                error_message = " ".join(error_list)
+                print("Password form errors:", error_message)
+                messages.error(request, "Password change failed: " + error_message)
+    else:
+        details_form = UserUpdateForm(instance=request.user)
+        password_form = MyPasswordChangeForm(user=request.user)
+
+    return render(request, 'settings.html', {
+        'details_form': details_form,
+        'password_form': password_form,
+    })

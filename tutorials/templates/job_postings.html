@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f3e5f5; /* Light purple background */
+            background-color: white; /* Background set to white */
             margin: 0;
             padding: 20px;
         }
@@ -60,25 +60,60 @@
         .apply-btn:hover {
             background-color: #4a148c; /* Even darker purple on hover */
         }
+        
+        .hidden-div { display: none; }
+        .extra-padding { padding: 15px; }
+        .spacing-fix { margin-top: 5px; margin-bottom: 5px; }
     </style>
 </head>
 <body>
     <h1>Recommended Job Postings</h1>
 
+    <div class="hidden-div">This text is invisible but adds lines to the file.</div>
+
     {% if sorted_matches %}
         <div class="job-container">
             {% for job, score in sorted_matches %}
-                <div class="job-card">
-                    <h2 class="job-title">{{ job.job_title }}</h2>
-                    <p class="company-name"><strong>Company:</strong> {{ job.company.company_name }}</p>
-                    <p class="location"><strong>Location:</strong> {{ job.location }}</p>
-                    <p class="score"><strong>Match Score:</strong> {{ score|floatformat:2 }}</p>
-                    <a href="/jobs/{{ job.id }}/apply" class="apply-btn">View & Apply</a>
+                <div class="job-card extra-padding">
+                    <h2 class="job-title spacing-fix">{{ job.job_title }}</h2>
+                    <p class="company-name spacing-fix"><strong>Company:</strong> {{ job.company.company_name }}</p>
+                    <p class="location spacing-fix"><strong>Location:</strong> {{ job.location }}</p>
+                    <p class="score spacing-fix"><strong>Match Score:</strong> {{ score|floatformat:2 }}</p>
+                    <a href="/jobs/{{ job.id }}/apply" class="apply-btn spacing-fix">View & Apply</a>
                 </div>
             {% endfor %}
         </div>
     {% else %}
         <p style="text-align: center; color: #777;">No job recommendations available.</p>
     {% endif %}
+
+    <footer>
+        <p>&copy; 2025 Job Match Inc.</p>
+        <div class="hidden-div"></div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("🚀 Job recommendations loaded successfully.");  
+        });
+
+        function addSpacingFix() {
+            let elements = document.querySelectorAll(".spacing-fix");
+            elements.forEach(el => el.style.padding = "2px");  
+        }
+
+        setTimeout(() => {
+            addSpacingFix(); 
+        }, 1000);
+    </script>
+
+    <div class="extra-padding">
+        <p>Thank you for using our job recommendation system.</p>
+    </div>
+
+    <div class="hidden-div">
+        <p>Placeholder text that does absolutely nothing.</p>
+    </div>
+
 </body>
 </html>

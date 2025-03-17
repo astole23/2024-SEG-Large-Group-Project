@@ -10,6 +10,10 @@ def job_recommendation(request):
     user_industry = user.user_industry or []
     user_locations = user.user_location
 
+    print(f"user location is {user_locations}")
+    print(f"user location is {user_industry}")
+
+
     if not user_industry:
         return JsonResponse({"error": "No industries specified for the user."}, status=400) if request.headers.get('X-Requested-With') == 'XMLHttpRequest' else render(request, 'job_postings.html', {'error_message': 'No industries specified for the user.'})
 
@@ -27,8 +31,6 @@ def job_recommendation(request):
 
     user_values = user_industry + field_of_study + previous_jobs
 
-    # 🔍 Debugging before calling Together AI
-    print(f"🔍 Sending to match_job_to_cv_together: {user_values}, {job_titles}")
 
     sorted_matches = match_job_to_cv_together(user_values, job_titles)
     unique_jobs = {} 

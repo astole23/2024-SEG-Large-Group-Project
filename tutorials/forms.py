@@ -145,3 +145,24 @@ class CVApplicationForm(forms.ModelForm):
     class Meta:
         model = CVApplication
         fields = '__all__'
+
+        User = get_user_model()
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'industry', 'location')
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your username'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}),
+            'industry': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your industry'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your location'}),
+        }
+
+class MyPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})
