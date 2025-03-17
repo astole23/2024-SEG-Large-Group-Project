@@ -337,7 +337,6 @@ def create_job_posting(request):
             # Set the company using the logged-in user
             company=request.user,
             # Automatically set company_name from the logged-in user
-            company_name=request.user.company_name or request.user.username,
             child_company_name=data.get('child_company_name'),
             location=data.get('location'),
             work_type=data.get('work_type'),

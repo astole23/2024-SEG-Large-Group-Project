@@ -132,7 +132,7 @@ body {
     margin-bottom: 10px;
     background-color: #ebebeb79;
     border: rgb(255, 255, 255); /* for identification */
-    color: white;
+    color: var(--text-primary);
     text-align: left;
     padding: 20px;
     display: flex;

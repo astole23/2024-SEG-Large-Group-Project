@@ -45,31 +45,26 @@
     <!-- Main Content: Job Posting Grid -->
     <div class="scrollable-section">
       <div class="grid-container">
-        {% with user_jobs=job_postings|dictsort:'company_name' %}
-          {% if user_jobs %}
-            {% for job in user_jobs %}
-              {% if job.company_name == user.company_name %}
-                <div class="grid-button card shadow-sm p-3 mb-4">
-                  <h5>{{ job.job_title }}</h5>
-                  <p>{{ job.company_name }}</p>
-                  <p>{{ job.location }}</p>
-                  <p>{{ job.work_type }}</p>
-                  <p>{{ job.company_overview|truncatewords:10 }}</p>
-                  <button class="btn btn-secondary mt-2" data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">View More</button>
-                </div>
-              {% endif %}
-            {% endfor %}
-          {% else %}
-            <p class="text-muted">No job postings available.</p>
-          {% endif %}
-        {% endwith %}
+        {% if job_postings %}
+          {% for job in job_postings %}
+            <div class="grid-button card shadow-sm p-3 mb-4">
+              <h5>{{ job.job_title }}</h5>
+              <p>{{ job.company.company_name }}</p>
+              <p>{{ job.location }}</p>
+              <p>{{ job.work_type }}</p>
+              <p>{{ job.company_overview|truncatewords:10 }}</p>
+              <button class="btn btn-secondary mt-2" data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">View More</button>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted">No job postings available.</p>
+        {% endif %}
       </div>
     </div>
 
 
   <!-- Modals: One per job posting -->
   {% for job in job_postings %}
-    {%if job.company_name == user.company_name %}
       <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
           <div class="modal-content">
@@ -83,7 +78,7 @@
                 <!-- Row 1: Basic Job Info -->
                 <div class="row mb-3">
                   <div class="col-md-6">
-                    <p><strong>Company:</strong> {{ job.company_name }}</p>
+                    <p><strong>Company:</strong> {{ job.company.company_name }}</p>
                     {% if job.child_company_name %}
                     <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
                     {% endif %}
@@ -152,7 +147,6 @@
           </div>
         </div>
       </div>
-    {% endif %}
   {% endfor %}
 
 
