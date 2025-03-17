@@ -17,30 +17,35 @@
             <!-- Account Settings Section -->
             <div class="settings-section">
                 <h3 class="text-center">Account Settings</h3>
-                <form>
+                <form method="form-group">
+                    {% csrf_token %}
                     <div class="form-group">
                         <label for="first-name">First Name</label>
-                        <input type="text" id="first-name" class="form-control" placeholder="Enter your first name">
+                        <input type="text" id="first-name" name="first_name" class="form-control" value="{{ user.first_name }}" placeholder="Enter your first name">
                     </div>
                     <div class="form-group">
                         <label for="last-name">Last Name</label>
-                        <input type="text" id="last-name" class="form-control" placeholder="Enter your last name">
+                        <input type="text" id="last-name" name="last_name" class="form-control" value="{{ user.last_name }}" placeholder="Enter your last name">
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" class="form-control" placeholder="Enter your email">
+                        <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" placeholder="Enter your email">
                     </div>
                     <div class="form-group">
-                        <label for="email">Location</label>
-                        <input type="text" id="location" class="form-control" placeholder="Enter your location">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" class="form-control" value="{{ user.location }}" placeholder="Enter your location">
                     </div>
                     <div class="form-group">
-                        <label for="email">Industry</label>
-                        <input type="text" id="industry" class="form-control" placeholder="Enter your industry">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" name="industry" class="form-control" value="{{ user.industry }}" placeholder="Enter your industry">
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" class="form-control" placeholder="Enter a new password">
+                        <input type="password" id="password1" name="password1" class="form-control" value="{{ user.password1 }}" placeholder="Enter a new password">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password2" name="password2" class="form-control" value="{{ user.password2 }}" placeholder="Enter your new password again">
                     </div>
                 </form>
             </div>
