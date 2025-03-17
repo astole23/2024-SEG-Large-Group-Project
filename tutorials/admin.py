@@ -12,7 +12,7 @@ CustomUser = get_user_model()
 class JobPostingAdmin(admin.ModelAdmin):
     list_display = (
         'job_title',
-        'company__company_name',
+        'get_company_name',
         'location',
         'salary_range',
         'contract_type',
@@ -21,7 +21,6 @@ class JobPostingAdmin(admin.ModelAdmin):
     list_filter = (
         'contract_type',
         'location',
-        'company__company_name',
     )
     search_fields = (
         'job_title',
@@ -31,6 +30,10 @@ class JobPostingAdmin(admin.ModelAdmin):
     ordering = ('-application_deadline',)
     readonly_fields = ('created_at', 'updated_at')
 
+    def get_company_name(self, obj):
+        return obj.company.company_name if obj.company else "No Company"
+    
+    get_company_name.short_description = "Company Name"
 
 from tutorials.models.accounts import CompanyUser, NormalUser
 

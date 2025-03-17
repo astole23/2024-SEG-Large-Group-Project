@@ -63,7 +63,7 @@ def guest(request):
         job_postings = JobPosting.objects.filter(job_title__icontains=query)
     else:
         job_postings = JobPosting.objects.all()
-    return render(request, 'guest.html', {'job_postings': job_postings})
+    return render(request, 'guest.html', {'job_postings': job_postings,'is_guest': True})
 
 @login_required
 def user_dashboard(request):
