@@ -212,39 +212,47 @@ def login_view(request):
     })
 
 def signup_view(request):
-
     if request.method == 'POST':
         user_form = UserSignUpForm(request.POST, prefix='user')
 
-        # Only process company form if the checkbox is present
-        is_company = 'is_company' in request.POST
+        is_company = 'is_company' in request.POST  # Check if the user is a company
         company_form = CompanySignUpForm(request.POST, prefix='company') if is_company else None
 
-
-        # Only save user if form is valid
         if user_form.is_valid():
-            user = user_form.save(commit=False)
+            user = user_form.save(commit=False)  # Don't save yet
 
-            # Assign custom fields
+            # Assign industry and location as lists
             user.user_industry = user_form.cleaned_data['user_industry'].split(',')
             user.user_location = user_form.cleaned_data['user_location'].split(',')
             user.set_password(user_form.cleaned_data['password1'])  # Hash password
 
-            # Mark user as a company if applicable
+            # If it's a company, assign company-related fields
             user.is_company = is_company
+            if is_company:
+                user.company_name = request.POST.get('company_name', '').strip()
+                user.industry = request.POST.get('industry', '').strip()
+                user.location = request.POST.get('location', '').strip()
+
+            # ✅ Save the user (company or not)
             user.save()
 
-            # If it's a company, validate and save company details
+            # If it's a company, ensure any additional company data is saved
             if is_company and company_form and company_form.is_valid():
                 company = company_form.save(commit=False)
                 company.is_company = True
                 company.save()
 
-            # Authenticate and log in the user
+            # ✅ Authenticate and log in the user
             authenticated_user = authenticate(username=user.username, password=user_form.cleaned_data['password1'])
             if authenticated_user:
                 login(request, authenticated_user)
-                return redirect('user_dashboard')
+                print(f"✅ User logged in: {authenticated_user.username}")
+
+                # 🔄 Redirect based on user type
+                if is_company:
+                    return redirect('company_detail')  # Redirect companies here
+                else:
+                    return redirect('user_dashboard')  # Redirect regular users here
 
     else:
         user_form = UserSignUpForm(prefix='user')
