@@ -210,6 +210,12 @@ def my_jobs(request):
 
 def profile_settings(request):
     if request.method == 'POST':
+        request.user.first_name = request.POST.get('first_name', request.user.first_name)
+        request.user.last_name = request.POST.get('last_name', request.user.last_name)
+        request.user.email = request.POST.get('email', request.user.email)
+        request.user.location = request.POST.get('location', request.user.location)
+        request.user.industry = request.POST.get('industry', request.user.industry)
+        request.user.save()
 
         form = UserUpdateForm(request.POST, instance = request.user)
 
