@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from tutorials.models.jobposting import JobPosting
 from .models.company_review import Review
 from .models.standard_cv import CVApplication
-
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 User = get_user_model()
@@ -104,7 +104,7 @@ class UserSignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'user_industry', 'user_location')
+        fields = ('username', 'email', 'first_name', 'last_name', 'user_industry', 'user_location')
 
 
 class CompanySignUpForm(UserCreationForm):
@@ -129,7 +129,7 @@ class CompanySignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2', 'company_name', 'industry')
+        fields = ('username', 'email', 'company_name', 'industry')
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -146,7 +146,25 @@ class CVApplicationForm(forms.ModelForm):
         model = CVApplication
         fields = '__all__'
 
+
+
+User = get_user_model()
+
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2', 'industry', 'location')
+        fields = ('username', 'first_name', 'last_name', 'email', 'industry', 'location')
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your username'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}),
+            'industry': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your industry'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your location'}),
+        }
+
+class MyPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})

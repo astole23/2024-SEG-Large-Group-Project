@@ -14,7 +14,7 @@ from django.utils.dateparse import parse_date
 from tutorials.forms import (
     UserLoginForm, CompanyLoginForm,
     UserSignUpForm, CompanySignUpForm,
-    CompanyProfileForm
+    CompanyProfileForm, UserUpdateForm, MyPasswordChangeForm
 )
 from tutorials.models.applications import JobApplication
 from tutorials.models.applications import Notification
@@ -27,6 +27,8 @@ from tutorials.views.function_views import remove_duplicates_by_keys , split_ski
 import os
 from tutorials.models.user_dashboard import UploadedCV, UserDocument
 CustomUser = get_user_model()
+
+from django.contrib.auth import update_session_auth_hash
 
 @login_required
 def employer_dashboard(request):
@@ -208,23 +210,7 @@ def faq(request):
 def my_jobs(request):
     return render(request, 'my_jobs.html')
 
-def profile_settings(request):
-    if request.method == 'POST':
-        request.user.first_name = request.POST.get('first_name', request.user.first_name)
-        request.user.last_name = request.POST.get('last_name', request.user.last_name)
-        request.user.email = request.POST.get('email', request.user.email)
-        request.user.location = request.POST.get('location', request.user.location)
-        request.user.industry = request.POST.get('industry', request.user.industry)
-        request.user.save()
 
-        form = UserUpdateForm(request.POST, instance = request.user)
-
-        if form.is_valid():
-            form.save()
-            return redirect('settings')
-        else:
-            form = UserUpdateForm(instance = request.user)
-            return render(request, 'settings.html', {'form': form})
 
 def login_view(request):
     # Since this view only needs to display the forms (the POST is handled in process_login),
@@ -819,3 +805,49 @@ def delete_user_document(request):
         doc.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'error': 'Document not found'})
+
+
+@login_required
+def profile_settings(request):
+    if request.method == 'POST':
+        if 'update_details' in request.POST:
+            details_form = UserUpdateForm(request.POST, instance=request.user)
+            password_form = MyPasswordChangeForm(user=request.user)  # blank
+            if details_form.is_valid():
+                details_form.save()
+                messages.success(request, "Your details have been updated.")
+                return redirect('settings')
+            else:
+                error_list = []
+                for field, errors in details_form.errors.items():
+                    error_list.append(f"{field}: {', '.join(errors)}")
+                error_message = " ".join(error_list)
+                print("Details form errors:", error_message)
+                messages.error(request, "Update failed: " + error_message)
+        elif 'change_password' in request.POST:
+            details_form = UserUpdateForm(instance=request.user)  # keep details form intact
+            password_form = MyPasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                old_hash = request.user.password  # Debug: print the current password hash
+                user = password_form.save()  # This should update the password
+                new_hash = user.password      # Debug: print the new password hash
+                print("Old hash:", old_hash)
+                print("New hash:", new_hash)
+                update_session_auth_hash(request, user)
+                messages.success(request, "Your password has been changed.")
+                return redirect('settings')
+            else:
+                error_list = []
+                for field, errors in password_form.errors.items():
+                    error_list.append(f"{field}: {', '.join(errors)}")
+                error_message = " ".join(error_list)
+                print("Password form errors:", error_message)
+                messages.error(request, "Password change failed: " + error_message)
+    else:
+        details_form = UserUpdateForm(instance=request.user)
+        password_form = MyPasswordChangeForm(user=request.user)
+
+    return render(request, 'settings.html', {
+        'details_form': details_form,
+        'password_form': password_form,
+    })

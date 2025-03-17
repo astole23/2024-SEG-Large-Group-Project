@@ -207,3 +207,25 @@ body {
 .navbar-nav .nav-link.active {
     background-color: #6a0dad;
 }
+
+.messages {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.alert-error {
+    background-color: #fdecea;
+    color: #b71c1c;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+    background-color: #e7f5e1;
+    color: #2e7d32;
+    border: 1px solid #c3e6cb;
+}
