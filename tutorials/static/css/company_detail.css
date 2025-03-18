@@ -28,13 +28,6 @@ body {
     padding: 20px;
 }
 
-/* Overall profile container */
-.company-profile {
-    width: 100%;
-    margin: 0 auto;
-    text-align: center;
-}
-
 /* Header styling */
 .company-header {
     width: 100%;

@@ -37,11 +37,11 @@ from django.contrib.auth import update_session_auth_hash
 @login_required
 def employer_dashboard(request):
     # Only allow company users
-    """
+    
     if not request.user.is_company:
         messages.error(request, "Access restricted to company accounts only.")
         return redirect('login')  
-    """
+    
     # Filter job postings by the logged-in company
     job_postings = JobPosting.objects.filter(company=request.user).order_by('-created_at')
     return render(request, 'employer_dashboard.html', {'job_postings': job_postings})
@@ -289,6 +289,27 @@ def company_detail(request, company_id):
     else:
         form = CompanyProfileForm(instance=company)
     return render(request, 'company_detail.html', {'company': company, 'form': form})
+
+def company_profile(request):
+    """
+    Display and update the logged-in company's profile.
+    """
+    if not request.user.is_company:  
+        messages.error(request, "Access restricted to company accounts only.")
+        return redirect('login') 
+    
+    company = get_object_or_404(CustomUser, id=request.user.id, is_company=True)
+    
+    job_postings = JobPosting.objects.filter(company=company)
+
+    if request.method == 'POST':
+        form = CompanyProfileForm(request.POST, request.FILES, instance=company)
+        if form.is_valid():
+            form.save()
+    else:
+        form = CompanyProfileForm(instance=company)
+
+    return render(request, 'company_profile.html', {'company': company, 'form': form, 'job_postings': job_postings,})
 
 def leave_review(request, company_id):
     if request.method == 'POST':

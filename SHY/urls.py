@@ -34,6 +34,7 @@ urlpatterns = [
     path('user_dashboard/', ui_views.user_dashboard, name='user_dashboard'),
     path('search/', ui_views.search, name='search'),
     path('about_us/', ui_views.about_us, name='about_us'),
+    path('company/profile/', ui_views.company_profile, name='company_profile'),
     path('company/<int:company_id>/', ui_views.company_detail, name='company_detail'),
     path('company/<int:company_id>/review/', ui_views.leave_review, name='leave_review'),
     path('company/<int:company_id>/edit/', ui_views.edit_company, name='edit_company'),

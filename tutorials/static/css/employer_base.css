@@ -1,0 +1,108 @@
+
+:root {
+    --primary-color: #462191;
+    --secondary-color: #475569;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, system-ui, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100 vh;
+}
+
+.main-content {
+    flex: 1;
+}
+
+
+.dashboard-container {
+  display: flex;
+  flex-direction: row;  
+  margin-top: 0;  
+}
+
+
+  
+  /* Side bar for dashboards */
+  .sidebar {
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 130px;
+    left: 0;
+    background-color: var(--text-primary);
+    color: white;
+    padding-top: 10px;
+    transition: width 0.3s ease; 
+  
+  }
+
+  .sidebar a {
+    color: white;
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+    font-size: 16px;
+  }
+
+  .sidebar a:hover {
+    background-color: #575d63;
+  }
+
+  .sidebar .sidebar-options {
+    color: white;
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+    font-size: 16px;
+    font-family: "Verdana", sans-serif;
+    text-align: left;
+    line-height: 4;
+  }
+
+  .sidebar .sidebar-options a:hover {
+    background-color: var(--secondary-color);
+  }
+
+
+  /* Header for dashboards */
+  .header {
+    background-color: #46219117;
+    padding: 15px;
+    padding-left: 280px;
+    margin-bottom: 20px;
+    height: 150px;
+  }
+
+
+  /* Main content for dashboards */
+  .scrollable-section {
+    flex-grow: 1;
+    overflow-y: scroll;
+    margin-top: 20px;
+    margin-left: 270px;
+    margin-right: 10px;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    grid-gap: 10px; /* Space between the buttons */
+  }
