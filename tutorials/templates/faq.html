@@ -1,143 +1,16 @@
+{% extends 'base_content.html' %}
+
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/formalities.css' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQs</title>
-
-    <style>
-        :root {
-            --primary-color: #462191;
-            --secondary-color: #475569;
-            --background-color: #f8fafc;
-            --card-background: #ffffff;
-            --border-color: #e2e8f0;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Inter, system-ui, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
-
-        .navbar {
-            background-color: #462191;
-            color: white;
-            padding: 1rem 2rem;
-            position: fixed;
-            width: 100%;
-            z-index: 10;
-            top: 0;
-            left: 0;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar .navbar-brand {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .navbar-nav {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .navbar-nav button {
-            background-color: #6a0dad;
-            border: none;
-            padding: 0.75rem 1.25rem;
-            border-radius: 5px;
-            color: white;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .navbar-nav button:hover {
-            background-color: #6a0dad;
-        }
-
-        .faq-background {
-            margin-right: 0;
-            padding: 40px 20px;
-            height: 100vh;
-            overflow-y: auto;
-            position: relative;
-            background-image: url('/static/contact_us_background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            padding-top: 5rem;
-            width: 100vw;
-        }
-
-        .faq-content {
-            position: relative;
-            z-index: 2;
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .faq-content h2, .faq-content h3 {
-            font-size: 1.75rem;
-            font-weight: bold;
-            color: #4b0082;
-            text-align: left;
-            margin-bottom: 1.5rem;
-        }
-
-        .faq-content p {
-            font-size: 1.1rem;
-            color: #475569;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .faq-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: var(--card-background);
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-    </style>
-</head>
 <body>
 
-    <div class="navbar">
-        <a href="#" class="navbar-brand">Shy</a>
-        <div class="navbar-nav">
-            <button class="login-btn" onclick="window.location.href='/signup/'">Sign Up</button>
-            <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact Us</button>
-            <button class="login-btn active" onclick="window.location.href='/terms_conditions/'">User Agreement</button>
-        </div>
-    </div>
-
-        <div class="faq-background">
-        <div class="faq-content">
+        <div class="privacy-background">
+        <div class="privacy-content">
         <h2 class="text-center">Frequently Asked Questions</h2>
 
         <h3>1. General Questions</h3>
@@ -212,3 +85,4 @@
 
 </body>
 </html>
+{% endblock %}
