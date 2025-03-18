@@ -7,8 +7,8 @@ User = get_user_model()
 # models.py
 class UploadedCV(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    file = models.FileField(upload_to='uploads/raw_cvs/')
-    uploaded_at = models.DateTimeField(auto_now=True)
+    file = models.FileField(upload_to='uploaded_cvs/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
 

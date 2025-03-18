@@ -5,7 +5,13 @@
   const mockCV = userCVScript ? JSON.parse(userCVScript.textContent) : {};
   console.log("Loaded CV from backend:", mockCV);
 
-  console.log("Loaded CV data:", mockCV); // 👈 Optional: Helps you debug what’s coming in
+  console.log("Loaded CV data:", mockCV); //  Optional: Helps you debug what’s coming in
+  // Raw CV file info (for filename, URL, timestamp)
+  const rawCVScript = document.getElementById('cv-raw-info');
+  let rawCVInfo = rawCVScript ? JSON.parse(rawCVScript.textContent) : {};
+
+  console.log("📄 Raw CV Info:", rawCVInfo);
+
 
 // Function to fetch job postings from the Django backend
 function fetchJobPostings() {
@@ -175,11 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.appendChild(modalDiv);
     });
   }
-  
-  console.log("Parsed CV from backend:", mockCV);
 
+
+
+  // Assuming you have a way to get the documents data in JavaScript
+  const documentsData = []; // Replace with actual data fetching logic
   function createDashboard() {
     
+    console.log("🧾 Raw CV being used in dashboard:", rawCVInfo);
 
 
 
@@ -188,6 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInfo = userInfoScript ? JSON.parse(userInfoScript.textContent) : {};
     console.log("Dashboard is loading");
     console.log("User info:", userInfo);
+
+    // Inside createDashboard()
+
   
 
     const app = document.querySelector('#app');
@@ -219,18 +231,19 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="document-item">
                 <span class="document-icon">📄</span>
                 <div class="document-info">
-                  <h3>My_CV.pdf</h3>
-                  <p>Updated 2 days ago</p>
+                  <h3>${rawCVInfo.filename || 'No CV uploaded yet'}</h3>
+                  <p>Updated ${rawCVInfo.uploaded_at || 'N/A'}</p>
+
+
                 </div>
-                <div class="document-actions">
-                  <button class="btn-outline btn-small">View</button>
-                  <button class="btn-outline btn-small">Edit</button>
-                </div>
+                <div class="document-actions" id="cvDocumentActionsPlaceholder"></div>
+
+              </div>
               </div>
               <div class="upload-section">
                 <p>Update your CV (PDF only)</p>
                 <input type="file" id="cvUpload" accept=".pdf" style="display: none">
-                <button class="btn btn-primary" id="cvUploadBtn">Upload CV</button>
+                <button class="btn btn-primary" id="uploadRawCvBtn">Upload CV</button>
               </div>
   
               <!-- Online CV Section -->
@@ -300,40 +313,17 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </section>
   
-          <section class="documents-section">
-            <div class="section-header">
-              <h2>Additional Documents</h2>
-            </div>
-            <div class="documents-list">
-              <div class="document-item">
-                <span class="document-icon">📑</span>
-                <div class="document-info">
-                  <h3>Portfolio.docx</h3>
-                  <p>Updated 1 week ago</p>
-                </div>
-                <div class="document-actions">
-                  <button class="btn-outline btn-small">View</button>
-                  <button class="btn-outline btn-small delete-btn">Delete</button>
-                </div>
-              </div>
-              <div class="document-item">
-                <span class="document-icon">📊</span>
-                <div class="document-info">
-                  <h3>Certifications.zip</h3>
-                  <p>Updated 2 weeks ago</p>
-                </div>
-                <div class="document-actions">
-                  <button class="btn-outline btn-small">View</button>
-                  <button class="btn-outline btn-small delete-btn">Delete</button>
-                </div>
-              </div>
-            </div>
-            <div class="upload-section">
-              <p>Upload additional documents</p>
-              <input type="file" id="docUpload" style="display: none">
-              <button class="btn btn-primary" id="docUploadBtn">Upload Document</button>
-            </div>
-          </section>
+       
+          <div class="modal-header">
+            <h2>📑 Supporting Documents / Certificates</h2>
+
+          </div>
+          <div class="upload-section">
+            <p>Upload additional documents</p>
+            <input type="file" id="docUpload" style="display: none">
+            <button class="btn btn-primary" id="docUploadBtn">Upload Document</button>
+          </div>
+     
   
           <section class="application-progress">
             <div class="progress-header">
@@ -372,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="#" class="view-all">View all suggestions</a>
           </section>
           <div class="quick-actions">
-            <button class="btn btn-primary" id="updateCvBtn">Update CV</button>
+            <button class="btn btn-primary" id="uploadAutoCvBtn">Autofill CV</button>
 
             <button class="btn btn-outline" id="browseJobsBtn">Browse Jobs</button>
             <button class="btn btn-outline" id="viewApplicationsBtn">My Applications</button>
@@ -532,6 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </form>
         </div>
       </div>
+
     `;
 
     fetchJobPostings().then(jobs => {
@@ -575,6 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('cvUpload').click();  // Trigger file select
       });
     }
+    
 
 
     // CV section toggle functionality
@@ -650,6 +642,105 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    const cvUploadInput = document.getElementById('cvUpload');
+    const uploadRawCvBtn = document.getElementById('uploadRawCvBtn');
+    const uploadAutoCvBtn = document.getElementById('uploadAutoCvBtn');
+  
+    let currentUploadMode = '';
+  
+    if (uploadRawCvBtn) {
+      uploadRawCvBtn.addEventListener('click', () => {
+        currentUploadMode = 'raw';
+        cvUploadInput?.click();
+      });
+    }
+  
+    if (uploadAutoCvBtn) {
+      uploadAutoCvBtn.addEventListener('click', () => {
+        currentUploadMode = 'autofill';
+        cvUploadInput?.click();
+      });
+    }
+
+    if (cvUploadInput) {
+      cvUploadInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+    
+        const formData = new FormData();
+        formData.append('cv', file);
+    
+        const uploadUrl = currentUploadMode === 'autofill'
+          ? '/upload_cv/'
+          : '/upload_raw_cv/';
+    
+        try {
+          const res = await fetch(uploadUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRFToken': getCSRFToken()
+            }
+          });
+    
+          const result = await res.json();
+          console.log("📤 Upload result:", result);
+    
+          if (result.success) {
+            showCVStatus("CV uploaded successfully!", "success");
+    
+            if (currentUploadMode === 'autofill') {
+              if (result.data) {
+                autofillCVForm(result.data);
+              }
+            } else {
+              // ✅ raw CV upload — update display
+              rawCVInfo.filename = result.filename;
+              rawCVInfo.uploaded_at = result.uploaded_at;
+              rawCVInfo.file_url = result.file_url;
+    
+              const docInfo = document.querySelector('.document-info');
+              if (docInfo) {
+                docInfo.querySelector('h3').textContent = rawCVInfo.filename;
+                docInfo.querySelector('p').textContent = "Updated just now";
+              }
+    
+              const docActions = document.querySelector('.document-actions');
+              if (docActions) {
+                docActions.innerHTML = `
+                  <button class="btn-outline btn-small" onclick="window.open('${rawCVInfo.file_url}', '_blank')">View</button>
+                  <button class="btn-outline btn-small delete-btn" onclick="deleteRawCV()">Delete</button>
+                `;
+              }
+            }
+    
+          } else {
+            showCVStatus(result.error || "Upload failed.", "danger");
+          }
+    
+        } catch (err) {
+          console.error("❌ Upload error:", err);
+          showCVStatus("Upload error occurred.", "danger");
+        }
+    
+        // Reset input so selecting the same file again triggers change
+        cvUploadInput.value = '';
+      });
+    }
+    const cvActionsContainer = document.getElementById('cvDocumentActionsPlaceholder');
+
+    if (rawCVInfo.file_url && cvActionsContainer) {
+      cvActionsContainer.innerHTML = `
+        <button class="btn-outline btn-small" onclick="window.open('${rawCVInfo.file_url}', '_blank')">View</button>
+        <button class="btn-outline btn-small delete-btn" onclick="deleteRawCV()">Delete</button>
+      `;
+    } else if (cvActionsContainer) {
+      cvActionsContainer.innerHTML = `<p style="color: gray;">No file uploaded</p>`;
+    }
+
+    
+  
+
   
     // Function to create education entry HTML
     function createEducationEntry(data = {}) {
@@ -720,18 +811,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add education entry button functionality
     const addEducationBtn = document.getElementById('addEducation');
     const educationEntries = document.getElementById('educationEntries');
-  
-    addEducationBtn.addEventListener('click', () => {
-      educationEntries.insertAdjacentHTML('beforeend', createEducationEntry());
-    });
+
+    if (addEducationBtn && educationEntries) {
+      addEducationBtn.addEventListener('click', () => {
+        educationEntries.insertAdjacentHTML('beforeend', createEducationEntry());
+      });
+    }
+
   
     // Add work experience entry button functionality
     const addWorkExperienceBtn = document.getElementById('addWorkExperience');
     const workExperienceEntries = document.getElementById('workExperienceEntries');
-  
-    addWorkExperienceBtn.addEventListener('click', () => {
-      workExperienceEntries.insertAdjacentHTML('beforeend', createWorkExperienceEntry());
-    });
+
+    if (addWorkExperienceBtn && workExperienceEntries) {
+      addWorkExperienceBtn.addEventListener('click', () => {
+        workExperienceEntries.insertAdjacentHTML('beforeend', createWorkExperienceEntry());
+      });
+    }
+
   
     // Remove entry functionality
     window.removeEntry = function(button) {
@@ -741,75 +838,49 @@ document.addEventListener('DOMContentLoaded', () => {
   
   
     // File upload handling
-    const cvUploadBtn = document.getElementById('cvUploadBtn');
-    const cvUploadInput = document.getElementById('cvUpload');
+    const docUploadBtn = document.getElementById('docUploadBtn');
+    const docUploadInput = document.getElementById('docUpload');
 
-    if (cvUploadBtn && cvUploadInput) {
-      cvUploadBtn.addEventListener('click', () => {
-        cvUploadInput.click();
+    if (docUploadInput && docUploadBtn) {
+      docUploadBtn.addEventListener('click', () => {
+        docUploadInput.click();
       });
 
-      cvUploadInput.addEventListener('change', async (e) => {
+      docUploadInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
+        if (!file) return;
+
+        const currentDocs = document.querySelectorAll('.documents-list .document-item');
+        if (currentDocs.length >= 5) {
+          showCVStatus("You can only upload up to 5 documents.", "danger");
+          return;
+        }
+
         const formData = new FormData();
-        formData.append('cv_file', file);
+        formData.append('document', file);
 
         try {
-          const res = await fetch('/upload_raw_cv/', {
+          const res = await fetch('/upload_user_document/', {
             method: 'POST',
             body: formData
           });
 
           const result = await res.json();
-          if (result.success) {
-            showCVStatus("CV uploaded successfully!", "success");
+          console.log("📎 Document upload result:", result);
 
-            // Optionally update file name + timestamp in UI
-            document.querySelector('.document-info h3').textContent = file.name;
-            document.querySelector('.document-info p').textContent = "Updated just now";
+          if (result.success) {
+            showCVStatus("Document uploaded!", "success");
+            addDocumentToList(file.name, result.uploaded_at);
           } else {
-            showCVStatus("Upload failed.", "danger");
+            showCVStatus(result.error || "Upload failed", "danger");
           }
         } catch (err) {
-          console.error("❌ Error uploading raw CV:", err);
-          showCVStatus("Error uploading CV", "danger");
+          console.error("❌ Upload failed:", err);
+          showCVStatus("Upload error", "danger");
         }
       });
     }
 
-    const docUploadBtn = document.getElementById('docUploadBtn');
-    const docUploadInput = document.getElementById('docUpload');
-
-    docUploadInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-    
-      const formData = new FormData();
-      formData.append('document', file);
-    
-      try {
-        const currentDocs = document.querySelectorAll('.document-item');
-        if (currentDocs.length >= 5) {
-          showCVStatus("Max 5 documents allowed", "danger");
-          return;
-        }
-
-        const res = await fetch('/upload_user_document/', {
-          method: 'POST',
-          body: formData
-        });
-        const result = await res.json();
-    
-        if (result.success) {
-          showCVStatus("Document uploaded!", "success");
-          addDocumentToList(file.name, result.uploaded_at);
-        } else {
-          showCVStatus(result.error || "Upload failed", "danger");
-        }
-      } catch (err) {
-        showCVStatus("Upload error", "danger");
-      }
-    });
     
     function addDocumentToList(fileName, uploadedAt) {
       const list = document.querySelector('.documents-list');
@@ -822,9 +893,13 @@ document.addEventListener('DOMContentLoaded', () => {
           <p>Updated just now</p>
         </div>
         <div class="document-actions">
-          <button class="btn-outline btn-small" onclick="window.open('/media/user_documents/${fileName}', '_blank')">View</button>
-          <button class="btn-outline btn-small delete-btn" onclick="deleteDocument('${fileName}', this)">Delete</button>
+          ${rawCVInfo.file_url ? `
+            <button class="btn-outline btn-small" onclick="window.open('${rawCVInfo.file_url}', '_blank')">View</button>
+            <button class="btn-outline btn-small delete-btn" onclick="deleteRawCV()">Delete</button>
+          ` : `<p style="color: gray;">No file uploaded</p>`}
         </div>
+
+
       `;
       list.appendChild(div);
     }
@@ -841,67 +916,55 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await res.json();
       if (result.success) {
         showCVStatus("Document deleted", "success");
-        btn.closest('.document-item').remove();
+        btn.closest('.document-item').remove();  // 🧼 removes it from UI
       } else {
         showCVStatus("Delete failed", "danger");
       }
     }
     
-  
-    cvUploadBtn.addEventListener('click', () => {
-      cvUploadInput.click();
-      console.log("📄 Upload CV button clicked - triggering file input");
-
-    });
-  
-    cvUploadInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      console.log("Selected file:", file);
-
-      if (!file) {
-        showCVStatus("No file selected. Please upload a PDF.", "danger");
-        return;
-      }
-
-      console.log("File type:", file.type);
-
-
-      if (file) {
-        if (file.type === 'application/pdf') {
-          showCVStatus("CV uploaded: My_CV.pdf", "success");
-        } else {
-          showCVStatus("Upload failed: Please upload a PDF", "danger");
-          e.target.value = '';
-        }
-      }
-
-      const formData = new FormData();
-      formData.append('cv_file', file);
+    async function deleteRawCV() {
+      const confirmDelete = confirm("Are you sure you want to delete your CV?");
+      if (!confirmDelete) return;
     
       try {
-        const res = await fetch('/upload_cv/', {
+        const res = await fetch('/delete_raw_cv/', {
           method: 'POST',
-          body: formData,
+          headers: {
+            'X-CSRFToken': getCSRFToken()
+          },
         });
     
         const result = await res.json();
-        console.log("📤 Uploading CV to /upload_cv/");
-        console.log("✅ Server response received:", result);
-
+    
         if (result.success) {
-          showCVStatus("CV uploaded! Auto-filling form...", "success");
-          autofillCVForm(result.data);  // 👈 Trigger the form fill
-          document.getElementById('cvModal').style.display = 'block'; // Open the CV modal
-        } else {
-          showCVStatus("Upload failed", "danger");
+          showCVStatus("CV deleted successfully.", "success");
+        
+          // Reset the global rawCVInfo object
+          rawCVInfo.filename = '';
+          rawCVInfo.uploaded_at = '';
+          rawCVInfo.file_url = '';
+        
+          // Update DOM
+          const docInfo = document.querySelector('.document-info');
+          if (docInfo) {
+            docInfo.querySelector('h3').textContent = "No CV uploaded yet";
+            docInfo.querySelector('p').textContent = "Updated N/A";
+          }
+        
+          const docActions = document.querySelector('.document-actions');
+          if (docActions) {
+            docActions.innerHTML = `<p style="color: gray;">No file uploaded</p>`;
+          }
+        }
+         else {
+          showCVStatus(result.error || "Delete failed.", "danger");
         }
       } catch (err) {
-        console.error(err);
-        console.error("❌ Error during upload fetch:", err);
-
-        showCVStatus("Error made during upload", "danger");
+        console.error("❌ Error deleting CV:", err);
+        showCVStatus("Error deleting CV", "danger");
       }
-    });
+    }
+    
 
     function autofillCVForm(data) {
       if (!data) return;
@@ -998,7 +1061,8 @@ document.addEventListener('DOMContentLoaded', () => {
       alertBox.className = `alert alert-${type} alert-dismissible fade show`;
       alertBox.style.display = "block";
     }
-    
+    window.showCVStatus = showCVStatus;
+
     
     
   
@@ -1006,15 +1070,6 @@ document.addEventListener('DOMContentLoaded', () => {
       docUploadInput.click();
     });
   
-    docUploadInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      console.log("Selected file:", file);
-      if (file) {
-        alert(`Document uploaded: ${file.name}`);
-      }
-      console.log("📎 Additional document selected:", file.name);
-
-    });
   
     // Close modal when clicking outside
     window.addEventListener('click', (e) => {
@@ -1024,5 +1079,78 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  window.deleteRawCV = async function () {
+    const confirmDelete = confirm("Are you sure you want to delete your CV?");
+    if (!confirmDelete) return;
+  
+    try {
+      const res = await fetch('/delete_raw_cv/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCSRFToken()  // make sure this works
+        },
+      });
+  
+      const result = await res.json();
+  
+      if (result.success) {
+        showCVStatus("CV deleted successfully.", "success");
+  
+        // Reset display
+        const docInfo = document.querySelector('.document-info');
+        if (docInfo) {
+          docInfo.querySelector('h3').textContent = "No CV uploaded yet";
+          docInfo.querySelector('p').textContent = "Updated N/A";
+        }
+  
+        const docActions = document.querySelector('.document-actions');
+        if (docActions) {
+          docActions.innerHTML = `<p style="color: gray;">No file uploaded</p>`;
+        }
+  
+      } else {
+        showCVStatus(result.error || "Delete failed.", "danger");
+      }
+    } catch (err) {
+      console.error("❌ Error deleting CV:", err);
+      showCVStatus("Error deleting CV", "danger");
+    }
+  };
 
-  document.addEventListener('DOMContentLoaded', createDashboard);
+  function getCSRFToken() {
+    const name = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+        return decodeURIComponent(cookie.substring(name.length + 1));
+      }
+    }
+    return '';
+  }
+  
+  
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Safely parse rawCVInfo from the script tag
+    const rawCVScript = document.getElementById('cv-raw-info');
+    let rawCVInfo = {};
+  
+    try {
+      rawCVInfo = rawCVScript ? JSON.parse(rawCVScript.textContent) : {};
+      console.log("🧾 Loaded real rawCVInfo from backend:", rawCVInfo);
+    } catch (err) {
+      console.warn("⚠️ Failed to parse rawCVInfo. Using empty fallback.");
+      rawCVInfo = {};
+    }
+  
+    // Store it globally for the rest of the dashboard to use
+    window.rawCVInfo = rawCVInfo;
+  
+    // Now build the dashboard
+    createDashboard();
+  });
+  
+  
+  
