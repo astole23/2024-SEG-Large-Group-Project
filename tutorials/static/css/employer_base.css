@@ -72,7 +72,8 @@ body {
     position: fixed;
     top: 130px;
     left: 0;
-    background-color:#462191a0;
+    /* background-color:#462191a0; */
+    background-color:#ddd6ea;
     color: white;
     padding-top: 10px;
     transition: width 0.3s ease; 
@@ -80,7 +81,7 @@ body {
   }
 
   .sidebar a {
-    color: white;
+    color: rgb(0, 0, 0);
     padding: 10px;
     display: block;
     text-decoration: none;
