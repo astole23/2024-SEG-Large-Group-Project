@@ -19,6 +19,14 @@
   box-sizing: border-box;
 }
 
+body.modal-open {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+.modal {
+  overflow-y: auto;
+}
+
 body {
   font-family: Inter, system-ui, sans-serif;
   background-color: var(--background-color);

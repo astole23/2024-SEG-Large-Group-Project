@@ -74,7 +74,6 @@ function renderSuggestedJobs(jobs) {
       `;
       suggestedJobsContainer.appendChild(jobElement);
 
-      // ✅ Create a corresponding modal for job details
       const modalDiv = document.createElement('div');
       modalDiv.className = 'modal fade';
       modalDiv.id = `jobModal${job.id}`;
@@ -99,11 +98,13 @@ function renderSuggestedJobs(jobs) {
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
                   </div>
               </div>
           </div>
       `;
       document.body.appendChild(modalDiv);
+      
   });
 }
 
