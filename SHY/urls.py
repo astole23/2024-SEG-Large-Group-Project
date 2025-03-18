@@ -66,7 +66,7 @@ urlpatterns = [
     path('company/applications/', ui_views.company_applications, name='company_applications'),
     path('company/applications/<int:application_id>/', ui_views.company_application_detail, name='company_application_detail'),
     path('company/applications/update/<int:application_id>/<str:new_status>/', ui_views.update_application_status, name='update_application_status'),
-    path('delete_raw_cv/', function_views.delete_raw_cv, name='delete_raw_cv'),
+
     path('api/job_postings/', ui_views.job_postings_api, name='job_postings_api'),
     path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
     path('job-postings/', ui_views.search, name='search',),

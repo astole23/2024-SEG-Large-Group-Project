@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime
-from django.utils import timezone
 import json
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -89,7 +88,6 @@ def user_dashboard(request):
         'full_name': f"{request.user.first_name} {request.user.last_name}"
     }
 
-    # CV structured data (already handled)
     try:
         cv = UserCV.objects.get(user=request.user)
         structured = {
@@ -102,38 +100,19 @@ def user_dashboard(request):
             'education': cv.education or [],
             'workExperience': cv.work_experience or [],
             'skills': {
-                'keySkills': normalize_to_string_list(structured.get("skills", "")),
-                'technicalSkills': normalize_to_string_list(structured.get("technical_skills", "")),
+                'key_skills': normalize_to_string_list(structured.get("skills", "")),
+                'technical_skills': normalize_to_string_list(structured.get("technical_skills", "")),
                 'languages': normalize_to_string_list(structured.get("languages", ""))
             },
         }
     except UserCV.DoesNotExist:
         cv_data = {}
 
-    # 🔥 Raw uploaded PDF CV
-    try:
-        uploaded_cv = UploadedCV.objects.get(user=request.user)
-        raw_cv_info = {
-            'filename': uploaded_cv.file.name.split('/')[-1],
-            'file_url': uploaded_cv.file.url,
-            'uploaded_at': timezone.localtime(uploaded_cv.uploaded_at).strftime("%b %d, %Y %I:%M %p")
-        }
-    except UploadedCV.DoesNotExist:
-        raw_cv_info = {}
-
-    uploaded_documents = UserDocument.objects.filter(user=request.user).order_by('-uploaded_at')
-    for doc in uploaded_documents:
-        doc.uploaded_at_human = timesince(doc.uploaded_at)
-    
-    print("🧾 raw_cv_info_json:", raw_cv_info)
-
-
     return render(request, 'user_dashboard.html', {
         'user_info_json': json.dumps(user_info),
-        'cv_data_json': json.dumps(cv_data, cls=DjangoJSONEncoder),
-        'raw_cv_info_json': json.dumps(raw_cv_info),
-        'documents': uploaded_documents
+        'cv_data_json': json.dumps(cv_data)
     })
+
 
 def search(request):
     query = request.GET.get('q', '')
@@ -254,8 +233,8 @@ def login_view(request):
     })
 
 def signup_view(request):
-
     if request.method == 'POST':
+
         user_form = UserSignUpForm(request.POST, prefix='user')
 
         # Only process company form if the checkbox is present
@@ -816,24 +795,30 @@ def upload_cv(request):
 @login_required
 @require_POST
 def upload_raw_cv(request):
-    if request.method == 'POST' and request.FILES.get('cv'):
-        uploaded_file = request.FILES['cv']
-        user = request.user
+    user = request.user
+    file = request.FILES.get('cv_file')
+    if not file:
+        return JsonResponse({'success': False, 'error': 'No file uploaded'}, status=400)
 
-        # Replace any existing CV for the user (optional logic)
-        UploadedCV.objects.filter(user=user).delete()
+    try:
+        uploaded_cv, _ = UploadedCV.objects.get_or_create(user=user)
 
-        cv = UploadedCV.objects.create(user=user, file=uploaded_file)
+        # Delete old file if it exists
+        if uploaded_cv.file and os.path.exists(uploaded_cv.file.path):
+            os.remove(uploaded_cv.file.path)
+
+        # Save new one
+        uploaded_cv.file.save(file.name, file)
+        uploaded_cv.save()
 
         return JsonResponse({
             'success': True,
-            'filename': uploaded_file.name,
-            'file_url': cv.file.url,
-            'uploaded_at': timezone.localtime(cv.uploaded_at).strftime("%b %d, %Y %I:%M %p")
+            'filename': uploaded_cv.file.name,
+            'uploaded_at': uploaded_cv.uploaded_at.strftime("%Y-%m-%d %H:%M")
         })
 
-    return JsonResponse({'success': False, 'error': 'Invalid request.'}, status=400)
-
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 @csrf_exempt
 @login_required
@@ -864,51 +849,3 @@ def delete_user_document(request):
         doc.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'error': 'Document not found'})
-
-
-
-@login_required
-def profile_settings(request):
-    if request.method == 'POST':
-        if 'update_details' in request.POST:
-            details_form = UserUpdateForm(request.POST, instance=request.user)
-            password_form = MyPasswordChangeForm(user=request.user)  # blank
-            if details_form.is_valid():
-                details_form.save()
-                messages.success(request, "Your details have been updated.")
-                return redirect('settings')
-            else:
-                error_list = []
-                for field, errors in details_form.errors.items():
-                    error_list.append(f"{field}: {', '.join(errors)}")
-                error_message = " ".join(error_list)
-                print("Details form errors:", error_message)
-                messages.error(request, "Update failed: " + error_message)
-        elif 'change_password' in request.POST:
-            details_form = UserUpdateForm(instance=request.user)  # keep details form intact
-            password_form = MyPasswordChangeForm(user=request.user, data=request.POST)
-            if password_form.is_valid():
-                old_hash = request.user.password  # Debug: print the current password hash
-                user = password_form.save()  # This should update the password
-                new_hash = user.password      # Debug: print the new password hash
-                print("Old hash:", old_hash)
-                print("New hash:", new_hash)
-                update_session_auth_hash(request, user)
-                messages.success(request, "Your password has been changed.")
-                return redirect('settings')
-            else:
-                error_list = []
-                for field, errors in password_form.errors.items():
-                    error_list.append(f"{field}: {', '.join(errors)}")
-                error_message = " ".join(error_list)
-                print("Password form errors:", error_message)
-                messages.error(request, "Password change failed: " + error_message)
-    else:
-        details_form = UserUpdateForm(instance=request.user)
-        password_form = MyPasswordChangeForm(user=request.user)
-
-    return render(request, 'settings.html', {
-        'details_form': details_form,
-        'password_form': password_form,
-    })
-
