@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime
+from django.utils import timezone
 import json
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -16,10 +17,15 @@ from tutorials.forms import (
     UserSignUpForm, CompanySignUpForm,
     CompanyProfileForm, UserUpdateForm, MyPasswordChangeForm
 )
+
+from django.utils.timesince import timesince
+from django.core.serializers.json import DjangoJSONEncoder
+
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from tutorials.models.accounts import CustomUser
+
 from tutorials.models.applications import JobApplication
 from tutorials.models.applications import Notification
 from tutorials.forms import CVApplicationForm
@@ -83,6 +89,7 @@ def user_dashboard(request):
         'full_name': f"{request.user.first_name} {request.user.last_name}"
     }
 
+    # CV structured data (already handled)
     try:
         cv = UserCV.objects.get(user=request.user)
         structured = {
@@ -95,19 +102,38 @@ def user_dashboard(request):
             'education': cv.education or [],
             'workExperience': cv.work_experience or [],
             'skills': {
-                'key_skills': normalize_to_string_list(structured.get("skills", "")),
-                'technical_skills': normalize_to_string_list(structured.get("technical_skills", "")),
+                'keySkills': normalize_to_string_list(structured.get("skills", "")),
+                'technicalSkills': normalize_to_string_list(structured.get("technical_skills", "")),
                 'languages': normalize_to_string_list(structured.get("languages", ""))
             },
         }
     except UserCV.DoesNotExist:
         cv_data = {}
 
+    # 🔥 Raw uploaded PDF CV
+    try:
+        uploaded_cv = UploadedCV.objects.get(user=request.user)
+        raw_cv_info = {
+            'filename': uploaded_cv.file.name.split('/')[-1],
+            'file_url': uploaded_cv.file.url,
+            'uploaded_at': timezone.localtime(uploaded_cv.uploaded_at).strftime("%b %d, %Y %I:%M %p")
+        }
+    except UploadedCV.DoesNotExist:
+        raw_cv_info = {}
+
+    uploaded_documents = UserDocument.objects.filter(user=request.user).order_by('-uploaded_at')
+    for doc in uploaded_documents:
+        doc.uploaded_at_human = timesince(doc.uploaded_at)
+    
+    print("🧾 raw_cv_info_json:", raw_cv_info)
+
+
     return render(request, 'user_dashboard.html', {
         'user_info_json': json.dumps(user_info),
-        'cv_data_json': json.dumps(cv_data)
+        'cv_data_json': json.dumps(cv_data, cls=DjangoJSONEncoder),
+        'raw_cv_info_json': json.dumps(raw_cv_info),
+        'documents': uploaded_documents
     })
-
 
 def search(request):
     query = request.GET.get('q', '')
@@ -790,30 +816,24 @@ def upload_cv(request):
 @login_required
 @require_POST
 def upload_raw_cv(request):
-    user = request.user
-    file = request.FILES.get('cv_file')
-    if not file:
-        return JsonResponse({'success': False, 'error': 'No file uploaded'}, status=400)
+    if request.method == 'POST' and request.FILES.get('cv'):
+        uploaded_file = request.FILES['cv']
+        user = request.user
 
-    try:
-        uploaded_cv, _ = UploadedCV.objects.get_or_create(user=user)
+        # Replace any existing CV for the user (optional logic)
+        UploadedCV.objects.filter(user=user).delete()
 
-        # Delete old file if it exists
-        if uploaded_cv.file and os.path.exists(uploaded_cv.file.path):
-            os.remove(uploaded_cv.file.path)
-
-        # Save new one
-        uploaded_cv.file.save(file.name, file)
-        uploaded_cv.save()
+        cv = UploadedCV.objects.create(user=user, file=uploaded_file)
 
         return JsonResponse({
             'success': True,
-            'filename': uploaded_cv.file.name,
-            'uploaded_at': uploaded_cv.uploaded_at.strftime("%Y-%m-%d %H:%M")
+            'filename': uploaded_file.name,
+            'file_url': cv.file.url,
+            'uploaded_at': timezone.localtime(cv.uploaded_at).strftime("%b %d, %Y %I:%M %p")
         })
 
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    return JsonResponse({'success': False, 'error': 'Invalid request.'}, status=400)
+
 
 @csrf_exempt
 @login_required
@@ -844,6 +864,7 @@ def delete_user_document(request):
         doc.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'error': 'Document not found'})
+
 
 
 @login_required
@@ -890,3 +911,4 @@ def profile_settings(request):
         'details_form': details_form,
         'password_form': password_form,
     })
+

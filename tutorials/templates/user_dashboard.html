@@ -19,10 +19,13 @@
   <script id="cv-data" type="application/json">
     {{ cv_data_json|safe }}
   </script>
-
-  <script id="current-user" type="application/json">
-    {{ user_info_json|safe }}
+  
+  <script id="cv-raw-info" type="application/json">
+    {{ raw_cv_info_json|safe }}
   </script>
+  
+  <script src="{% static 'js/user_dashboard.js' %}"></script>
+  
 
   
 
@@ -40,6 +43,10 @@
 
   <div id="app"></div>
   <script src="{% static 'js/user_dashboard.js' %}"></script>
+  <pre>{{ raw_cv_info_json }}</pre>
+  <pre>Raw CV JSON: {{ raw_cv_info_json }}</pre>
+
+
 </body>
 </html>
 {% endblock %}
