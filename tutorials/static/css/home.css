@@ -28,7 +28,6 @@ body {
 
 .main-content {
     flex: 1;
-    padding-top: 0;
 }
 
 .search-bar {
@@ -39,6 +38,7 @@ body {
     flex-wrap: wrap;
     margin: 20px auto 20px auto;
     padding: 0 20px;
+    
 }
 
 .search-bar input {

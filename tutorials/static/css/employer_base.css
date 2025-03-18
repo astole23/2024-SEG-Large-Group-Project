@@ -89,7 +89,7 @@ body {
   }
 
   .sidebar a:hover {
-    background-color: #575d63;
+    background-color: #edeaf3;
   }
 
   .sidebar .sidebar-options {
@@ -104,7 +104,7 @@ body {
   }
 
   .sidebar .sidebar-options a:hover {
-    background-color: var(--secondary-color);
+    background-color: #46219117;
   }
 
 
@@ -114,7 +114,7 @@ body {
     padding: 15px;
     padding-left: 10px;
     margin-bottom: 10px;
-    height: 150px;
+    height: 70px;
     position: relative;
   }
 
