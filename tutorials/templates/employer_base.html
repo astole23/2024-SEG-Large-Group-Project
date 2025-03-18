@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block body %}
+{% include 'partials/company_navbar.html' %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,10 +11,7 @@
   <title>{% block title %}Dashboard{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/employer_base.css' %}">
 </head>
-<body>
-
-  <!-- Navbar -->
-  {% include 'partials/company_navbar.html' %}
+<div class="main-content">
 
   <div class="dashboard-container">
 
@@ -31,7 +29,7 @@
     </div>
 
     <!-- Content Area -->
-    <div class="content" id="content">
+    
       <!-- Header -->
       {% block header %}
       <div class="header">
@@ -42,10 +40,11 @@
         </div>
       </div>
       {% endblock %}
-      
-      {% block main_content %}
-      {% endblock %}
-
+    <div class="content">
+      <div class="main-body">
+        {% block main_content %}
+        {% endblock %}
+      </div>
     </div>
 
   </div>
@@ -187,7 +186,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/job_form_validation.js' %}"></script>
 
-</body>
+</div>
 </html>
 
 {% endblock %}

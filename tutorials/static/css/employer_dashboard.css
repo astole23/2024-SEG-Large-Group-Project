@@ -44,7 +44,6 @@ body {
   .scrollable-section {
     flex-grow: 1;
     overflow-y: scroll;
-    margin-top: 20px;
     margin-left: 270px;
     margin-right: 10px;
   }
