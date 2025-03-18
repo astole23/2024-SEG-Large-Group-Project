@@ -4,6 +4,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from tutorials.models.jobposting import JobPosting
 from .models.company_review import Review
 from .models.standard_cv import CVApplication
+from django.contrib.auth.forms import PasswordChangeForm
+
 
 
 
