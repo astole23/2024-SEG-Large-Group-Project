@@ -5,6 +5,8 @@
 <div class="dashboard-container">
     <div class="company-header">
         <div class="company-logo-container">
+            <a href="{% url 'edit_company' company_id=user.id %}">Edit Profile</a>
+
             {% if company.logo %}
                 <img src="{{ company.logo.url }}" alt="{{ company.company_name }} Logo" class="company-logo">
             {% else %}

@@ -23,13 +23,14 @@
           <i class="fas fa-plus-circle"></i> Create new posting
         </a>
         <a href="{% url 'company_profile' %}"><i class="fas fa-building"></i> Company Profile</a>
-        <a href="/company/applications/"><i class="fas fa-building"></i> Applications</a>
-        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="/company/applications/"><i class="fas fa-bookmark"></i> Applications</a>
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+        <a href="#"><i class="fas fa-question-circle"></i> Help Centre</a>
       </div>
     </div>
 
     <!-- Content Area -->
-    
+    <div class="content">
       <!-- Header -->
       {% block header %}
       <div class="header">
@@ -40,7 +41,7 @@
         </div>
       </div>
       {% endblock %}
-    <div class="content">
+    
       <div class="main-body">
         {% block main_content %}
         {% endblock %}
