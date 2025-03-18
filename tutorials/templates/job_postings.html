@@ -5,60 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Recommendations</title>
     <style>
+        /* General Styling */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f3e5f5; /* Light purple background */
+            background-color: white;
             margin: 0;
             padding: 20px;
+            color: black;
         }
         h1 {
             text-align: center;
-            color: #6a1b9a; /* Dark Purple */
+            color: black;
         }
+
+        /* Job Card Container */
         .job-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
         }
+        
+        /* Job Card Styling */
         .job-card {
             background: white;
             border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(106, 27, 154, 0.2); /* Purple shadow */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
             width: 320px;
             text-align: left;
-            border: 2px solid #9c27b0; /* Medium Purple Border */
+            border: 2px solid #d1d1d1;
+            position: relative;
         }
+
         .job-title {
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 8px;
-            color: #8e24aa; /* Lighter Purple */
+            color: black;
         }
-        .company-name, .location, .score {
+
+        .company-name, .location, .salary, .contract-type, .deadline, .work-type, .skills, .perks {
             font-size: 14px;
-            color: #4a148c; /* Darker Purple */
+            color: #333;
             margin-bottom: 6px;
         }
+
         .score {
             font-weight: bold;
-            color: #ba68c8; /* Soft purple */
+            color: #555;
         }
-        .apply-btn {
-            display: inline-block;
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
             margin-top: 10px;
+        }
+
+        /* Button Styling (for both buttons) */
+        .btn, .btn-link {
+            display: inline-block;
             padding: 8px 15px;
-            background-color: #6a1b9a; /* Dark Purple */
+            background-color: #007bff;
             color: white;
-            text-decoration: none;
+            text-decoration: none; /* Removes underline for <a> */
             border-radius: 5px;
             text-align: center;
             font-weight: bold;
             transition: background 0.3s ease;
+            cursor: pointer;
+            border: none;
+            width: 48%;
+            font-size: 14px; /* Ensure identical font size */
+            text-align: center;
         }
-        .apply-btn:hover {
-            background-color: #4a148c; /* Even darker purple on hover */
+
+        .btn:hover, .btn-link:hover {
+            background-color: #0056b3;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #d1d1d1;
+            width: 50%;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .close {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 10px;
         }
     </style>
 </head>
@@ -71,14 +138,84 @@
                 <div class="job-card">
                     <h2 class="job-title">{{ job.job_title }}</h2>
                     <p class="company-name"><strong>Company:</strong> {{ job.company.company_name }}</p>
+                    {% if job.child_company_name %}
+                        <p class="company-name"><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                    {% endif %}
                     <p class="location"><strong>Location:</strong> {{ job.location }}</p>
+                    <p class="salary"><strong>Salary:</strong> {{ job.salary_range }} GBP</p>
+                    <p class="contract-type"><strong>Contract:</strong> {{ job.contract_type }}</p>
+                    <p class="work-type"><strong>Work Type:</strong> {{ job.work_type }}</p>
+                    <p class="deadline"><strong>Deadline:</strong> {{ job.application_deadline }}</p>
                     <p class="score"><strong>Match Score:</strong> {{ score|floatformat:2 }}</p>
-                    <a href="/jobs/{{ job.id }}/apply" class="apply-btn">View & Apply</a>
+                    
+                    <!-- Buttons -->
+                    <div class="button-container">
+                        <button class="btn" onclick="openModal('modal{{ job.id }}')">View More</button>
+                        <a href="{% url 'start_application' job.id %}" class="btn-link">Apply Now</a> <!-- Identical Button -->
+                    </div>
+                </div>
+
+                <!-- Job Modal -->
+                <div id="modal{{ job.id }}" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>{{ job.job_title }}</h2>
+                            <span class="close" onclick="closeModal('modal{{ job.id }}')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Company:</strong> {{ job.company.company_name }}</p>
+                            {% if job.child_company_name %}
+                                <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                            {% endif %}
+                            <p><strong>Location:</strong> {{ job.location }}</p>
+                            <p><strong>Work Type:</strong> {{ job.work_type }}</p>
+                            <p><strong>Salary:</strong> {{ job.salary_range }} GBP</p>
+                            <p><strong>Contract Type:</strong> {{ job.contract_type }}</p>
+                            <p><strong>Deadline:</strong> {{ job.application_deadline }}</p>
+                            <hr>
+                            <h3>Job Overview</h3>
+                            <p>{{ job.job_overview }}</p>
+                            <h3>Roles & Responsibilities</h3>
+                            <p>{{ job.roles_responsibilities }}</p>
+                            <h3>Required Skills</h3>
+                            <p>{{ job.required_skills }}</p>
+                            <h3>Preferred Skills</h3>
+                            <p>{{ job.preferred_skills }}</p>
+                            <h3>Education Required</h3>
+                            <p>{{ job.education_required }}</p>
+                            <h3>Perks</h3>
+                            <p>{{ job.perks }}</p>
+                            <hr>
+                            <h3>About the Company</h3>
+                            <p><strong>Overview:</strong> {{ job.company_overview }}</p>
+                            <p><strong>Why Join Us:</strong> {{ job.why_join_us }}</p>
+                            <p><strong>Reviews:</strong> {{ job.company_reviews }}</p>
+                            <p class="text-muted"><small>Posted on {{ job.created_at|date:"M d, Y" }}</small></p>
+                        </div>
+                    </div>
                 </div>
             {% endfor %}
         </div>
     {% else %}
         <p style="text-align: center; color: #777;">No job recommendations available.</p>
     {% endif %}
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            document.querySelectorAll(".modal").forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
 </body>
 </html>
