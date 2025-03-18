@@ -106,7 +106,7 @@ class UserSignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'user_industry', 'user_location')
+        fields = ('username', 'email', 'first_name', 'last_name', 'user_industry', 'user_location')
 
 
 class CompanySignUpForm(UserCreationForm):
@@ -131,7 +131,7 @@ class CompanySignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2', 'company_name', 'industry')
+        fields = ('username', 'email', 'company_name', 'industry')
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -148,7 +148,9 @@ class CVApplicationForm(forms.ModelForm):
         model = CVApplication
         fields = '__all__'
 
-        User = get_user_model()
+
+
+User = get_user_model()
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:

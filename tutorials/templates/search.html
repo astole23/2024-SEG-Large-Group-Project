@@ -204,27 +204,38 @@
         </div>
       </div>
 
-    <div class="scrollable-section">
-      <div class="grid-container">
-        {% for job in job_postings %}
-        <div class="grid-button">
-          <div class="job-details">
-            <h5 class="job-title">{{ job.job_title }}</h5>
-            <p class="company-name">{{ job.company_name }}</p>
-            <p class="location">{{ job.location }}</p>
-            <p class="pay-contract">{{ job.salary_range }} | {{ job.contract_type }}</p>
-            <p class="company-overview">{{ job.company_overview|truncatewords:10 }}</p>
+      <div class="scrollable-section">
+        <div class="grid-container">
+          {% for job in job_postings %}
+          <div class="grid-button">
+            <div class="job-details">
+              <h5 class="job-title">{{ job.job_title }}</h5>
+              <p class="company-name"><strong>Company:</strong> {{ job.company_name }}</p>
+              <p class="location"><strong>Location:</strong> {{ job.location }}</p>
+              <p class="pay-contract"><strong>Salary:</strong> {{ job.salary_range }} | {{ job.contract_type }}</p>
+              <p class="company-overview">{{ job.company_overview|truncatewords:10 }}</p>
+            </div>
+  
+            <!-- Updated Buttons (ONLY CHANGED THIS PART) -->
+            <div class="button-container" style="display: flex; justify-content: space-between; margin-top: 10px;">
+              <button class="btn btn-secondary btn-lg" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#jobModal{{ job.id }}" 
+                      style="width: 48%;">
+                View More
+              </button>
+              <a href="{% url 'start_application' job.id %}" 
+                 class="btn btn-secondary btn-lg" 
+                 style="width: 48%; text-align: center;">
+                Apply Now
+              </a>
           </div>
-          <!-- Bigger View More Button -->
-          <button class="btn btn-secondary btn-lg mt-2" 
-                  data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">
-            View More
-          </button>
+  
+          </div>
+          {% empty %}
+          <p>No job postings found matching the applied filters.</p>
+          {% endfor %}
         </div>
-        {% empty %}
-        <p>No job postings found matching the applied filters.</p>
-        {% endfor %}
-      </div>
     </div>
   </div>
   {% endif %}
