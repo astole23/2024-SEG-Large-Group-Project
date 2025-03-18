@@ -849,3 +849,48 @@ def delete_user_document(request):
         doc.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'error': 'Document not found'})
+
+@login_required
+def profile_settings(request):
+    if request.method == 'POST':
+        if 'update_details' in request.POST:
+            details_form = UserUpdateForm(request.POST, instance=request.user)
+            password_form = MyPasswordChangeForm(user=request.user)  # blank
+            if details_form.is_valid():
+                details_form.save()
+                messages.success(request, "Your details have been updated.")
+                return redirect('settings')
+            else:
+                error_list = []
+                for field, errors in details_form.errors.items():
+                    error_list.append(f"{field}: {', '.join(errors)}")
+                error_message = " ".join(error_list)
+                print("Details form errors:", error_message)
+                messages.error(request, "Update failed: " + error_message)
+        elif 'change_password' in request.POST:
+            details_form = UserUpdateForm(instance=request.user)  # keep details form intact
+            password_form = MyPasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                old_hash = request.user.password  # Debug: print the current password hash
+                user = password_form.save()  # This should update the password
+                new_hash = user.password      # Debug: print the new password hash
+                print("Old hash:", old_hash)
+                print("New hash:", new_hash)
+                update_session_auth_hash(request, user)
+                messages.success(request, "Your password has been changed.")
+                return redirect('settings')
+            else:
+                error_list = []
+                for field, errors in password_form.errors.items():
+                    error_list.append(f"{field}: {', '.join(errors)}")
+                error_message = " ".join(error_list)
+                print("Password form errors:", error_message)
+                messages.error(request, "Password change failed: " + error_message)
+    else:
+        details_form = UserUpdateForm(instance=request.user)
+        password_form = MyPasswordChangeForm(user=request.user)
+
+    return render(request, 'settings.html', {
+        'details_form': details_form,
+        'password_form': password_form,
+    })
