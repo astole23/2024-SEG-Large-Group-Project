@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from tutorials.models.jobposting import JobPosting
+from tutorials.models.standard_cv import CVApplication
 from tutorials.models.applications import JobApplication, Notification
 
 
@@ -11,7 +12,7 @@ CustomUser = get_user_model()
 class JobPostingAdmin(admin.ModelAdmin):
     list_display = (
         'job_title',
-        'company_name',
+        'get_company_name',
         'location',
         'salary_range',
         'contract_type',
@@ -20,16 +21,19 @@ class JobPostingAdmin(admin.ModelAdmin):
     list_filter = (
         'contract_type',
         'location',
-        'company_name',
     )
     search_fields = (
         'job_title',
-        'company_name',
+        'company__company_name',
         'location',
     )
     ordering = ('-application_deadline',)
     readonly_fields = ('created_at', 'updated_at')
 
+    def get_company_name(self, obj):
+        return obj.company.company_name if obj.company else "No Company"
+    
+    get_company_name.short_description = "Company Name"
 
 from tutorials.models.accounts import CompanyUser, NormalUser
 

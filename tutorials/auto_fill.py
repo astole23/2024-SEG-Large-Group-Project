@@ -2,11 +2,12 @@ from django.db import models
 from django.core.validators import FileExtensionValidator, ValidationError
 import os
 import fitz  # PyMuPDF
-import re
 import together
+from dotenv import load_dotenv
 
-# Your Together API key
-api_key = os.getenv("api_key")
+# Load .env variables
+load_dotenv() 
+api_key = os.getenv("TOGETHER_API_KEY")
 
 # Validate file size
 def validate_file_size(value):
@@ -22,25 +23,55 @@ def extract_text_from_pdf(pdf_file):
         text += page.get_text() + "\n"
     return text.strip()
 
+# Send resume to Together AI for structured analysis
 def classify_resume_with_together(text):
     prompt = f"""
-    You are an AI trained to summarize resumes into clearly defined sections.
+    
+You are an AI that extracts structured JSON from resume text. Return only a JSON object in this format:
 
-    Provide a structured JSON output with the following fields:
+{{
+  "personal_info": {{
+    "full_name": "string",
+    "email": "string",
+    "phone": "string",
+    "address": "string",
+    "postcode": "string"
+  }},
+  "education": [
     {{
-        "Experience & Education": "Summarize work and educational background.",
-        "Skills": "List key skills and competencies.",
-        "Projects": "Summarize important projects.",
-        "Languages": "List languages spoken."
+      "university": "string",
+      "degree_type": "string",
+      "field_of_study": "string",
+      "grade": "string",
+      "dates": "string",
+      "modules": "string"
+    }}
+  ],
+  "work_experience": [
+    {{
+      "company": "string",
+      "job_title": "string",
+      "dates": "string",
+      "responsibilities": "string"
+    }}
+    ],
+    [
+    {{
+    "skills": ["communication", "teamwork", "problem-solving"],
+    "technical_skills": ["Python", "JavaScript", "SQL"],
+    "languages": ["English", "Spanish"],
+    "motivations": "string",
+    "fit_for_role": "string",
+    "career_aspirations": "string",
+    "preferred_start_date": "YYYY-MM-DD"
     }}
 
-    Only use information directly from the resume, do not make assumptions. Do not include personal information.
+Do not include commentary. If any value is missing, leave it as an empty string or empty array. Use only the following resume content:
 
-    Resume text:
-    {text}
+{text}
 
-    JSON Output:
-    """
+JSON Output:
+"""
 
     together_client = together.Together(api_key=api_key)
 
@@ -48,14 +79,13 @@ def classify_resume_with_together(text):
         model="mistralai/Mistral-7B-Instruct-v0.1",
         prompt=prompt,
         max_tokens=1500,
-        temperature=0.1,  # Lower temperature for more deterministic results
+        temperature=0.1
     )
 
-    print(response)  # Debugging: See the actual response structure
+    print(response)  # Debug output (optional)
+    return response["choices"][0]["text"]
 
-    return response["choices"][0]["text"]  # Extract the actual content
-
-# Django Model
+# Optional Django model that uses the extraction logic
 class CV(models.Model):
     name = models.CharField(max_length=255)
     pdf_file = models.FileField(
@@ -69,17 +99,11 @@ class CV(models.Model):
             self.name = os.path.splitext(self.pdf_file.name)[0]
         
         if self.pdf_file:
-            # Extract and clean text from the PDF
             pdf_text = extract_text_from_pdf(self.pdf_file.path)
-            
-            # Classify the resume text using Together AI
             structured_data = classify_resume_with_together(pdf_text)
-            
-            # Store the structured data
             self.structured_data = structured_data
-        
+
         super(CV, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
-

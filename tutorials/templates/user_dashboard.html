@@ -15,9 +15,16 @@
   <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
 </head>
 <body>
+  <!-- Expose CV and user info to JavaScript -->
+  <script id="cv-data" type="application/json">
+    {{ cv_data_json|safe }}
+  </script>
+
   <script id="current-user" type="application/json">
     {{ user_info_json|safe }}
   </script>
+
+  
 
   <script>
     // Generate a base URL for starting an application.

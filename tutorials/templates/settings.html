@@ -3,45 +3,46 @@
 {% load static %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
+
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+
+{% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings</title>
-    <link rel="stylesheet" href="{% static 'css/settings.css' %}">
 </head>
 <body>
-    <!-- Spacer to push content below the navbar -->
-    <div class="content-spacer"></div>
-
     <!-- Settings Page -->
     <div class="settings-background">
         <div class="settings-content">
-            <!-- Account Settings Section -->
+            <!-- Account Details Section -->
             <div class="settings-section">
                 <h3 class="text-center">Account Settings</h3>
-                <form>
-                    <div class="form-group">
-                        <label for="first-name">First Name</label>
-                        <input type="text" id="first-name" class="form-control" placeholder="Enter your first name">
-                    </div>
-                    <div class="form-group">
-                        <label for="last-name">Last Name</label>
-                        <input type="text" id="last-name" class="form-control" placeholder="Enter your last name">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" class="form-control" placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" class="form-control" placeholder="Enter a new password">
-                    </div>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ details_form.as_p }}
+                    <button type="submit" name="update_details" class="btn btn-primary">Save Details</button>
+                </form>
+            </div>
+            
+            <!-- Password Change Section -->
+            <div class="settings-section">
+                <h3 class="text-center">Change Password</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ password_form.as_p }}
+                    <button type="submit" name="change_password" class="btn btn-primary">Change Password</button>
                 </form>
             </div>
 
@@ -50,13 +51,13 @@
                 <h3 class="text-center">Privacy Management</h3>
                 <p>
                     <strong>Terms & Conditions</strong><br>
-                    By using JobPlatform, you agree to the following terms:
+                    By using SHY, you agree to the following terms:
                 </p>
                 <ul>
                     <li>We may collect personal data including your name, contact information, and job preferences to better tailor our services.</li>
-                    <li>JobPlatform will never share your personal information with third parties without your consent, except as required by law.</li>
+                    <li>SHY will never share your personal information with third parties without your consent, except as required by law.</li>
                     <li>You are responsible for maintaining the confidentiality of your account and password.</li>
-                    <li>JobPlatform reserves the right to update these terms at any time. Please review them regularly for any changes.</li>
+                    <li>SHY reserves the right to update these terms at any time. Please review them regularly for any changes.</li>
                 </ul>
             </div>
 
@@ -82,6 +83,5 @@
     </div>
 
 </body>
-</html>
 
 {% endblock %}

@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from tutorials.views import ui_views, function_views
+from tutorials.views import job_search, ui_views, function_views
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -34,10 +34,16 @@ urlpatterns = [
     path('user_dashboard/', ui_views.user_dashboard, name='user_dashboard'),
     path('search/', ui_views.search, name='search'),
     path('about_us/', ui_views.about_us, name='about_us'),
+    path('company/profile/', ui_views.company_profile, name='company_profile'),
     path('company/<int:company_id>/', ui_views.company_detail, name='company_detail'),
     path('company/<int:company_id>/review/', ui_views.leave_review, name='leave_review'),
     path('company/<int:company_id>/edit/', ui_views.edit_company, name='edit_company'),
     path('settings/', ui_views.profile_settings, name='settings'),
+    path('terms_conditions/', ui_views.terms_conditions, name='terms_conditions'),
+    path('privacy/', ui_views.privacy, name='privacy'),
+    path('user_agreement/', ui_views.user_agreement, name='user_agreement'),
+    path('faq/', ui_views.faq, name='faq'),
+    path('status/', ui_views.status, name='status'),
     path('your-job-posting-endpoint/', ui_views.create_job_posting, name='create_job_posting'),
     path('company/<int:company_id>/add_job/', ui_views.create_job_posting, name='add_job_listing'),
     path('apply/start/<int:job_posting_id>/', ui_views.start_application, name='start_application'),
@@ -51,7 +57,11 @@ urlpatterns = [
     # User applications
     path('user/applications/', ui_views.user_applications, name='user_applications'),
     path('user/applications/<int:application_id>/', ui_views.user_application_detail, name='user_application_detail'),
-
+    # urls.py
+    path('upload_cv/', ui_views.upload_cv, name='upload_cv'),
+    path('upload_raw_cv/', ui_views.upload_raw_cv, name='upload_raw_cv'),
+    path("upload_user_document/", ui_views.upload_user_document, name="upload_user_document"),
+    path("delete_user_document/", ui_views.delete_user_document, name="delete_user_document"),
     # Company applications
     path('company/applications/', ui_views.company_applications, name='company_applications'),
     path('company/applications/<int:application_id>/', ui_views.company_application_detail, name='company_application_detail'),
@@ -60,6 +70,10 @@ urlpatterns = [
     path('api/job_postings/', ui_views.job_postings_api, name='job_postings_api'),
     path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
     path('job-postings/', ui_views.search, name='search',),
+
+
+ path('job-postings_view/', job_search.job_recommendation, name='job_postings'),
+ path('job_recommendations/', job_search.job_recommendation, name='job_recommendations'),  
 
 ]
 

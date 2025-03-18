@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 from tutorials.models.jobposting import JobPosting
 import faker
 from tutorials.models.accounts import CustomUser as User, CompanyUser as Company, CustomUser
-
+from tutorials.models.standard_cv import UserCV
 from phonenumbers import parse, is_possible_number, is_valid_number, PhoneNumberFormat, format_number
 
 
@@ -41,9 +41,6 @@ user_fixtures = [
     },
 ]
 
-
-
-
 fake = faker.Faker()
 # Adzuna API credentials
 ADZUNA_APP_ID = "dac9af71"
@@ -51,10 +48,10 @@ ADZUNA_APP_KEY = "0d149e6c79fe0dbc54e9bece78c8ff87"
 
 # Categories for diversified job fetching
 CATEGORIES = [
-    "business", "management", "sales", "marketing", "technology", "internship", "software-development",
-    "engineering", "design", "industry", "finance", "accounting", "healthcare",
+    "business", "management", "sales", "marketing", "technology", "software-development",
+    "engineering", "design", "finance", "accounting", "healthcare",
     "education", "legal", "customer-service", "retail", "hospitality", "construction",
-    "media", "logistics", "human-resources", "writing", "consulting", "ngo", "data-science",
+    "media", "logistics", "human-resources", "writing", "consulting",  "data-science",
 ]
 
 # Randomized options for fields
@@ -151,9 +148,9 @@ WHY_JOIN_US_OPTIONS = [
     "Help build a brighter future with a company that cares."
 ]
 
-# Function to generate roles, responsibilities, and skills based on job title
+    # Define pools for each category
 def generate_roles_and_skills(category):
-    #Generate roles, responsibilities, required skills, and preferred skills based on the category
+    # Generate roles, responsibilities, required skills, and preferred skills based on the category
 
     # Define pools for each category
     category_specific_data = {
@@ -180,6 +177,98 @@ def generate_roles_and_skills(category):
                 "Expertise in competitive market analysis",
             ],
         },
+        "management": {
+            "responsibilities": [
+                "Lead and motivate a team to achieve company objectives.",
+                "Develop and implement management strategies to improve performance.",
+                "Monitor and assess team performance, providing feedback as needed.",
+                "Manage budgets and allocate resources effectively.",
+                "Communicate company goals to all team members.",
+            ],
+            "required_skills": [
+                "Strong leadership and decision-making abilities",
+                "Excellent interpersonal and communication skills",
+                "Experience in project management",
+                "Ability to work under pressure and meet deadlines",
+                "Proficiency in management software (e.g., Asana, Trello)",
+            ],
+            "preferred_skills": [
+                "Master's degree in management or related field",
+                "Experience with Agile or Scrum methodologies",
+                "Familiarity with performance management tools",
+                "Knowledge of financial management and budgeting",
+                "Experience in conflict resolution and team building",
+            ],
+        },
+        "sales": {
+            "responsibilities": [
+                "Generate leads and build relationships with clients.",
+                "Identify and pursue new sales opportunities.",
+                "Present products and services to potential clients.",
+                "Negotiate and close sales contracts.",
+                "Provide post-sales support and maintain client relationships.",
+            ],
+            "required_skills": [
+                "Strong negotiation and communication skills",
+                "Ability to meet and exceed sales targets",
+                "Customer-focused approach",
+                "Proficiency in CRM software",
+                "Experience in B2B or B2C sales",
+            ],
+            "preferred_skills": [
+                "Experience in digital marketing and sales funnels",
+                "Knowledge of sales analytics tools",
+                "Familiarity with the product lifecycle",
+                "Experience in the relevant industry",
+                "Fluency in multiple languages",
+            ],
+        },
+        "marketing": {
+            "responsibilities": [
+                "Develop and implement marketing campaigns.",
+                "Analyze market trends and identify opportunities.",
+                "Manage digital marketing efforts across multiple channels.",
+                "Create and distribute marketing content.",
+                "Monitor and report on marketing performance metrics.",
+            ],
+            "required_skills": [
+                "Strong written and verbal communication skills",
+                "Proficiency in digital marketing tools (e.g., Google Analytics, SEMrush)",
+                "Knowledge of SEO and SEM strategies",
+                "Experience with social media platforms and advertising",
+                "Ability to analyze and interpret marketing data",
+            ],
+            "preferred_skills": [
+                "Experience with email marketing and automation",
+                "Creative skills for content creation (e.g., graphic design)",
+                "Experience in branding and product positioning",
+                "Knowledge of A/B testing and market research methods",
+                "Familiarity with content management systems (e.g., WordPress)",
+            ],
+        },
+        "technology": {
+            "responsibilities": [
+                "Develop, test, and maintain software applications.",
+                "Collaborate with cross-functional teams to design solutions.",
+                "Write clean, efficient, and scalable code.",
+                "Troubleshoot technical issues and provide solutions.",
+                "Keep up to date with the latest technology trends.",
+            ],
+            "required_skills": [
+                "Proficiency in programming languages (e.g., Python, Java, JavaScript)",
+                "Experience with databases and data management",
+                "Strong problem-solving and analytical skills",
+                "Knowledge of web development frameworks",
+                "Familiarity with version control systems (e.g., Git)",
+            ],
+            "preferred_skills": [
+                "Experience with cloud computing platforms (e.g., AWS, Azure)",
+                "Knowledge of DevOps and automation tools",
+                "Familiarity with machine learning and AI technologies",
+                "Experience with cybersecurity principles",
+                "Experience with mobile application development",
+            ],
+        },
         "software-development": {
             "responsibilities": [
                 "Write clean, efficient, and maintainable code.",
@@ -203,53 +292,374 @@ def generate_roles_and_skills(category):
                 "Experience with blockchain technologies",
             ],
         },
+        "engineering": {
+            "responsibilities": [
+                "Design and develop engineering systems and processes.",
+                "Analyze and test prototypes to ensure reliability and efficiency.",
+                "Collaborate with cross-functional teams on product design.",
+                "Monitor project timelines and ensure deadlines are met.",
+                "Provide engineering support for troubleshooting and maintenance.",
+            ],
+            "required_skills": [
+                "Proficiency in engineering design tools and CAD software",
+                "Strong mathematical and analytical skills",
+                "Experience in materials selection and testing",
+                "Knowledge of engineering standards and regulations",
+                "Excellent problem-solving abilities",
+            ],
+            "preferred_skills": [
+                "Experience with industrial automation",
+                "Familiarity with manufacturing processes",
+                "Experience with systems engineering",
+                "Knowledge of environmental regulations",
+                "Strong project management skills",
+            ],
+        },
+        "finance": {
+            "responsibilities": [
+                "Prepare financial reports and budgets.",
+                "Analyze financial data and provide insights for decision-making.",
+                "Monitor and manage cash flow.",
+                "Ensure compliance with financial regulations.",
+                "Advise senior management on financial strategy.",
+            ],
+            "required_skills": [
+                "Strong analytical and mathematical skills",
+                "Proficiency in financial software (e.g., QuickBooks, Excel)",
+                "Knowledge of financial modeling and forecasting",
+                "Experience with tax regulations and filings",
+                "Ability to interpret financial statements",
+            ],
+            "preferred_skills": [
+                "CPA or CFA certification",
+                "Experience with mergers and acquisitions",
+                "Knowledge of international finance",
+                "Fluency in multiple languages",
+                "Strong communication and negotiation skills",
+            ],
+        },
+        "accounting": {
+            "responsibilities": [
+                "Prepare and maintain financial records.",
+                "Ensure accuracy in financial statements and reports.",
+                "Reconcile accounts and resolve discrepancies.",
+                "Assist with budgeting and forecasting.",
+                "Ensure compliance with accounting regulations and standards.",
+            ],
+            "required_skills": [
+                "Proficiency in accounting software (e.g., QuickBooks, Xero)",
+                "Strong attention to detail and accuracy",
+                "Ability to manage multiple tasks and deadlines",
+                "Knowledge of accounting principles and practices",
+                "Experience with tax preparation and filings",
+            ],
+            "preferred_skills": [
+                "CPA certification",
+                "Experience with auditing and financial reviews",
+                "Knowledge of IFRS standards",
+                "Ability to work in a fast-paced environment",
+                "Familiarity with financial planning and analysis",
+            ],
+        },
         "healthcare": {
             "responsibilities": [
-                "Provide high-quality patient care and medical services.",
-                "Collaborate with healthcare teams to ensure comprehensive care.",
-                "Maintain accurate and up-to-date patient records.",
-                "Educate patients about health management and prevention.",
-                "Participate in ongoing medical training and certifications.",
+                "Provide patient care and monitor health conditions.",
+                "Diagnose and treat illnesses or injuries.",
+                "Educate patients on health and wellness topics.",
+                "Collaborate with medical teams for patient care plans.",
+                "Maintain accurate medical records.",
             ],
             "required_skills": [
-                "Strong understanding of medical terminology and procedures",
-                "Excellent interpersonal and communication skills",
-                "Knowledge of patient care protocols",
-                "Proficiency in using electronic medical records systems",
-                "Ability to work in high-pressure environments",
+                "Strong medical knowledge and clinical skills",
+                "Ability to work under pressure",
+                "Excellent communication skills",
+                "Attention to detail and strong organizational skills",
+                "Empathy and compassion for patients",
             ],
             "preferred_skills": [
-                "Specialization in a specific field (e.g., cardiology, pediatrics)",
-                "Experience in emergency medicine",
-                "Knowledge of public health policies",
-                "Certification in advanced medical techniques",
-                "Familiarity with telemedicine platforms",
+                "Experience with electronic health records (EHR) systems",
+                "Knowledge of healthcare regulations and compliance",
+                "Specialized certifications (e.g., CPR, ACLS)",
+                "Experience in a healthcare leadership role",
+                "Fluency in multiple languages",
             ],
         },
-        "marketing": {
+        "education": {
             "responsibilities": [
-                "Develop and execute marketing campaigns.",
-                "Analyze market trends and competitor strategies.",
-                "Collaborate with sales teams to align marketing objectives.",
-                "Manage social media platforms and digital content.",
-                "Measure campaign performance and generate reports.",
+                "Develop and implement lesson plans.",
+                "Teach students in a classroom setting.",
+                "Evaluate student performance and provide feedback.",
+                "Collaborate with colleagues and parents.",
+                "Support students' personal and academic growth.",
             ],
             "required_skills": [
-                "Strong knowledge of digital marketing strategies",
-                "Proficiency in SEO and SEM tools",
-                "Excellent copywriting and content creation skills",
-                "Experience with social media management tools",
-                "Ability to analyze and interpret marketing data",
+                "Strong communication and teaching skills",
+                "Ability to adapt teaching methods to individual needs",
+                "Classroom management skills",
+                "Knowledge of educational technologies",
+                "Ability to assess and evaluate student progress",
             ],
             "preferred_skills": [
-                "Experience in graphic design and video editing",
-                "Familiarity with influencer marketing strategies",
-                "Knowledge of CRM and email marketing tools",
-                "Experience in managing marketing budgets",
-                "Strong public speaking and presentation skills",
+                "Teaching certification",
+                "Experience with special needs education",
+                "Familiarity with online teaching platforms",
+                "Knowledge of curriculum development",
+                "Fluency in multiple languages",
             ],
         },
-        # Add other categories similarly...
+        "legal": {
+            "responsibilities": [
+                "Provide legal advice and counsel to clients.",
+                "Draft and review contracts and legal documents.",
+                "Represent clients in court or legal proceedings.",
+                "Research legal issues and stay updated on laws.",
+                "Negotiate settlements and dispute resolutions.",
+            ],
+            "required_skills": [
+                "Strong knowledge of law and legal procedures",
+                "Excellent verbal and written communication skills",
+                "Attention to detail and analytical skills",
+                "Ability to work under pressure and meet deadlines",
+                "Negotiation and conflict resolution skills",
+            ],
+            "preferred_skills": [
+                "Law degree and relevant legal certifications",
+                "Experience in corporate or criminal law",
+                "Knowledge of international law",
+                "Experience in litigation and trial preparation",
+                "Fluency in multiple languages",
+            ],
+        },
+        "customer-service": {
+            "responsibilities": [
+                "Provide assistance to customers and resolve inquiries.",
+                "Handle complaints and provide effective solutions.",
+                "Ensure customer satisfaction and maintain relationships.",
+                "Process orders, returns, and exchanges.",
+                "Provide product and service information to customers.",
+            ],
+            "required_skills": [
+                "Excellent communication and problem-solving skills",
+                "Ability to handle challenging situations calmly",
+                "Strong interpersonal and active listening skills",
+                "Experience with customer service software (e.g., Zendesk)",
+                "Patience and empathy towards customers",
+            ],
+            "preferred_skills": [
+                "Experience in customer support or call center roles",
+                "Knowledge of CRM tools and systems",
+                "Fluency in multiple languages",
+                "Experience with conflict resolution",
+                "Ability to work in a fast-paced environment",
+            ],
+        },
+        "retail": {
+            "responsibilities": [
+                "Assist customers with product selection and purchases.",
+                "Manage stock and inventory levels.",
+                "Process transactions and handle cash.",
+                "Maintain a clean and organized store environment.",
+                "Provide excellent customer service and handle complaints.",
+            ],
+            "required_skills": [
+                "Strong customer service skills",
+                "Basic math skills for handling transactions",
+                "Knowledge of product features and benefits",
+                "Ability to work in a fast-paced environment",
+                "Experience in point-of-sale (POS) systems",
+            ],
+            "preferred_skills": [
+                "Experience in retail management",
+                "Knowledge of merchandising and inventory management",
+                "Fluency in multiple languages",
+                "Experience with e-commerce platforms",
+                "Knowledge of store safety and security procedures",
+            ],
+        },
+        "hospitality": {
+            "responsibilities": [
+                "Provide excellent customer service to guests.",
+                "Ensure that facilities and services meet guest expectations.",
+                "Handle guest inquiries, complaints, and special requests.",
+                "Coordinate events and services for guests.",
+                "Maintain cleanliness and organization of the property.",
+            ],
+            "required_skills": [
+                "Strong communication and customer service skills",
+                "Ability to work under pressure and handle multiple tasks",
+                "Attention to detail and problem-solving abilities",
+                "Knowledge of hospitality industry standards",
+                "Experience in event planning or coordination",
+            ],
+            "preferred_skills": [
+                "Experience in hospitality management",
+                "Knowledge of hotel booking systems",
+                "Fluency in multiple languages",
+                "Experience with food and beverage management",
+                "Ability to work flexible hours, including weekends",
+            ],
+        },
+        "construction": {
+            "responsibilities": [
+                "Plan and supervise construction projects from start to finish.",
+                "Ensure compliance with safety regulations and building codes.",
+                "Manage construction crews and subcontractors.",
+                "Monitor project progress and budgets.",
+                "Ensure quality control throughout the project.",
+            ],
+            "required_skills": [
+                "Knowledge of construction methods and techniques",
+                "Strong project management skills",
+                "Experience with construction tools and equipment",
+                "Ability to read and interpret blueprints and drawings",
+                "Familiarity with safety standards and regulations",
+            ],
+            "preferred_skills": [
+                "Construction management degree",
+                "Experience with project management software",
+                "Ability to lead teams effectively",
+                "Knowledge of sustainable building practices",
+                "Experience in commercial or residential construction",
+            ],
+        },
+        "media": {
+            "responsibilities": [
+                "Create and manage media content for various platforms.",
+                "Develop and implement media campaigns.",
+                "Analyze media trends and audience insights.",
+                "Collaborate with creative teams to produce content.",
+                "Manage relationships with media outlets and partners.",
+            ],
+            "required_skills": [
+                "Strong communication and writing skills",
+                "Experience with media production tools (e.g., Adobe Creative Suite)",
+                "Knowledge of social media platforms and trends",
+                "Ability to analyze and interpret media metrics",
+                "Experience with content marketing and distribution",
+            ],
+            "preferred_skills": [
+                "Experience in broadcast or print journalism",
+                "Knowledge of digital media strategies",
+                "Familiarity with SEO and SEM",
+                "Creative skills for video and audio production",
+                "Experience in public relations and media outreach",
+            ],
+        },
+        "logistics": {
+            "responsibilities": [
+                "Manage the movement of goods and materials.",
+                "Coordinate shipments and deliveries to ensure timely arrival.",
+                "Track inventory levels and manage stock.",
+                "Optimize supply chain processes for efficiency.",
+                "Negotiate with suppliers and third-party vendors.",
+            ],
+            "required_skills": [
+                "Strong organizational and multitasking abilities",
+                "Knowledge of logistics management software",
+                "Excellent communication and negotiation skills",
+                "Ability to work under pressure and meet deadlines",
+                "Experience with inventory control and supply chain management",
+            ],
+            "preferred_skills": [
+                "Experience with warehouse management systems (WMS)",
+                "Fluency in multiple languages",
+                "Experience with freight and shipping regulations",
+                "Knowledge of international logistics",
+                "Ability to manage large-scale distribution networks",
+            ],
+        },
+        "human-resources": {
+            "responsibilities": [
+                "Manage recruitment and hiring processes.",
+                "Develop and implement employee training programs.",
+                "Handle employee relations and resolve conflicts.",
+                "Ensure compliance with labor laws and company policies.",
+                "Support employee development and performance management.",
+            ],
+            "required_skills": [
+                "Strong interpersonal and communication skills",
+                "Knowledge of HR policies and labor laws",
+                "Experience with recruitment and onboarding",
+                "Strong problem-solving and conflict resolution skills",
+                "Ability to handle sensitive information with discretion",
+            ],
+            "preferred_skills": [
+                "Experience with HR software (e.g., Workday, BambooHR)",
+                "Certifications in HR management (e.g., SHRM-CP)",
+                "Experience in employee engagement and retention strategies",
+                "Fluency in multiple languages",
+                "Experience in performance management and coaching",
+            ],
+        },
+        "writing": {
+            "responsibilities": [
+                "Create content for blogs, websites, and other publications.",
+                "Research and write articles on various topics.",
+                "Edit and proofread content to ensure clarity and accuracy.",
+                "Collaborate with editors and designers on content production.",
+                "Meet deadlines for content delivery.",
+            ],
+            "required_skills": [
+                "Strong writing and editing skills",
+                "Ability to research and create compelling content",
+                "Attention to detail and accuracy",
+                "Experience with content management systems (e.g., WordPress)",
+                "Ability to write for various audiences and formats",
+            ],
+            "preferred_skills": [
+                "Experience with SEO and keyword research",
+                "Knowledge of content marketing strategies",
+                "Fluency in multiple languages",
+                "Experience with multimedia content (e.g., video, audio)",
+                "Ability to write in different writing styles (e.g., technical, creative)",
+            ],
+        },
+        "consulting": {
+            "responsibilities": [
+                "Provide expert advice to organizations on business issues.",
+                "Analyze client needs and develop tailored strategies.",
+                "Conduct market research and competitor analysis.",
+                "Develop and present reports and recommendations to clients.",
+                "Assist in implementing solutions and strategies.",
+            ],
+            "required_skills": [
+                "Strong analytical and problem-solving skills",
+                "Excellent communication and presentation abilities",
+                "Ability to manage client relationships",
+                "Knowledge of business operations and strategy",
+                "Experience with data analysis and market research",
+            ],
+            "preferred_skills": [
+                "Consulting certification or relevant experience",
+                "Experience in a specific industry (e.g., finance, healthcare)",
+                "Fluency in multiple languages",
+                "Experience with project management tools",
+                "Ability to manage multiple clients and projects",
+            ],
+        },
+        "data-science": {
+            "responsibilities": [
+                "Analyze large datasets to identify trends and insights.",
+                "Develop machine learning models for data-driven decision-making.",
+                "Create data visualizations to communicate findings.",
+                "Collaborate with cross-functional teams to define data needs.",
+                "Clean and preprocess data for analysis.",
+            ],
+            "required_skills": [
+                "Proficiency in programming languages (e.g., Python, R)",
+                "Experience with data analysis and visualization tools",
+                "Knowledge of machine learning algorithms and frameworks",
+                "Strong statistical and analytical skills",
+                "Experience with data wrangling and preprocessing",
+            ],
+            "preferred_skills": [
+                "Experience with big data tools (e.g., Hadoop, Spark)",
+                "Knowledge of deep learning frameworks (e.g., TensorFlow, PyTorch)",
+                "Familiarity with cloud platforms (e.g., AWS, GCP)",
+                "Experience with SQL and NoSQL databases",
+                "Fluency in multiple languages",
+            ],
+        },
     }
 
     # Fallback to generic skills and responsibilities if the category is not mapped
@@ -298,7 +708,7 @@ def fetch_adzuna_jobs():
     print("🔍 Fetching jobs from Adzuna API...")
 
     try:
-        while len(job_list) < 1000:
+        while len(job_list) < 150:
             category = random.choice(CATEGORIES)
             
             for page in range(1, 6):
@@ -319,25 +729,32 @@ def fetch_adzuna_jobs():
                     print(f"Error fetching from Adzuna for category {category}, page {page}: {e}")
                     break
 
-                for i in range(10):
-                    for job in data.get("results", []):
-                        job_title = job.get("title", "Unknown Job")
-                        company_name = job.get("company", {}).get("display_name", "Unknown Company")
-                        location = job.get("location", {}).get("display_name", "Remote")
-                        details = generate_roles_and_skills(category)
+                for job in data.get("results", []):
+                    job_title = job.get("title", "Unknown Job")
+                    company_name = job.get("company", {}).get("display_name", "Unknown Company")
+                    location = job.get("location", {}).get("display_name", "Remote")
+                    details = generate_roles_and_skills(category)
 
-                        companies = Company.objects.filter(company_name=company_name)
-                        if companies.exists():
-                            company = companies.first()
-                        else:
-                            company = Company.objects.create(
-                                username=generate_unique_company_username(company_name),
-                                email=generate_unique_email(company_name),
-                                password=fake.password(),
-                                industry=category.capitalize(),
-                                phone=job.get("phone_number", fake.phone_number()),
-                                unique_id=generate_unique_company_id(),
-                            )
+                    # Look up any companies with this name
+                    companies = Company.objects.filter(company_name=company_name)
+                    if companies.exists():
+                        company = companies.first()  # Use existing company
+                        created = False
+                    else:
+                        company = Company.objects.create(
+                            username=generate_unique_company_username(company_name),
+                            company_name = company_name,
+                            email=generate_unique_email(company_name),
+                            password=fake.password(),
+                            industry=category.capitalize(),
+                            phone=job.get("phone_number", fake.phone_number()),
+                            unique_id=generate_unique_company_id(),
+                            is_company = True
+                        )
+                        created = True
+                        print(f"✅ Created new company: {company.company_name}, Industry: {company.industry}, Email: {company.email}")
+
+                    
 
                         job_list.append({
                             "job_title": job_title,
@@ -351,10 +768,10 @@ def fetch_adzuna_jobs():
                             "company_overview": random.choice(WHY_JOIN_US_OPTIONS),
                         })
 
-                        if len(job_list) >= 1000:
+                        if len(job_list) >= 150:
                             break  # Exit early from job loop
 
-                if len(job_list) >= 1000:
+                if len(job_list) >= 150:
                     break  # Exit early from page loop if needed
     except requests.RequestException as e:
         print(f"❌ Error: {e}")
@@ -460,6 +877,53 @@ class Command(BaseCommand):
                 # For normal users, ensure is_company remains False.
                 fixture['is_company'] = False
                 user, created = User.objects.get_or_create(username=username, defaults=fixture)
+                if user_type == "user":
+                    UserCV.objects.update_or_create(
+                        user=user,
+                        defaults={
+                            "personal_info": {
+                                "fullName": f"{user.first_name} {user.last_name}",
+                                "email": user.email,
+                                "phone": user.phone,
+                                "address": "123 University St, London, UK"
+                            },
+                            "key_skills": "Problem Solving, Teamwork, Time Management",
+                            "technical_skills": "Python, Django, PostgreSQL, HTML, CSS",
+                            "languages": "English, French",
+                            "education": [
+                                {
+                                    "university": "University of Oxford",
+                                    "degreeType": "Bachelor's",
+                                    "fieldOfStudy": "Computer Science",
+                                    "grade": "1st Class Honours",
+                                    "dates": "2018 - 2021",
+                                    "modules": "Algorithms, Data Structures, AI"
+                                },
+                                {
+                                    "university": "University of Cambridge",
+                                    "degreeType": "Master's",
+                                    "fieldOfStudy": "Artificial Intelligence",
+                                    "grade": "Distinction",
+                                    "dates": "2021 - 2022",
+                                    "modules": "Machine Learning, NLP, Deep Learning"
+                                }
+                            ],
+                            "work_experience": [
+                                {
+                                    "employer": "Google",
+                                    "jobTitle": "Software Engineering Intern",
+                                    "dates": "Summer 2021",
+                                    "responsibilities": "Built internal tools using Python and Flask."
+                                },
+                                {
+                                    "employer": "Meta",
+                                    "jobTitle": "Backend Developer",
+                                    "dates": "2022 - 2023",
+                                    "responsibilities": "Worked on REST APIs and database optimization."
+                                }
+                            ]
+                        }
+                    )
 
             if created:
                 user.set_password(raw_password)
@@ -481,8 +945,9 @@ class Command(BaseCommand):
                     "phone": fake.phone_number(),
                     "password": fake.password(length=10),
                     "username": username,
-                    
                 }
+
+                
             )
             if created:
                 print(f"✅ Created User: {user.first_name} {user.last_name} - {user.email}")
@@ -496,36 +961,37 @@ class Command(BaseCommand):
 
         job_postings = fetch_adzuna_jobs()
       
-        for job in job_postings:
-            try:
-                JobPosting.objects.create(
-                    job_title=job["job_title"],
-                    company_name=job["company_name"],
-                    location=job["location"],
-                    salary_range=job["salary_range"],
-                    contract_type=random.choice(["Full-time", "Part-time", "Apprenticeship", "Internship"]),
-                    work_type=random.choice(["Remote", "Hybrid", "On-site"]),
-                    job_overview=job["job_overview"],
-                    education_required=random.choice(EDUCATION_OPTIONS),
-                    perks=", ".join(random.sample(PERKS_OPTIONS, k=random.randint(3, 9))),
-                    application_deadline=random.choice(APPLICATION_DEADLINE_OPTIONS),
-                    roles_responsibilities=job["roles_responsibilities"],
-                    required_skills=job["required_skills"],
-                    preferred_skills=job["preferred_skills"],
-                    company_overview=job["company_overview"],
-                    why_join_us=random.choice(WHY_JOIN_US_OPTIONS),
-                    company_reviews=round(random.uniform(3.5, 5.0), 1),
-                    child_company_name="",
+        existing_companies = User.objects.filter(is_company=True)
+
+# Check if there are any existing companies
+        if existing_companies.exists():
+            existing_companies_list = list(existing_companies)  # Convert queryset to list
+            for job in job_postings:
+                try:
+                    company = random.choice(existing_companies_list)  # Choose a random company
                     
-                    required_documents="Updated CV",
-
-                 )
-                job_count += 1
-                print(f"✅ Added: {job['job_title']} at {job['company_name']}")
-            except Exception as e:
-                print(f"❌ Error: {e}")
-            finally:
-                pass
-
-        self.stdout.write(self.style.SUCCESS(f"✅ Success : {job_count}"))
-    
+                    JobPosting.objects.create(
+                        job_title=job["job_title"],
+                        company=company,  
+                        location=job["location"],
+                        salary_range=job["salary_range"],
+                        contract_type=random.choice(["Full-time", "Part-time", "Apprenticeship", "Internship"]),
+                        work_type=random.choice(["Remote", "Hybrid", "On-site"]),
+                        job_overview=job["job_overview"],
+                        education_required=random.choice(EDUCATION_OPTIONS),
+                        perks=", ".join(random.sample(PERKS_OPTIONS, k=random.randint(3, 9))),
+                        application_deadline=random.choice(APPLICATION_DEADLINE_OPTIONS),
+                        roles_responsibilities=job["roles_responsibilities"],
+                        required_skills=job["required_skills"],
+                        preferred_skills=job["preferred_skills"],
+                        company_overview=random.choice(WHY_JOIN_US_OPTIONS),
+                        why_join_us=random.choice(WHY_JOIN_US_OPTIONS),
+                        company_reviews=round(random.uniform(3.5, 5.0), 1),
+                        required_documents="Updated CV",
+                    )
+                    job_count += 1
+                    print(f"✅ Added: {job['job_title']} at {company.company_name}")
+                except Exception as e:
+                    print(f"❌ Error: {e}")
+        else:
+            print("no companies")

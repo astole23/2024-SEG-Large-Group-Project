@@ -59,3 +59,5 @@ class NormalUser(CustomUser):
         proxy = True
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+
+

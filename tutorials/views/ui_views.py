@@ -14,25 +14,34 @@ from django.utils.dateparse import parse_date
 from tutorials.forms import (
     UserLoginForm, CompanyLoginForm,
     UserSignUpForm, CompanySignUpForm,
-    CompanyProfileForm
+    CompanyProfileForm, UserUpdateForm, MyPasswordChangeForm
 )
+from django.contrib.auth.hashers import make_password
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from tutorials.models.accounts import CustomUser
 from tutorials.models.applications import JobApplication
 from tutorials.models.applications import Notification
-
+from tutorials.forms import CVApplicationForm
+from tutorials.models.standard_cv import CVApplication, UserCV
 import logging
-
-
-
+from tutorials.auto_fill import extract_text_from_pdf, classify_resume_with_together
+import tempfile
+from tutorials.views.function_views import remove_duplicates_by_keys , split_skills
+import os
+from tutorials.models.user_dashboard import UploadedCV, UserDocument
 CustomUser = get_user_model()
+
+from django.contrib.auth import update_session_auth_hash
 
 @login_required
 def employer_dashboard(request):
     # Only allow company users
-    """
+    
     if not request.user.is_company:
         messages.error(request, "Access restricted to company accounts only.")
         return redirect('login')  
-    """
+    
     # Filter job postings by the logged-in company
     job_postings = JobPosting.objects.filter(company=request.user).order_by('-created_at')
     return render(request, 'employer_dashboard.html', {'job_postings': job_postings})
@@ -47,32 +56,57 @@ def user_logout(request):
 def contact_us(request):
     return render(request, 'contact_us.html')
 
+def normalize_to_string_list(value):
+    if isinstance(value, list):
+        return ", ".join(v.strip() for v in value)
+    elif isinstance(value, str):
+        return value.strip()
+    return ""
+
 def guest(request):
     query = request.GET.get('q', '')
     if query:
         job_postings = JobPosting.objects.filter(job_title__icontains=query)
     else:
         job_postings = JobPosting.objects.all()
-    return render(request, 'guest.html', {'job_postings': job_postings})
+    return render(request, 'guest.html', {'job_postings': job_postings,'is_guest': True})
 
 @login_required
 def user_dashboard(request):
-    # If user is a company, block access
     if request.user.is_company:
         messages.error(request, "Access restricted to normal users only.")
-        return redirect('login')  
+        return redirect('login')
 
-    # Otherwise, show the user dashboard
-    user_info = {}
-    if request.user.is_authenticated:
-        user_info = {
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'full_name': f"{request.user.first_name} {request.user.last_name}"
+    user_info = {
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'full_name': f"{request.user.first_name} {request.user.last_name}"
+    }
+
+    try:
+        cv = UserCV.objects.get(user=request.user)
+        structured = {
+            "skills": cv.key_skills,
+            "technical_skills": cv.technical_skills,
+            "languages": cv.languages
         }
-    # Convert to JSON
-    user_info_json = json.dumps(user_info)
-    return render(request, 'user_dashboard.html', {'user_info_json': user_info_json})
+        cv_data = {
+            'personalInfo': cv.personal_info or {},
+            'education': cv.education or [],
+            'workExperience': cv.work_experience or [],
+            'skills': {
+                'key_skills': normalize_to_string_list(structured.get("skills", "")),
+                'technical_skills': normalize_to_string_list(structured.get("technical_skills", "")),
+                'languages': normalize_to_string_list(structured.get("languages", ""))
+            },
+        }
+    except UserCV.DoesNotExist:
+        cv_data = {}
+
+    return render(request, 'user_dashboard.html', {
+        'user_info_json': json.dumps(user_info),
+        'cv_data_json': json.dumps(cv_data)
+    })
 
 
 def search(request):
@@ -162,11 +196,25 @@ def search(request):
 def about_us(request):
     return render(request, 'about_us.html')
 
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')
+
+def status(request):
+    return render(request, 'status.html')
+
+def privacy(request):
+    return render(request, 'privacy.html')
+
+def user_agreement(request):
+    return render(request, 'user_agreement.html')
+
+def faq(request):
+    return render(request, 'faq.html')
+
 def my_jobs(request):
     return render(request, 'my_jobs.html')
 
-def profile_settings(request):
-    return render(request, 'settings.html')
+
 
 def login_view(request):
     # Since this view only needs to display the forms (the POST is handled in process_login),
@@ -180,15 +228,53 @@ def login_view(request):
     })
 
 def signup_view(request):
-    # This view just displays the empty forms for a GET request;
-    # the actual POST is handled in process_signup.
-    user_form = UserSignUpForm(prefix='user')
-    company_form = CompanySignUpForm(prefix='company')
+    if request.method == 'POST':
+        user_form = UserSignUpForm(request.POST, prefix='user')
 
-    return render(request, 'signup.html', {
-        'user_form': user_form,
-        'company_form': company_form
-    })
+        is_company = 'is_company' in request.POST  # Check if the user is a company
+        company_form = CompanySignUpForm(request.POST, prefix='company') if is_company else None
+
+        if user_form.is_valid():
+            user = user_form.save(commit=False)  # Don't save yet
+
+            # Assign industry and location as lists
+            user.user_industry = user_form.cleaned_data['user_industry'].split(',')
+            user.user_location = user_form.cleaned_data['user_location'].split(',')
+            user.set_password(user_form.cleaned_data['password1'])  # Hash password
+
+            # If it's a company, assign company-related fields
+            user.is_company = is_company
+            if is_company:
+                user.company_name = request.POST.get('company_name', '').strip()
+                user.industry = request.POST.get('industry', '').strip()
+                user.location = request.POST.get('location', '').strip()
+
+            # ✅ Save the user (company or not)
+            user.save()
+
+            # If it's a company, ensure any additional company data is saved
+            if is_company and company_form and company_form.is_valid():
+                company = company_form.save(commit=False)
+                company.is_company = True
+                company.save()
+
+            # ✅ Authenticate and log in the user
+            authenticated_user = authenticate(username=user.username, password=user_form.cleaned_data['password1'])
+            if authenticated_user:
+                login(request, authenticated_user)
+                print(f"✅ User logged in: {authenticated_user.username}")
+
+                # 🔄 Redirect based on user type
+                if is_company:
+                    return redirect('company_detail')  # Redirect companies here
+                else:
+                    return redirect('user_dashboard')  # Redirect regular users here
+
+    else:
+        user_form = UserSignUpForm(prefix='user')
+        company_form = CompanySignUpForm(prefix='company')
+
+    return render(request, 'signup.html', {'user_form': user_form, 'company_form': company_form})
 
 
 def company_detail(request, company_id):
@@ -203,6 +289,27 @@ def company_detail(request, company_id):
     else:
         form = CompanyProfileForm(instance=company)
     return render(request, 'company_detail.html', {'company': company, 'form': form})
+
+def company_profile(request):
+    """
+    Display and update the logged-in company's profile.
+    """
+    if not request.user.is_company:  
+        messages.error(request, "Access restricted to company accounts only.")
+        return redirect('login') 
+    
+    company = get_object_or_404(CustomUser, id=request.user.id, is_company=True)
+    
+    job_postings = JobPosting.objects.filter(company=company)
+
+    if request.method == 'POST':
+        form = CompanyProfileForm(request.POST, request.FILES, instance=company)
+        if form.is_valid():
+            form.save()
+    else:
+        form = CompanyProfileForm(instance=company)
+
+    return render(request, 'company_profile.html', {'company': company, 'form': form, 'job_postings': job_postings,})
 
 def leave_review(request, company_id):
     if request.method == 'POST':
@@ -293,7 +400,6 @@ def create_job_posting(request):
             # Set the company using the logged-in user
             company=request.user,
             # Automatically set company_name from the logged-in user
-            company_name=request.user.company_name or request.user.username,
             child_company_name=data.get('child_company_name'),
             location=data.get('location'),
             work_type=data.get('work_type'),
@@ -514,12 +620,6 @@ def mark_notification_read(request, notification_id):
     notif.save()
     return JsonResponse({'status': 'success'})
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from tutorials.models.applications import JobApplication, Notification
-from tutorials.models.jobposting import JobPosting
-
 # 1. User Applications: List of applications submitted by the logged-in user
 @login_required
 def user_applications(request):
@@ -576,7 +676,6 @@ def job_postings_api(request):
     job_postings = JobPosting.objects.all().values(
         'id',
         'job_title',
-        'company_name',
         'location',
         'salary_range',
         'contract_type',
@@ -586,3 +685,216 @@ def job_postings_api(request):
     )
     # Return the results as a JSON response.
     return JsonResponse(list(job_postings), safe=False)
+
+@csrf_exempt
+@require_POST
+@login_required
+def upload_cv(request):
+    user = request.user
+    file = request.FILES.get('cv_file')
+
+    if not file:
+        return JsonResponse({'success': False, 'error': 'No file uploaded'}, status=400)
+
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            for chunk in file.chunks():
+                temp_file.write(chunk)
+            temp_path = temp_file.name
+
+        text = extract_text_from_pdf(temp_path)
+        ai_output = classify_resume_with_together(text)
+        try:
+            structured = json.loads(ai_output)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Failed to parse CV data from AI'}, status=500)
+
+        skills_raw = structured.get("skills", [])
+        technical_skills, soft_skills = split_skills(skills_raw)
+
+        cv, _ = CVApplication.objects.get_or_create(user=user)
+        cv.full_name = user.get_full_name()
+        cv.email = user.email or 'unknown@example.com'
+        cv.phone = structured.get("personal_info", {}).get("phone", "N/A")
+        cv.address = structured.get("personal_info", {}).get("address", "N/A")
+        cv.postcode = structured.get("personal_info", {}).get("postcode", "N/A")
+        cv.key_skills = ", ".join(sorted(soft_skills))
+        cv.technical_skills = ", ".join(sorted(technical_skills))
+        cv.languages = ", ".join(structured.get("languages", []))
+        cv.motivation_statement = structured.get("motivations", "")
+        cv.fit_for_role = structured.get("fit_for_role", "")
+        cv.career_aspirations = structured.get("career_aspirations", "")
+
+        raw_date = structured.get("preferred_start_date", "")
+        parsed_date = parse_date(raw_date) if raw_date else None
+        cv.preferred_start_date = parsed_date
+
+        cv.cv_file.save(file.name, file)
+        cv.save()
+
+        user_cv, _ = UserCV.objects.get_or_create(user=user)
+        user_cv.personal_info = structured.get("personal_info", {})
+
+        if user_cv.education is None:
+            user_cv.education = []
+        if user_cv.work_experience is None:
+            user_cv.work_experience = []
+
+        existing_edu = {json.dumps(e, sort_keys=True) for e in user_cv.education}
+        for edu in structured.get("education", []):
+            new_edu = {
+                'university': edu.get("university", ""),
+                'degreeType': edu.get("degree_type", ""),
+                'fieldOfStudy': edu.get("field_of_study", ""),
+                'grade': edu.get("grade", ""),
+                'dates': edu.get("dates", ""),
+                'modules': edu.get("modules", "")
+            }
+            if json.dumps(new_edu, sort_keys=True) not in existing_edu:
+                user_cv.education.append(new_edu)
+
+        existing_exp = {json.dumps(e, sort_keys=True) for e in user_cv.work_experience}
+        for exp in structured.get("work_experience", []):
+            new_exp = {
+                'employer_name': exp.get("company", ""),
+                'job_title': exp.get("job_title", ""),
+                'responsibilities': exp.get("responsibilities", ""),
+                'dates': exp.get("dates", "")
+            }
+            if json.dumps(new_exp, sort_keys=True) not in existing_exp:
+                user_cv.work_experience.append(new_exp)
+
+        existing_skills = set(user_cv.key_skills.split(",")) if user_cv.key_skills else set()
+        new_skills = set(soft_skills)
+        user_cv.key_skills = ", ".join(sorted(existing_skills.union(new_skills)))
+
+        user_cv.technical_skills = user_cv.technical_skills or ", ".join(technical_skills)
+        user_cv.languages = user_cv.languages or ", ".join(structured.get("languages", []))
+        user_cv.interest = user_cv.interest or cv.motivation_statement
+        user_cv.fit_for_role = user_cv.fit_for_role or cv.fit_for_role
+        user_cv.aspirations = user_cv.aspirations or cv.career_aspirations
+
+        user_cv.save()
+        os.remove(temp_path)
+
+        return JsonResponse({
+            'success': True,
+            'message': 'CV updated from upload.',
+            'data': {
+                'personalInfo': user_cv.personal_info,
+                'education': user_cv.education,
+                'workExperience': user_cv.work_experience,
+                'skills': {
+                    'keySkills': user_cv.key_skills,
+                    'technicalSkills': user_cv.technical_skills,
+                    'languages': user_cv.languages
+                }
+            }
+        })
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+@csrf_exempt
+@login_required
+@require_POST
+def upload_raw_cv(request):
+    user = request.user
+    file = request.FILES.get('cv_file')
+    if not file:
+        return JsonResponse({'success': False, 'error': 'No file uploaded'}, status=400)
+
+    try:
+        uploaded_cv, _ = UploadedCV.objects.get_or_create(user=user)
+
+        # Delete old file if it exists
+        if uploaded_cv.file and os.path.exists(uploaded_cv.file.path):
+            os.remove(uploaded_cv.file.path)
+
+        # Save new one
+        uploaded_cv.file.save(file.name, file)
+        uploaded_cv.save()
+
+        return JsonResponse({
+            'success': True,
+            'filename': uploaded_cv.file.name,
+            'uploaded_at': uploaded_cv.uploaded_at.strftime("%Y-%m-%d %H:%M")
+        })
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@csrf_exempt
+@login_required
+@require_POST
+def upload_user_document(request):
+    if request.FILES.get('document'):
+        if request.user.documents.count() >= 5:
+            return JsonResponse({'success': False, 'error': 'Maximum 5 documents allowed'}, status=400)
+
+        doc = UserDocument.objects.create(user=request.user, file=request.FILES['document'])
+        return JsonResponse({
+            'success': True,
+            'filename': doc.file.name,
+            'url': doc.file.url,
+            'uploaded_at': doc.uploaded_at.strftime("%Y-%m-%d %H:%M")
+        })
+
+    return JsonResponse({'success': False, 'error': 'No file provided'}, status=400)
+
+@csrf_exempt
+@login_required
+@require_POST
+def delete_user_document(request):
+    file_name = request.POST.get('filename')
+    doc = UserDocument.objects.filter(user=request.user, file__icontains=file_name).first()
+    if doc:
+        doc.file.delete()
+        doc.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False, 'error': 'Document not found'})
+
+
+@login_required
+def profile_settings(request):
+    if request.method == 'POST':
+        if 'update_details' in request.POST:
+            details_form = UserUpdateForm(request.POST, instance=request.user)
+            password_form = MyPasswordChangeForm(user=request.user)  # blank
+            if details_form.is_valid():
+                details_form.save()
+                messages.success(request, "Your details have been updated.")
+                return redirect('settings')
+            else:
+                error_list = []
+                for field, errors in details_form.errors.items():
+                    error_list.append(f"{field}: {', '.join(errors)}")
+                error_message = " ".join(error_list)
+                print("Details form errors:", error_message)
+                messages.error(request, "Update failed: " + error_message)
+        elif 'change_password' in request.POST:
+            details_form = UserUpdateForm(instance=request.user)  # keep details form intact
+            password_form = MyPasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                old_hash = request.user.password  # Debug: print the current password hash
+                user = password_form.save()  # This should update the password
+                new_hash = user.password      # Debug: print the new password hash
+                print("Old hash:", old_hash)
+                print("New hash:", new_hash)
+                update_session_auth_hash(request, user)
+                messages.success(request, "Your password has been changed.")
+                return redirect('settings')
+            else:
+                error_list = []
+                for field, errors in password_form.errors.items():
+                    error_list.append(f"{field}: {', '.join(errors)}")
+                error_message = " ".join(error_list)
+                print("Password form errors:", error_message)
+                messages.error(request, "Password change failed: " + error_message)
+    else:
+        details_form = UserUpdateForm(instance=request.user)
+        password_form = MyPasswordChangeForm(user=request.user)
+
+    return render(request, 'settings.html', {
+        'details_form': details_form,
+        'password_form': password_form,
+    })

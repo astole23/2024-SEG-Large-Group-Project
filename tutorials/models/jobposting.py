@@ -16,8 +16,6 @@ class JobPosting(models.Model):
         blank=True  # Allow form submissions without this field
     )
 
-
-    company_name = models.CharField(max_length=255, editable=False)
     
     child_company_name = models.CharField(
         max_length=255,
@@ -102,6 +100,7 @@ class JobPosting(models.Model):
         help_text="Date and time when the job details were last updated."
     )
 
-    def __str__(self):
-        # If you decide to remove company_name, you can display company.company_name or company.username.
-        return f"{self.job_title} at {self.company.company_name if self.company.company_name else self.company.username} ({self.location})"
+def __str__(self):
+        if self.company and self.company.company_name:
+            return self.company.company_name  # Return the company name if it exists
+        return ""  # Return an empty string if there is no company name
