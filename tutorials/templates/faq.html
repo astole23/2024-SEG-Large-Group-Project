@@ -1,0 +1,214 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQs</title>
+
+    <style>
+        :root {
+            --primary-color: #462191;
+            --secondary-color: #475569;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, system-ui, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .navbar {
+            background-color: #462191;
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .navbar-nav button {
+            background-color: #6a0dad;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 5px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav button:hover {
+            background-color: #6a0dad;
+        }
+
+        .faq-background {
+            margin-right: 0;
+            padding: 40px 20px;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            background-image: url('/static/contact_us_background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding-top: 5rem;
+            width: 100vw;
+        }
+
+        .faq-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .faq-content h2, .faq-content h3 {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #4b0082;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .faq-content p {
+            font-size: 1.1rem;
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .faq-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="#" class="navbar-brand">Shy</a>
+        <div class="navbar-nav">
+            <button class="login-btn" onclick="window.location.href='/signup/'">Sign Up</button>
+            <button class="login-btn" onclick="window.location.href='/contact_us/'">Contact Us</button>
+            <button class="login-btn active" onclick="window.location.href='/terms_conditions/'">User Agreement</button>
+        </div>
+    </div>
+
+        <div class="faq-background">
+        <div class="faq-content">
+        <h2 class="text-center">Frequently Asked Questions</h2>
+
+        <h3>1. General Questions</h3>
+
+        <h4>1.1 What is SHY?</h4>
+        <p>SHY is a job hunting platform designed to connect job seekers with employers. Unlike other platforms, SHY focuses solely on job opportunities without any social media features.</p>
+
+        <h4>1.2 How does SHY work?</h4>
+        <p>Job seekers create a profile, upload their resumes, and apply for jobs directly through SHY. Employers can post job listings and search for candidates based on skills and experience.</p>
+
+        <h4>1.3 Is SHY free to use?</h4>
+        <p>Yes, SHY is free for job seekers. Employers can post a limited number of jobs for free, with premium options available for additional features.</p>
+
+        <h3>2. Account & Profile</h3>
+
+        <h4>2.1 How do I create an account?</h4>
+        <p>Simply click on the "Sign Up" button, enter your details, and follow the instructions to create your profile.</p>
+
+        <h4>2.2 Can I edit my profile after creating it?</h4>
+        <p>Yes, you can edit your profile at any time by navigating to the "Profile Settings" section in your dashboard.</p>
+
+        <h4>2.3 How do I delete my account?</h4>
+        <p>You can delete your account by going to "Account Settings" and selecting the "Delete Account" option. Please note that this action is irreversible.</p>
+
+        <h3>3. Job Applications</h3>
+
+        <h4>3.1 How do I apply for jobs on SHY?</h4>
+        <p>Browse job listings, select a job that interests you, and click the "Apply Now" button. You may be asked to submit a resume and answer a few screening questions.</p>
+
+        <h4>3.2 Can I track my job applications?</h4>
+        <p>Yes, all your applications are saved under the "My Applications" section, where you can check their status.</p>
+
+        <h4>3.3 What happens after I apply for a job?</h4>
+        <p>Employers will review your application and may contact you for further steps, such as an interview.</p>
+
+        <h3>4. Employers & Job Listings</h3>
+
+        <h4>4.1 How do I post a job on SHY?</h4>
+        <p>Employers can create an account, navigate to the "Post a Job" section, and enter the job details. Listings may require approval before going live.</p>
+
+        <h4>4.2 Can I edit or remove a job posting?</h4>
+        <p>Yes, job postings can be edited or removed from the "Manage Listings" section in your employer dashboard.</p>
+
+        <h4>4.3 Are there any fees for posting jobs?</h4>
+        <p>Basic job postings are free, but we offer premium options for increased visibility and additional features.</p>
+
+        <h3>5. Security & Privacy</h3>
+
+        <h4>5.1 Is my personal information safe on SHY?</h4>
+        <p>Yes, SHY follows strict data protection policies. Please review our <a href="/privacy">Privacy Policy</a> for more details.</p>
+
+        <h4>5.2 How do I report a fraudulent job posting?</h4>
+        <p>If you come across a suspicious job posting, please use the "Report Job" button or contact our support team.</p>
+
+        <h4>5.3 Can employers see my full profile?</h4>
+        <p>Employers can only see the information you choose to make public. You can adjust visibility settings in your profile.</p>
+
+        <h3>6. Technical Support</h3>
+
+        <h4>6.1 I forgot my password. How do I reset it?</h4>
+        <p>Click on "Forgot Password" on the login page and follow the instructions to reset your password.</p>
+
+        <h4>6.2 I'm having trouble using SHY. What should I do?</h4>
+        <p>If you experience any technical issues, try clearing your browser cache or using a different browser. If the problem persists, contact our support team.</p>
+
+        <h4>6.3 How do I contact customer support?</h4>
+        <p>You can reach out to our support team by visiting the <a href="/contact_us">Contact Us</a> page.</p>
+    </div>
+</div>
+
+
+
+</body>
+</html>

@@ -1,25 +1,4 @@
 
-// Mock data for demonstration
-const mockJobs = [
-    { 
-      title: 'React Developer',
-      company: 'Apple',
-      location: 'Cupertino, CA',
-      salary: '$120k - $180k'
-    },
-    { 
-      title: 'Frontend Engineer',
-      company: 'Meta',
-      location: 'Remote',
-      salary: '$130k - $190k'
-    },
-    { 
-      title: 'Full Stack Developer',
-      company: 'Amazon',
-      location: 'Seattle, WA',
-      salary: '$140k - $200k'
-    }
-  ];
   
   // Mock CV data
   const userCVScript = document.getElementById('cv-data');
@@ -34,22 +13,116 @@ const mockJobs = [
   console.log("📄 Raw CV Info:", rawCVInfo);
 
 
-  // Function to fetch job postings from the API (or use a fallback)
-  function fetchJobPostings() {
-    // If you have an API endpoint, use it. Otherwise, fall back to mock data.
-    return fetch('/api/job_postings/')
-      .then(response => response.json())
-      .catch(error => {
-        console.error('Error fetching job postings:', error);
-        // Fallback: use the existing mockJobs data
-        return [
-          { id: 1, job_title: 'React Developer', company_name: 'Apple', location: 'Cupertino, CA', salary_range: '$120k - $180k', contract_type: 'Full-time', job_overview: 'Develop user interfaces...', roles_responsibilities: 'Build components, debug code...', required_skills: 'React, JavaScript' },
-          { id: 2, job_title: 'Frontend Engineer', company_name: 'Meta', location: 'Remote', salary_range: '$130k - $190k', contract_type: 'Contract', job_overview: 'Design modern web apps...', roles_responsibilities: 'UI design, testing...', required_skills: 'HTML, CSS, JS' },
-          { id: 3, job_title: 'Full Stack Developer', company_name: 'Amazon', location: 'Seattle, WA', salary_range: '$140k - $200k', contract_type: 'Full-time', job_overview: 'Work across the stack...', roles_responsibilities: 'API design, integration...', required_skills: 'Python, React, SQL' }
-        ];
-        });
-      };
-  
+// Function to fetch job postings from the Django backend
+function fetchJobPostings() {
+  return fetch('/job_recommendations/', { 
+      headers: { 'X-Requested-With': 'XMLHttpRequest' } // ✅ Ensure Django treats it as an AJAX request
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      return response.json();
+  })
+  .then(data => {
+      if (!data.recommended_jobs || data.recommended_jobs.length === 0) {
+          console.warn('No job recommendations available.');
+          return [];
+      }
+      return data.recommended_jobs;
+  })
+  .catch(error => {
+      console.error('Error fetching job recommendations:', error);
+      return []; // Return empty array if API fails
+  });
+}
+
+// Function to display the top 3 suggested jobs
+function renderSuggestedJobs(jobs) {
+  const suggestedJobsContainer = document.getElementById('suggested-jobs');
+
+  if (!suggestedJobsContainer) {
+      console.error("Element #suggested-jobs not found.");
+      return;
+  }
+
+  // ✅ Remove "Loading..." message after jobs load
+  suggestedJobsContainer.innerHTML = '';
+
+  if (jobs.length === 0) {
+      suggestedJobsContainer.innerHTML = "<p>No job recommendations available.</p>";
+      return;
+  }
+
+  // ✅ Display only the first 3 jobs
+  jobs.slice(0, 3).forEach(job => {
+      const jobElement = document.createElement('div');
+      jobElement.className = 'job-card';
+      jobElement.innerHTML = `
+          <h3 class="job-title">${job.job_title}</h3>
+          <p class="company-name">${job.company_name}</p>
+          <div class="job-location">
+              <span>📍</span> ${job.location}
+          </div>
+          <p class="salary-range">${job.salary_range}</p>
+          <button class="btn btn-primary" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#jobModal${job.id}" 
+                  style="width: 100%;">
+              View & Apply
+          </button>
+      `;
+      suggestedJobsContainer.appendChild(jobElement);
+
+      // ✅ Create a corresponding modal for job details
+      const modalDiv = document.createElement('div');
+      modalDiv.className = 'modal fade';
+      modalDiv.id = `jobModal${job.id}`;
+      modalDiv.tabIndex = -1;
+      modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
+      modalDiv.setAttribute('aria-hidden', 'true');
+      modalDiv.innerHTML = `
+          <div class="modal-dialog modal-dialog-scrollable modal-lg">
+              <div class="modal-content">
+                  <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+                      <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                      <p><strong>Company:</strong> ${job.company_name}</p>
+                      <p><strong>Location:</strong> ${job.location}</p>
+                      <p><strong>Salary:</strong> ${job.salary_range}</p>
+                      <p><strong>Contract:</strong> ${job.contract_type}</p>
+                      <p><strong>Job Overview:</strong> ${job.job_overview}</p>
+                      <p><strong>Roles & Responsibilities:</strong> ${job.roles_responsibilities}</p>
+                      <p><strong>Required Skills:</strong> ${job.required_skills}</p>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+              </div>
+          </div>
+      `;
+      document.body.appendChild(modalDiv);
+  });
+}
+
+
+// ✅ Show "Loading..." before fetching jobs
+document.addEventListener('DOMContentLoaded', () => {
+  const suggestedJobsContainer = document.getElementById('suggested-jobs');
+
+  if (suggestedJobsContainer) {
+      // ✅ Keep "Loading..." visible while waiting for the response
+      suggestedJobsContainer.innerHTML = "<p>Loading job recommendations...</p>";
+  }
+
+  fetchJobPostings().then(jobs => {
+      setTimeout(() => {
+          renderSuggestedJobs(jobs);  // ✅ Replace "Loading..." with job results
+      }, 500); // 🔹 Artificial delay to ensure "Loading..." is seen
+  });
+});
 
   function renderJobListings(jobs) {
     const listingsContainer = document.getElementById('temporary-job-listings-container');

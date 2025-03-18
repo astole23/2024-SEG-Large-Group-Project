@@ -52,6 +52,7 @@
             <p>Please review all the information below before submitting your application.</p>
           </div>
           
+          <!-- Application Method Section -->
           <div class="review-section">
             <div class="review-section-header">
               <h3>Application Method</h3>
@@ -59,15 +60,16 @@
             <div class="review-section-content">
               <div class="review-item">
                 <div class="review-item-label">Application Type:</div>
-                <div class="review-item-value">Manual Application</div>
+                <div class="review-item-value">{{ application_data.application_type }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Cover Letter:</div>
-                <div class="review-item-value">Your cover letter text goes here...</div>
+                <div class="review-item-value">{{ application_data.cover_letter }}</div>
               </div>
             </div>
           </div>
           
+          <!-- Personal Information Section -->
           <div class="review-section">
             <div class="review-section-header">
               <h3>Personal Information</h3>
@@ -75,27 +77,28 @@
             <div class="review-section-content">
               <div class="review-item">
                 <div class="review-item-label">Title:</div>
-                <div class="review-item-value">Mr.</div>
+                <div class="review-item-value">{{ application_data.title }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">First Name:</div>
-                <div class="review-item-value">John</div>
+                <div class="review-item-value">{{ application_data.first_name }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Last Name:</div>
-                <div class="review-item-value">Doe</div>
+                <div class="review-item-value">{{ application_data.last_name }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Email:</div>
-                <div class="review-item-value">john.doe@example.com</div>
+                <div class="review-item-value">{{ application_data.email }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Phone:</div>
-                <div class="review-item-value">+1 234 567 8900</div>
+                <div class="review-item-value">{{ application_data.phone }}</div>
               </div>
             </div>
           </div>
           
+          <!-- Address Section -->
           <div class="review-section">
             <div class="review-section-header">
               <h3>Address</h3>
@@ -103,23 +106,42 @@
             <div class="review-section-content">
               <div class="review-item">
                 <div class="review-item-label">Country:</div>
-                <div class="review-item-value">USA</div>
+                <div class="review-item-value">{{ application_data.country }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Address Line 1:</div>
-                <div class="review-item-value">123 Main St</div>
+                <div class="review-item-value">{{ application_data.address_line1 }}</div>
               </div>
+              {% if application_data.address_line2 %}
+              <div class="review-item">
+                <div class="review-item-label">Address Line 2:</div>
+                <div class="review-item-value">{{ application_data.address_line2 }}</div>
+              </div>
+              {% endif %}
+              {% if application_data.address_line3 %}
+              <div class="review-item">
+                <div class="review-item-label">Address Line 3:</div>
+                <div class="review-item-value">{{ application_data.address_line3 }}</div>
+              </div>
+              {% endif %}
               <div class="review-item">
                 <div class="review-item-label">City/Town:</div>
-                <div class="review-item-value">San Francisco</div>
+                <div class="review-item-value">{{ application_data.city }}</div>
               </div>
+              {% if application_data.county %}
+              <div class="review-item">
+                <div class="review-item-label">County/State/Province:</div>
+                <div class="review-item-value">{{ application_data.county }}</div>
+              </div>
+              {% endif %}
               <div class="review-item">
                 <div class="review-item-label">Postcode/ZIP:</div>
-                <div class="review-item-value">94105</div>
+                <div class="review-item-value">{{ application_data.postcode }}</div>
               </div>
             </div>
           </div>
           
+          <!-- Education Section -->
           <div class="review-section">
             <div class="review-section-header">
               <h3>Education</h3>
@@ -127,27 +149,24 @@
             <div class="review-section-content">
               <div class="review-item">
                 <div class="review-item-label">Institution:</div>
-                <div class="review-item-value">Stanford University</div>
+                <div class="review-item-value">{{ application_data.institution }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Degree/Qualification:</div>
-                <div class="review-item-value">Master's in Computer Science</div>
+                <div class="review-item-value">{{ application_data.degree }}</div>
               </div>
               <div class="review-item">
-                <div class="review-item-label">Field of Study:</div>
-                <div class="review-item-value">Computer Science</div>
+                <div class="review-item-label">Start Date:</div>
+                <div class="review-item-value">{{ application_data.edu_start }}</div>
               </div>
               <div class="review-item">
-                <div class="review-item-label">Grade/Result:</div>
-                <div class="review-item-value">3.8 GPA</div>
-              </div>
-              <div class="review-item">
-                <div class="review-item-label">Duration:</div>
-                <div class="review-item-value">2018-2022</div>
+                <div class="review-item-label">End Date:</div>
+                <div class="review-item-value">{{ application_data.edu_end }}</div>
               </div>
             </div>
           </div>
           
+          <!-- Work Experience Section -->
           <div class="review-section">
             <div class="review-section-header">
               <h3>Work Experience</h3>
@@ -155,43 +174,39 @@
             <div class="review-section-content">
               <div class="review-item">
                 <div class="review-item-label">Company:</div>
-                <div class="review-item-value">Tech Corp</div>
+                <div class="review-item-value">{{ application_data.company_name_exp }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Position:</div>
-                <div class="review-item-value">Senior Software Developer</div>
+                <div class="review-item-value">{{ application_data.position }}</div>
               </div>
               <div class="review-item">
-                <div class="review-item-label">Duration:</div>
-                <div class="review-item-value">2022-Present</div>
+                <div class="review-item-label">Start Date:</div>
+                <div class="review-item-value">{{ application_data.work_start }}</div>
               </div>
               <div class="review-item">
-                <div class="review-item-label">Responsibilities:</div>
-                <div class="review-item-value">Led development team, implemented microservices architecture</div>
+                <div class="review-item-label">End Date:</div>
+                <div class="review-item-value">{{ application_data.work_end }}</div>
               </div>
             </div>
           </div>
           
+          <!-- Skills Section -->
           <div class="review-section">
             <div class="review-section-header">
               <h3>Skills</h3>
             </div>
             <div class="review-section-content">
+              {% for skill in application_data.skills %}
               <div class="review-item">
                 <div class="review-item-label">Skill:</div>
-                <div class="review-item-value">JavaScript</div>
+                <div class="review-item-value">{{ skill }}</div>
               </div>
-              <div class="review-item">
-                <div class="review-item-label">Proficiency Level:</div>
-                <div class="review-item-value">Expert</div>
-              </div>
-              <div class="review-item">
-                <div class="review-item-label">Description:</div>
-                <div class="review-item-value">Extensive experience in modern JavaScript frameworks</div>
-              </div>
+              {% endfor %}
             </div>
           </div>
           
+          <!-- Job Specific Questions Section -->
           <div class="review-section">
             <div class="review-section-header">
               <h3>Job Specific Questions</h3>
@@ -199,31 +214,31 @@
             <div class="review-section-content">
               <div class="review-item">
                 <div class="review-item-label">Eligible to work:</div>
-                <div class="review-item-value">Yes</div>
+                <div class="review-item-value">{{ application_data.eligible_to_work }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Previously employed:</div>
-                <div class="review-item-value">No</div>
+                <div class="review-item-value">{{ application_data.previously_employed }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Require sponsorship:</div>
-                <div class="review-item-value">No</div>
+                <div class="review-item-value">{{ application_data.require_sponsorship }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">How did you hear about this position:</div>
-                <div class="review-item-value">LinkedIn</div>
+                <div class="review-item-value">{{ application_data.how_did_you_hear }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Why you're a good fit:</div>
-                <div class="review-item-value">I have the skills and experience required for the role.</div>
+                <div class="review-item-value">{{ application_data.why_good_fit }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Salary expectations:</div>
-                <div class="review-item-value">$100k per year</div>
+                <div class="review-item-value">{{ application_data.salary_expectations }}</div>
               </div>
               <div class="review-item">
                 <div class="review-item-label">Willing to undergo background check:</div>
-                <div class="review-item-value">Yes</div>
+                <div class="review-item-value">{{ application_data.background_check }}</div>
               </div>
             </div>
           </div>

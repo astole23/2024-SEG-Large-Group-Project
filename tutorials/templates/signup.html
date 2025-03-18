@@ -16,7 +16,7 @@
       <div class="tab-content">
         <!-- Job Seeker Sign Up -->
         <div class="tab-pane active" id="user-tab">
-          <form action="{% url 'process_signup' %}" method="post">
+          <form action="{% url 'signup' %}" method="post">
             {% csrf_token %}
             <!-- Hidden field to pass user type -->
             <input type="hidden" name="user_type" value="user">
@@ -78,7 +78,7 @@
       
           <div class="form-group">
             
-              <input id="location-input" name="user_location" type="text" class="tab-pane active" placeholder="Location">
+              {{ user_form.user_location }}
               {% if user_form.user_location.errors %}
                   <div class="error">{{ user_form.user_location.errors }}</div>
               {% endif %}
