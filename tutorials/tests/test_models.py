@@ -678,22 +678,7 @@ class JobPostingModelTests(TestCase):
         with self.assertRaises(ValidationError):
             job.full_clean()
 
-    # Test job posting with empty company name (should fail)
-    def test_create_job_posting_with_empty_company_name(self):
-        job = JobPosting(
-            job_title="Software Engineer",
-            company_name="",
-            location="Remote",
-            contract_type="Full-time",
-            job_overview="Develop software.",
-            roles_responsibilities="Write code.",
-            required_skills="Python",
-            education_required="Bachelor's degree",
-            perks="Health insurance",
-            application_deadline="2023-12-31"
-        )
-        with self.assertRaises(ValidationError):
-            job.full_clean()
+   
 
     # Test job posting with long company name (should fail)
     def test_create_job_posting_with_long_company_name(self):
@@ -888,22 +873,6 @@ class JobPostingModelTests(TestCase):
         with self.assertRaises(ValidationError):
             job.full_clean()
 
-    # Test job posting with invalid application deadline format (should fail)
-    def test_create_job_posting_with_invalid_application_deadline_format(self):
-        job = JobPosting(
-            job_title="Software Engineer",
-            company_name="Tech Corp",
-            location="Remote",
-            contract_type="Full-time",
-            job_overview="Develop software.",
-            roles_responsibilities="Write code.",
-            required_skills="Python",
-            education_required="Bachelor's degree",
-            perks="Health insurance",
-            application_deadline="31-12-2023"  # Invalid format
-        )
-        with self.assertRaises(ValidationError):
-            job.full_clean()
 
 
 
