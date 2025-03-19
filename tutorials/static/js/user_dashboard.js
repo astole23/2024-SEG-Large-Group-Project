@@ -47,7 +47,41 @@ function fetchJobPostings() {
         </button>
       `;
       suggestedJobsContainer.appendChild(jobElement);
-  });
+  
+
+      // Create the corresponding modal element
+      const modalDiv = document.createElement('div');
+      modalDiv.className = 'modal fade';
+      modalDiv.id = `jobModal${job.id}`;
+      modalDiv.tabIndex = -1;
+      modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
+      modalDiv.setAttribute('aria-hidden', 'true');
+      modalDiv.innerHTML = `
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+          <div class="modal-content">
+            <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+              <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Company:</strong> ${job.company_name}</p>
+              <p><strong>Location:</strong> ${job.location}</p>
+              <p><strong>Salary:</strong> ${job.salary_range}</p>
+              <p><strong>Contract:</strong> ${job.contract_type || ''}</p>
+              <p><strong>Job Overview:</strong> ${job.job_overview || ''}</p>
+              <p><strong>Roles &amp; Responsibilities:</strong> ${job.roles_responsibilities || ''}</p>
+              <p><strong>Required Skills:</strong> ${job.required_skills || ''}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
+            </div>
+          </div>
+        </div>
+      `;
+      // Append the modal to the document body so Bootstrap can find and open it
+      document.body.appendChild(modalDiv);
+    });
 
   // ✅ Add "View All Suggestions" button at the bottom
   const viewAllButton = document.createElement('a');
