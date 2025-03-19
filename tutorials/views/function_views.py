@@ -130,3 +130,5 @@ def delete_raw_cv(request):
         except UploadedCV.DoesNotExist:
             return JsonResponse({"success": False, "error": "No CV found."})
     return JsonResponse({"success": False, "error": "Invalid request."})
+
+

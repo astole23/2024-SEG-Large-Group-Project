@@ -1,55 +1,33 @@
+// Instead of three separate script tags, we use one combined element with id "dashboard-data"
+const dashboardDataScript = document.getElementById('dashboard-data');
+const dashboardData = dashboardDataScript ? JSON.parse(dashboardDataScript.textContent) : {};
 
-// Mock data for demonstration
-const mockJobs = [
-    { 
-      title: 'React Developer',
-      company: 'Apple',
-      location: 'Cupertino, CA',
-      salary: '$120k - $180k'
-    },
-    { 
-      title: 'Frontend Engineer',
-      company: 'Meta',
-      location: 'Remote',
-      salary: '$130k - $190k'
-    },
-    { 
-      title: 'Full Stack Developer',
-      company: 'Amazon',
-      location: 'Seattle, WA',
-      salary: '$140k - $200k'
-    }
-  ];
-  
-  // Mock CV data
-  const userCVScript = document.getElementById('cv-data');
-  const mockCV = userCVScript ? JSON.parse(userCVScript.textContent) : {};
-  console.log("Loaded CV from backend:", mockCV);
+// Destructure the data from the combined JSON object
+const mockCV = dashboardData.cv_data || {};
+const rawCVInfo = dashboardData.raw_cv_info || {};
+const userDocuments = dashboardData.user_documents || [];
 
-  console.log("Loaded CV data:", mockCV); //  Optional: Helps you debug what’s coming in
-  // Raw CV file info (for filename, URL, timestamp)
-  const rawCVScript = document.getElementById('cv-raw-info');
-  let rawCVInfo = rawCVScript ? JSON.parse(rawCVScript.textContent) : {};
+// Logging to check data loaded correctly
+console.log("✅ Loaded CV from backend:", mockCV);
+console.log("📄 Raw CV Info:", rawCVInfo);
+console.log("📂 User Documents:", userDocuments);
 
-  console.log("📄 Raw CV Info:", rawCVInfo);
+// Your existing code can then use these variables...
+// For example, if you fetch job postings:
+function fetchJobPostings() {
+  return fetch('/api/job_postings/')
+    .then(response => response.json())
+    .catch(error => {
+      console.error('Error fetching job postings:', error);
+      // Fallback mock data
+      return [
+        { id: 1, job_title: 'React Developer', company_name: 'Apple', location: 'Cupertino, CA', salary_range: '$120k - $180k', contract_type: 'Full-time', job_overview: 'Develop user interfaces...', roles_responsibilities: 'Build components, debug code...', required_skills: 'React, JavaScript' },
+        { id: 2, job_title: 'Frontend Engineer', company_name: 'Meta', location: 'Remote', salary_range: '$130k - $190k', contract_type: 'Contract', job_overview: 'Design modern web apps...', roles_responsibilities: 'UI design, testing...', required_skills: 'HTML, CSS, JS' },
+        { id: 3, job_title: 'Full Stack Developer', company_name: 'Amazon', location: 'Seattle, WA', salary_range: '$140k - $200k', contract_type: 'Full-time', job_overview: 'Work across the stack...', roles_responsibilities: 'API design, integration...', required_skills: 'Python, React, SQL' }
+      ];
+    });
+}
 
-
-  // Function to fetch job postings from the API (or use a fallback)
-  function fetchJobPostings() {
-    // If you have an API endpoint, use it. Otherwise, fall back to mock data.
-    return fetch('/api/job_postings/')
-      .then(response => response.json())
-      .catch(error => {
-        console.error('Error fetching job postings:', error);
-        // Fallback: use the existing mockJobs data
-        return [
-          { id: 1, job_title: 'React Developer', company_name: 'Apple', location: 'Cupertino, CA', salary_range: '$120k - $180k', contract_type: 'Full-time', job_overview: 'Develop user interfaces...', roles_responsibilities: 'Build components, debug code...', required_skills: 'React, JavaScript' },
-          { id: 2, job_title: 'Frontend Engineer', company_name: 'Meta', location: 'Remote', salary_range: '$130k - $190k', contract_type: 'Contract', job_overview: 'Design modern web apps...', roles_responsibilities: 'UI design, testing...', required_skills: 'HTML, CSS, JS' },
-          { id: 3, job_title: 'Full Stack Developer', company_name: 'Amazon', location: 'Seattle, WA', salary_range: '$140k - $200k', contract_type: 'Full-time', job_overview: 'Work across the stack...', roles_responsibilities: 'API design, integration...', required_skills: 'Python, React, SQL' }
-        ];
-        });
-      };
-  
 
   function renderJobListings(jobs) {
     const listingsContainer = document.getElementById('temporary-job-listings-container');
@@ -239,19 +217,36 @@ const mockJobs = [
               </div>
             </div>
           </section>
-  
-       
+
           <div class="modal-header">
             <h2>📑 Supporting Documents / Certificates</h2>
 
           </div>
+          
+          <div class="documents-five" id="supportDocsContainer">
+            
+            ${userDocuments.length ? userDocuments.map(doc => `
+              <div class="document-item">
+                <span class="document-icon">📎</span>
+                <div class="document-info">
+                  <h3>${doc.filename}</h3>
+                  <p>Updated ${doc.uploaded_at}</p>
+                </div>
+                <div class="document-actions">
+                  <button class="btn-outline btn-small" onclick="window.open('${doc.file_url}', '_blank')">View</button>
+                  <button class="btn-outline btn-small delete-btn" onclick="deleteDocument('${doc.filename}', this)">Delete</button>
+                </div>
+              </div>
+            `).join('') : '<p style="color: gray;">No support documents uploaded yet.</p>'}
+          </div>
+
+          <div class="document-actions" id="DocumentActionsPlaceholder"></div>
           <div class="upload-section">
             <p>Upload additional documents</p>
-            <input type="file" id="docUpload" style="display: none">
+            <input type="file" id="docUpload" accept =".pdf" style="display: none">
             <button class="btn btn-primary" id="docUploadBtn">Upload Document</button>
           </div>
-     
-  
+
           <section class="application-progress">
             <div class="progress-header">
               <div class="company-info">
@@ -568,6 +563,30 @@ const mockJobs = [
         modal.style.display = 'none';
       });
     }
+    const supportDocsContainer = document.getElementById('supportDocsContainer');
+    if (supportDocsContainer) {
+      supportDocsContainer.innerHTML = '';
+
+      userDocuments.forEach(doc => {
+        const docDiv = document.createElement('div');
+        docDiv.className = 'document-item';
+        docDiv.innerHTML = `
+          <span class="document-icon">📎</span>
+          <div class="document-info">
+            <h3>${doc.filename}</h3>
+            <p>Uploaded ${doc.uploaded_at_human}</p>
+          </div>
+          <div class="document-actions">
+            <button class="btn-outline btn-small" onclick="window.open('${doc.file_url}', '_blank')">View</button>
+            <button class="btn-outline btn-small delete-btn" onclick="deleteDocument('${doc.filename}', this)">Delete</button>
+          </div>
+        `;
+        supportDocsContainer.appendChild(docDiv);
+      });
+    }
+
+
+  
 
     const cvUploadInput = document.getElementById('cvUpload');
     const uploadRawCvBtn = document.getElementById('uploadRawCvBtn');
@@ -585,6 +604,7 @@ const mockJobs = [
     if (uploadAutoCvBtn) {
       uploadAutoCvBtn.addEventListener('click', () => {
         currentUploadMode = 'autofill';
+        console.log("Autofill CV button clicked - uploading CV");
         cvUploadInput?.click();
       });
     }
@@ -594,8 +614,11 @@ const mockJobs = [
         const file = e.target.files[0];
         if (!file) return;
     
+        console.log('File selected:', file); // Ensure file is selected
+    
         const formData = new FormData();
-        formData.append('cv', file);
+        formData.append('cv_file', file);  // matches backend key
+
     
         const uploadUrl = currentUploadMode === 'autofill'
           ? '/upload_cv/'
@@ -615,36 +638,31 @@ const mockJobs = [
     
           if (result.success) {
             showCVStatus("CV uploaded successfully!", "success");
-    
-            if (currentUploadMode === 'autofill') {
-              if (result.data) {
-                autofillCVForm(result.data);
+          
+            if (currentUploadMode === 'autofill' && result.data) {
+              const cleanedCV = { ...result.data };
+            
+              if (cleanedCV.education) {
+                cleanedCV.education = removeDuplicateEducation(cleanedCV.education);
               }
-            } else {
-              // ✅ raw CV upload — update display
-              rawCVInfo.filename = result.filename;
-              rawCVInfo.uploaded_at = result.uploaded_at;
-              rawCVInfo.file_url = result.file_url;
-    
-              const docInfo = document.querySelector('.document-info');
-              if (docInfo) {
-                docInfo.querySelector('h3').textContent = rawCVInfo.filename;
-                docInfo.querySelector('p').textContent = "Updated just now";
+            
+              if (cleanedCV.workExperience) {
+                cleanedCV.workExperience = removeDuplicateExperience(cleanedCV.workExperience);
               }
-    
-              const docActions = document.querySelector('.document-actions');
-              if (docActions) {
-                docActions.innerHTML = `
-                  <button class="btn-outline btn-small" onclick="window.open('${rawCVInfo.file_url}', '_blank')">View</button>
-                  <button class="btn-outline btn-small delete-btn" onclick="deleteRawCV()">Delete</button>
-                `;
-              }
+            
+              // Clear existing data to avoid stacking duplicates
+              mockCV.education = [];
+              mockCV.workExperience = [];
+            
+              Object.assign(mockCV, cleanedCV);
+              autofillCVForm(cleanedCV);
             }
-    
+            
+          
           } else {
             showCVStatus(result.error || "Upload failed.", "danger");
           }
-    
+          
         } catch (err) {
           console.error("❌ Upload error:", err);
           showCVStatus("Upload error occurred.", "danger");
@@ -654,6 +672,8 @@ const mockJobs = [
         cvUploadInput.value = '';
       });
     }
+    
+    
     const cvActionsContainer = document.getElementById('cvDocumentActionsPlaceholder');
 
     if (rawCVInfo.file_url && cvActionsContainer) {
@@ -777,7 +797,8 @@ const mockJobs = [
         const file = e.target.files[0];
         if (!file) return;
 
-        const currentDocs = document.querySelectorAll('.documents-list .document-item');
+        const currentDocs = document.querySelectorAll('#supportDocsContainer .document-item');
+        console.log("Current document count:", currentDocs.length);
         if (currentDocs.length >= 5) {
           showCVStatus("You can only upload up to 5 documents.", "danger");
           return;
@@ -789,15 +810,20 @@ const mockJobs = [
         try {
           const res = await fetch('/upload_user_document/', {
             method: 'POST',
+            headers: {
+              'X-CSRFToken': getCSRFToken()
+            },
             body: formData
           });
+        
 
           const result = await res.json();
           console.log("📎 Document upload result:", result);
 
           if (result.success) {
             showCVStatus("Document uploaded!", "success");
-            addDocumentToList(file.name, result.uploaded_at);
+            addSupportingDocument(result.filename, result.uploaded_at, result.file_url);
+
           } else {
             showCVStatus(result.error || "Upload failed", "danger");
           }
@@ -830,8 +856,60 @@ const mockJobs = [
       `;
       list.appendChild(div);
     }
+
+    function addSupportingDocument(filename, uploadedAt, fileUrl) {
+      const container = document.getElementById('supportDocsContainer');
+      if (!container) return;
+    
+      const docDiv = document.createElement('div');
+      docDiv.className = 'document-item';
+      docDiv.innerHTML = `
+        <span class="document-icon">📎</span>
+        <div class="document-info">
+          <h3>${filename}</h3>
+          <p>Uploaded just now</p>
+        </div>
+        <div class="document-actions">
+          <button class="btn-outline btn-small" onclick="window.open('${fileUrl}', '_blank')">View</button>
+          <button class="btn-outline btn-small delete-btn" onclick="deleteSupportingDocument('${filename}', this)">Delete</button>
+        </div>
+      `;
+    
+      container.appendChild(docDiv);
+    }
+
+    async function deleteSupportingDocument(filename, btn) {
+      const formData = new FormData();
+      formData.append('filename', filename);
+    
+      try {
+        const res = await fetch('/delete_user_document/', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCSRFToken()
+          },
+          body: formData
+        });
+    
+        const result = await res.json();
+        if (result.success) {
+          showCVStatus("Document deleted.", "success");
+          btn.closest('.document-item').remove();
+        } else {
+          showCVStatus("Failed to delete document.", "danger");
+        }
+      } catch (err) {
+        console.error("❌ Document deletion error:", err);
+        showCVStatus("Error deleting document", "danger");
+      }
+    }
+    
+    
     
     async function deleteDocument(fileName, btn) {
+      const confirmDelete = confirm("Are you sure you want to delete your CV?");
+      if (!confirmDelete) return;
+
       const formData = new FormData();
       formData.append('filename', fileName);
     
@@ -848,6 +926,38 @@ const mockJobs = [
         showCVStatus("Delete failed", "danger");
       }
     }
+
+    window.deleteDocument = async function (filename, btn) {
+      const confirmDelete = confirm("Are you sure you want to delete this document?");
+      if (!confirmDelete) return;
+    
+      try {
+        const formData = new FormData();
+        formData.append('filename', filename);
+    
+        const res = await fetch('/delete_user_document/', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCSRFToken()  // ensure CSRF token is available
+          },
+          body: formData
+        });
+    
+        const result = await res.json();
+    
+        if (result.success) {
+          showCVStatus("Document deleted successfully.", "success");
+          // Remove the document from the UI
+          btn.closest('.document-item').remove();
+        } else {
+          showCVStatus(result.error || "Delete failed.", "danger");
+        }
+      } catch (err) {
+        console.error("❌ Error deleting document:", err);
+        showCVStatus("Error deleting document", "danger");
+      }
+    };
+    
     
     async function deleteRawCV() {
       const confirmDelete = confirm("Are you sure you want to delete your CV?");
@@ -951,33 +1061,33 @@ const mockJobs = [
       // =====================
       // Education
       // =====================
-      const educationData = data.education || data.Education || [];
+      const educationData = removeDuplicateEducation(data.education || data.Education || []);
       const educationContainer = document.getElementById('educationEntries');
       educationContainer.innerHTML = '';
-    
+
       educationData.forEach(edu => {
         const entryHTML = createEducationEntry(edu);
         educationContainer.insertAdjacentHTML('beforeend', entryHTML);
       });
-    
+
       // =====================
       // Work Experience
       // =====================
-
-      const workData = data.workExperience || data["Work Experience"] || [];
-
+      const workData = removeDuplicateExperience(data.workExperience || data["Work Experience"] || []);
       const workContainer = document.getElementById('workExperienceEntries');
       workContainer.innerHTML = '';
-    
+
       workData.forEach(exp => {
         const entryHTML = createWorkExperienceEntry(exp);
         workContainer.insertAdjacentHTML('beforeend', entryHTML);
       });
+
     }
     
     function showCVStatus(message, type = "success") {
       const alertBox = document.getElementById("cvStatusAlert");
       const messageSpan = document.getElementById("cvStatusMessage");
+      console.log("showCVStatus called. alertBox:", alertBox, "messageSpan:", messageSpan);
     
       if (!alertBox || !messageSpan) {
         alert(message);
@@ -990,14 +1100,6 @@ const mockJobs = [
     }
     window.showCVStatus = showCVStatus;
 
-    
-    
-  
-    docUploadBtn.addEventListener('click', () => {
-      docUploadInput.click();
-    });
-  
-  
     // Close modal when clicking outside
     window.addEventListener('click', (e) => {
       if (e.target === modal) {
@@ -1055,29 +1157,58 @@ const mockJobs = [
     }
     return '';
   }
-  
-  
 
+  function normalize(str) {
+    return (str || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+  
+  function removeDuplicateEducation(data) {
+    const seen = new Set();
+    return data.filter(edu => {
+      const key = `${normalize(edu.university)}|${normalize(edu.degreeType)}|${normalize(edu.fieldOfStudy)}|${normalize(edu.dates)}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+  
+  function removeDuplicateExperience(data) {
+    const seen = new Set();
+    return data.filter(exp => {
+      const key = `${normalize(exp.employer)}|${normalize(exp.jobTitle)}|${normalize(exp.dates)}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+  
+  
+  
+  
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Safely parse rawCVInfo from the script tag
-    const rawCVScript = document.getElementById('cv-raw-info');
-    let rawCVInfo = {};
+    // Define mock job data globally if not already defined
+    window.mockJobs = window.mockJobs || [
+      { title: 'React Developer', company: 'Apple', location: 'Cupertino, CA', salary: '$120k - $180k' },
+      { title: 'Frontend Engineer', company: 'Meta', location: 'Remote', salary: '$130k - $190k' },
+      { title: 'Full Stack Developer', company: 'Amazon', location: 'Seattle, WA', salary: '$140k - $200k' }
+    ];
   
-    try {
-      rawCVInfo = rawCVScript ? JSON.parse(rawCVScript.textContent) : {};
-      console.log("🧾 Loaded real rawCVInfo from backend:", rawCVInfo);
-    } catch (err) {
-      console.warn("⚠️ Failed to parse rawCVInfo. Using empty fallback.");
-      rawCVInfo = {};
-    }
-  
-    // Store it globally for the rest of the dashboard to use
+
+    console.log("✅ Loaded CV from backend:", mockCV);
+
+
+    console.log("📄 Raw CV Info:", rawCVInfo);
+
+    // Optionally store these globally (if other parts of your code need them)
     window.rawCVInfo = rawCVInfo;
+    window.userDocuments = userDocuments;
   
     // Now build the dashboard
     createDashboard();
   });
+  
+  
   
   
   
