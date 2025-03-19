@@ -37,10 +37,8 @@ REGIONAL_MAPPING = {
 LOCATION_TO_REGION = {city: region for region, cities in REGIONAL_MAPPING.items() for city in cities}
 
 def is_location_match(user_locations, job_location):
-    print(f"user location is {user_locations}")
     """Adjust job score based on location match with user preferences."""
     if not user_locations or not job_location:
-        print(f"❌ No location match: {job_location} (Penalty: -0.50)")
         return -0.50  
 
     # Normalize job location
@@ -51,7 +49,6 @@ def is_location_match(user_locations, job_location):
 
         # Exact match (cleaned)
         if job_location_clean == user_loc_clean:
-            print(f"✅ Exact location match: {job_location} (Boost: +0.50)")
             return +0.50  
 
         # Regional match
@@ -59,10 +56,7 @@ def is_location_match(user_locations, job_location):
         user_region = LOCATION_TO_REGION.get(user_loc_clean, user_loc_clean)
 
         if job_region == user_region:
-            print(f"🔹 Regional match: {job_location} → {user_loc} (Boost: +0.30)")
             return +0.30  
-
-    print(f"❌ Location mismatch: {job_location} (Penalty: -0.50)")
     return -0.50    
 
 def clean_location(job_location):
@@ -79,7 +73,6 @@ def clean_location(job_location):
         return LOCATION_TO_REGION[job_location]  # Return mapped region
 
 
-    print(job_location)
     return job_location  # Return the cleaned city if no match is found
 
 
@@ -90,10 +83,8 @@ together_client = together.Together(api_key=api_key)
 def get_embeddings(text_list):
     """Batch request embeddings for multiple texts at once with error handling."""
     if not text_list or not all(isinstance(text, str) for text in text_list):
-        print(f"❌ Invalid input for embeddings: {text_list}")
         return []
 
-    print(f"🔍 Sending batch to Together AI: {text_list}")  # Debugging
 
     try:
         response = together.Embeddings.create(
@@ -101,17 +92,12 @@ def get_embeddings(text_list):
             input=text_list
         )
 
-        print(f"✅ Raw API Response: {response}")  # Log full API response
 
         embeddings = [item["embedding"] for item in response.get("data", [])]
-
-        if not embeddings:
-            print("❌ API returned empty embeddings. Skipping similarity calculation.")
 
         return embeddings
 
     except Exception as e:
-        print(f"❌ API Request Failed: {str(e)}")
         return []
 
 
@@ -131,7 +117,6 @@ def match_job_to_cv_together(job_title, cv_job_titles):
     # Step 1: Compute AI-based similarity scores
     all_texts = job_title + cv_job_titles
     embeddings = get_embeddings(all_texts)
-    print(f"embeddings is: {embeddings}")
 
     job_embedding = embeddings[0]
     cv_embeddings = embeddings[1:]

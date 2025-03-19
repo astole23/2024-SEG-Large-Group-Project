@@ -233,46 +233,78 @@ def login_view(request):
     })
 
 def signup_view(request):
+    print("🚀 Signup process started")  # Confirm that view is running
+
     if request.method == 'POST':
+        print(f"🔍 Received POST request: {request.POST}")  # Debugging input data
 
-        user_form = UserSignUpForm(request.POST, prefix='user')
+        is_company = 'is_company' in request.POST  # Check if user is a company
+        print(f"🏢 Is company? {is_company}")  # Check if we're processing a company
 
-        # Only process company form if the checkbox is present
-        is_company = 'is_company' in request.POST
-        company_form = CompanySignUpForm(request.POST, prefix='company') if is_company else None
+        if is_company:
+            company_form = CompanySignUpForm(request.POST, prefix='company')
+            print(f"📋 Company form valid? {company_form.is_valid()}")  # Check if form is valid
 
-
-        # Only save user if form is valid
-        if user_form.is_valid():
-            user = user_form.save(commit=False)
-
-            # Assign custom fields
-            user.user_industry = user_form.cleaned_data['user_industry'].split(',')
-            user.user_location = user_form.cleaned_data['user_location'].split(',')
-            user.set_password(user_form.cleaned_data['password1'])  # Hash password
-
-            # Mark user as a company if applicable
-            user.is_company = is_company
-            user.save()
-
-            # If it's a company, validate and save company details
-            if is_company and company_form and company_form.is_valid():
+            if company_form.is_valid():
+                print("✅ Company form passed validation")
                 company = company_form.save(commit=False)
+
+                # Hash the password before saving
+                company.set_password(company_form.cleaned_data['password1'])
                 company.is_company = True
                 company.save()
 
-            # Authenticate and log in the user
-            authenticated_user = authenticate(username=user.username, password=user_form.cleaned_data['password1'])
-            if authenticated_user:
-                login(request, authenticated_user)
-                return redirect('user_dashboard')
+                print(f"🔑 Saved company user: {company.username}, ID: {company.id}")
+
+                # Authenticate AFTER saving
+                authenticated_user = authenticate(username=company.username, password=company_form.cleaned_data['password1'])
+
+                print(f"🔍 Authenticate returned: {authenticated_user}")  # See what authenticate() returns
+
+                if authenticated_user:
+                    print(f"✅ Company User authenticated: {authenticated_user.username}")
+                    login(request, authenticated_user)
+                    return redirect('employer_dashboard')
+                else:
+                    print(f"❌ Authentication failed for {company.username}")
+                    print(f"🔍 Saved Password Hash: {company.password}")  # Check if it's hashed correctly
+
+        else:
+            user_form = UserSignUpForm(request.POST, prefix='user')
+            print(f"📋 User form valid? {user_form.is_valid()}")  # Check if form is valid
+
+            if user_form.is_valid():
+                print("✅ User form passed validation")
+                user = user_form.save(commit=False)
+                user.user_industry = user_form.cleaned_data['user_industry'].split(',')
+                user.user_location = user_form.cleaned_data['user_location'].split(',')
+
+                # Hash the password before saving
+                user.set_password(user_form.cleaned_data['password1'])
+                user.is_company = False  # Ensure this is set
+                user.save()
+
+                print(f"🔑 Saved user: {user.username}, ID: {user.id}")
+
+                # Authenticate AFTER saving
+                authenticated_user = authenticate(username=user.username, password=user_form.cleaned_data['password1'])
+
+                print(f"🔍 Authenticate returned: {authenticated_user}")  # See what authenticate() returns
+
+                if authenticated_user:
+                    print(f"✅ User authenticated: {authenticated_user.username}")
+                    login(request, authenticated_user)
+                    return redirect('user_dashboard')
+                else:
+                    print(f"❌ Authentication failed for {user.username}")
+                    print(f"🔍 Saved Password Hash: {user.password}")  # Debugging
 
     else:
+        print("🟢 GET request received, rendering signup page")
         user_form = UserSignUpForm(prefix='user')
         company_form = CompanySignUpForm(prefix='company')
 
     return render(request, 'signup.html', {'user_form': user_form, 'company_form': company_form})
-
 
 def company_detail(request, company_id):
     """

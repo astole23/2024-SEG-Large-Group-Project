@@ -38,6 +38,9 @@ urlpatterns = [
     path('company/<int:company_id>/', ui_views.company_detail, name='company_detail'),
     path('company/<int:company_id>/review/', ui_views.leave_review, name='leave_review'),
     path('company/<int:company_id>/edit/', ui_views.edit_company, name='edit_company'),
+    path('profile/settings/', ui_views.profile_settings, name='profile_settings'),
+    path('settings/', ui_views.profile_settings, name='settings'),  # Alias for settings
+
 
     path('terms_conditions/', ui_views.terms_conditions, name='terms_conditions'),
     path('privacy/', ui_views.privacy, name='privacy'),
