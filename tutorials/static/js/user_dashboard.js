@@ -12,6 +12,7 @@ console.log("✅ Loaded CV from backend:", mockCV);
 console.log("📄 Raw CV Info:", rawCVInfo);
 console.log("📂 User Documents:", userDocuments);
 
+
 // Your existing code can then use these variables...
 // For example, if you fetch job postings:
 function fetchJobPostings() {
@@ -29,74 +30,73 @@ function fetchJobPostings() {
 }
 
 
-  function renderJobListings(jobs) {
-    const listingsContainer = document.getElementById('temporary-job-listings-container');
-    listingsContainer.innerHTML = ''; // Clear any existing content
 
-    jobs.forEach(job => {
-      // Create a job card similar to the employer grid
-      const card = document.createElement('div');
-      card.className = 'job-card';
-      card.innerHTML = `
-        <h5 class="job-title">${job.job_title}</h5>
-        <p class="company-name">${job.company_name}</p>
-        <p class="location"><span>📍</span> ${job.location}</p>
-        <p class="pay-contract">${job.salary_range} | ${job.contract_type}</p>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
-          View &amp; Apply
-        </button>
-      `;
-      suggestedJobsContainer.appendChild(jobElement);
-  
+function renderJobListings(jobs) {
+  const listingsContainer = document.getElementById('temporary-job-listings-container');
+  listingsContainer.innerHTML = ''; // Clear any existing content
 
-      // Create the corresponding modal element
-      const modalDiv = document.createElement('div');
-      modalDiv.className = 'modal fade';
-      modalDiv.id = `jobModal${job.id}`;
-      modalDiv.tabIndex = -1;
-      modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
-      modalDiv.setAttribute('aria-hidden', 'true');
-      modalDiv.innerHTML = `
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
-          <div class="modal-content">
-            <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-              <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p><strong>Company:</strong> ${job.company_name}</p>
-              <p><strong>Location:</strong> ${job.location}</p>
-              <p><strong>Salary:</strong> ${job.salary_range}</p>
-              <p><strong>Contract:</strong> ${job.contract_type || ''}</p>
-              <p><strong>Job Overview:</strong> ${job.job_overview || ''}</p>
-              <p><strong>Roles &amp; Responsibilities:</strong> ${job.roles_responsibilities || ''}</p>
-              <p><strong>Required Skills:</strong> ${job.required_skills || ''}</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
-            </div>
+  jobs.forEach(job => {
+    // Create job card
+    const card = document.createElement('div');
+    card.className = 'job-card';
+    card.innerHTML = `
+      <h5 class="job-title">${job.job_title}</h5>
+      <p class="company-name">${job.company_name}</p>
+      <p class="location"><span>📍</span> ${job.location}</p>
+      <p class="pay-contract">${job.salary_range} | ${job.contract_type}</p>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
+        View &amp; Apply
+      </button>
+    `;
+    listingsContainer.appendChild(card);
+
+    // Create Bootstrap modal
+    const modalDiv = document.createElement('div');
+    modalDiv.className = 'modal fade';
+    modalDiv.id = `jobModal${job.id}`;
+    modalDiv.tabIndex = -1;
+    modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
+    modalDiv.setAttribute('aria-hidden', 'true');
+    modalDiv.innerHTML = `
+      <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+            <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Company:</strong> ${job.company_name}</p>
+            <p><strong>Location:</strong> ${job.location}</p>
+            <p><strong>Salary:</strong> ${job.salary_range}</p>
+            <p><strong>Contract:</strong> ${job.contract_type || ''}</p>
+            <p><strong>Job Overview:</strong> ${job.job_overview || ''}</p>
+            <p><strong>Roles &amp; Responsibilities:</strong> ${job.roles_responsibilities || ''}</p>
+            <p><strong>Required Skills:</strong> ${job.required_skills || ''}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
           </div>
         </div>
-      `;
-      // Append the modal to the document body so Bootstrap can find and open it
-      document.body.appendChild(modalDiv);
-    });
+      </div>
+    `;
+    document.body.appendChild(modalDiv);
+  });
 
-  // ✅ Add "View All Suggestions" button at the bottom
-  const viewAllButton = document.createElement('a');
-  viewAllButton.href = '/job-postings_view/';  // ✅ Redirects to the correct URL
-  viewAllButton.className = 'view-all btn btn-primary';  // ✅ Use consistent button styling
-  viewAllButton.textContent = 'View all suggestions';
-
-  suggestedJobsContainer.appendChild(viewAllButton);  // ✅ Append the button
+  // ✅ Add View All Suggestions button once listings are rendered
+  const suggestedJobsContainer = document.getElementById('suggested-jobs');
+  if (suggestedJobsContainer) {
+    const viewAllButton = document.createElement('a');
+    viewAllButton.href = '/job-postings_view/';
+    viewAllButton.className = 'view-all btn btn-primary';
+    viewAllButton.textContent = 'View all suggestions';
+    suggestedJobsContainer.appendChild(viewAllButton);
+  }
 }
-  
   console.log("Parsed CV from backend:", mockCV);
 
   function createDashboard() {
     
-
 
 
     // Grab the script tag with id="current-user"
@@ -104,6 +104,9 @@ function fetchJobPostings() {
     const userInfo = userInfoScript ? JSON.parse(userInfoScript.textContent) : {};
     console.log("Dashboard is loading");
     console.log("User info:", userInfo);
+
+    // Inside createDashboard()
+
   
 
     const app = document.querySelector('#app');
@@ -135,18 +138,19 @@ function fetchJobPostings() {
               <div class="document-item">
                 <span class="document-icon">📄</span>
                 <div class="document-info">
-                  <h3>My_CV.pdf</h3>
-                  <p>Updated 2 days ago</p>
+                  <h3>${rawCVInfo.filename || 'No CV uploaded yet'}</h3>
+                  <p>Updated ${rawCVInfo.uploaded_at || 'N/A'}</p>
+
+
                 </div>
-                <div class="document-actions">
-                  <button class="btn-outline btn-small">View</button>
-                  <button class="btn-outline btn-small">Edit</button>
-                </div>
+                <div class="document-actions" id="cvDocumentActionsPlaceholder"></div>
+
+              </div>
               </div>
               <div class="upload-section">
                 <p>Update your CV (PDF only)</p>
                 <input type="file" id="cvUpload" accept=".pdf" style="display: none">
-                <button class="btn btn-primary" id="cvUploadBtn">Upload CV</button>
+                <button class="btn btn-primary" id="uploadRawCvBtn">Upload CV</button>
               </div>
   
               <!-- Online CV Section -->
@@ -282,7 +286,7 @@ function fetchJobPostings() {
             <a href="#" class="view-all">View all suggestions</a>
           </section>
           <div class="quick-actions">
-            <button class="btn btn-primary" id="updateCvBtn">Update CV</button>
+            <button class="btn btn-primary" id="uploadAutoCvBtn">Autofill CV</button>
 
             <button class="btn btn-outline" id="browseJobsBtn">Browse Jobs</button>
             <button class="btn btn-outline" id="viewApplicationsBtn">My Applications</button>
@@ -291,6 +295,11 @@ function fetchJobPostings() {
         </aside>
       </div>
 
+      <!-- Temporary section for testing available job listings -->
+      <section class="temporary-job-listings">
+        <h2>Available Job Listings (Temporary)</h2>
+        <div id="temporary-job-listings-container"></div>
+      </section>
   
       <!-- CV Edit Modal -->
       <div id="cvModal" class="modal">
@@ -437,19 +446,29 @@ function fetchJobPostings() {
           </form>
         </div>
       </div>
+
     `;
 
-    // After the dashboard is rendered, set the loading message
-
-  const suggestedJobsContainer = document.getElementById('suggested-jobs');
-  if (suggestedJobsContainer) {
-      suggestedJobsContainer.innerHTML = "<p>Loading job recommendations...</p>";
-  }
+    fetchJobPostings().then(jobs => {
+      renderJobListings(jobs);
+    });
   
-  // Now fetch and render the suggested jobs
-  fetchJobPostings().then(jobs => {
-      renderSuggestedJobs(jobs);
-  });
+    // Populate suggested jobs
+    const suggestedJobsContainer = document.getElementById('suggested-jobs');
+    mockJobs.forEach(job => {
+      const jobElement = document.createElement('div');
+      jobElement.className = 'job-card';
+      jobElement.innerHTML = `
+        <h3 class="job-title">${job.title}</h3>
+        <p class="company-name">${job.company}</p>
+        <div class="job-location">
+          <span>📍</span>
+          ${job.location}
+        </div>
+        <p class="salary-range">${job.salary}</p>
+      `;
+      suggestedJobsContainer.appendChild(jobElement);
+    });
 
     const viewApplicationsBtn = document.getElementById('viewApplicationsBtn');
     if (viewApplicationsBtn) {
@@ -471,13 +490,13 @@ function fetchJobPostings() {
         document.getElementById('cvUpload').click();  // Trigger file select
       });
     }
+    
 
 
     // CV section toggle functionality
     const cvToggle = document.getElementById('cvToggle');
     const cvContent = document.getElementById('cvContent');
     const toggleIcon = cvToggle.querySelector('.toggle-icon');
-    
   
     cvToggle.addEventListener('click', () => {
       cvContent.classList.toggle('collapsed');
@@ -570,11 +589,10 @@ function fetchJobPostings() {
 
 
   
+
     const cvUploadInput = document.getElementById('cvUpload');
-    const cvUploadBtn = document.getElementById('cvUploadBtn');
     const uploadRawCvBtn = document.getElementById('uploadRawCvBtn');
     const uploadAutoCvBtn = document.getElementById('uploadAutoCvBtn');
-    
   
     let currentUploadMode = '';
   
@@ -742,18 +760,24 @@ function fetchJobPostings() {
     // Add education entry button functionality
     const addEducationBtn = document.getElementById('addEducation');
     const educationEntries = document.getElementById('educationEntries');
-  
-    addEducationBtn.addEventListener('click', () => {
-      educationEntries.insertAdjacentHTML('beforeend', createEducationEntry());
-    });
+
+    if (addEducationBtn && educationEntries) {
+      addEducationBtn.addEventListener('click', () => {
+        educationEntries.insertAdjacentHTML('beforeend', createEducationEntry());
+      });
+    }
+
   
     // Add work experience entry button functionality
     const addWorkExperienceBtn = document.getElementById('addWorkExperience');
     const workExperienceEntries = document.getElementById('workExperienceEntries');
-  
-    addWorkExperienceBtn.addEventListener('click', () => {
-      workExperienceEntries.insertAdjacentHTML('beforeend', createWorkExperienceEntry());
-    });
+
+    if (addWorkExperienceBtn && workExperienceEntries) {
+      addWorkExperienceBtn.addEventListener('click', () => {
+        workExperienceEntries.insertAdjacentHTML('beforeend', createWorkExperienceEntry());
+      });
+    }
+
   
     // Remove entry functionality
     window.removeEntry = function(button) {
@@ -763,28 +787,28 @@ function fetchJobPostings() {
   
   
     // File upload handling
-    
-    
+    const docUploadBtn = document.getElementById('docUploadBtn');
+    const docUploadInput = document.getElementById('docUpload');
 
-    if (cvUploadBtn && cvUploadInput) {
-      cvUploadBtn.addEventListener('click', () => {
-        cvUploadInput.click();
+    if (docUploadInput && docUploadBtn) {
+      docUploadBtn.addEventListener('click', () => {
+        docUploadInput.click();
       });
 
-      cvUploadInput.addEventListener('change', async (e) => {
+      docUploadInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-      
+
         const currentDocs = document.querySelectorAll('#supportDocsContainer .document-item');
         console.log("Current document count:", currentDocs.length);
         if (currentDocs.length >= 5) {
           showCVStatus("You can only upload up to 5 documents.", "danger");
           return;
         }
-      
+
         const formData = new FormData();
         formData.append('document', file);
-      
+
         try {
           const res = await fetch('/upload_user_document/', {
             method: 'POST',
@@ -793,23 +817,23 @@ function fetchJobPostings() {
             },
             body: formData
           });
-      
+        
+
           const result = await res.json();
           console.log("📎 Document upload result:", result);
-      
+
           if (result.success) {
             showCVStatus("Document uploaded!", "success");
             addSupportingDocument(result.filename, result.uploaded_at, result.file_url);
+
           } else {
             showCVStatus(result.error || "Upload failed", "danger");
           }
-      
         } catch (err) {
           console.error("❌ Upload failed:", err);
           showCVStatus("Upload error", "danger");
         }
       });
-      
     }
 
     
@@ -824,9 +848,13 @@ function fetchJobPostings() {
           <p>Updated just now</p>
         </div>
         <div class="document-actions">
-          <button class="btn-outline btn-small" onclick="window.open('/media/user_documents/${fileName}', '_blank')">View</button>
-          <button class="btn-outline btn-small delete-btn" onclick="deleteDocument('${fileName}', this)">Delete</button>
+          ${rawCVInfo.file_url ? `
+            <button class="btn-outline btn-small" onclick="window.open('${rawCVInfo.file_url}', '_blank')">View</button>
+            <button class="btn-outline btn-small delete-btn" onclick="deleteRawCV()">Delete</button>
+          ` : `<p style="color: gray;">No file uploaded</p>`}
         </div>
+
+
       `;
       list.appendChild(div);
     }
@@ -895,7 +923,7 @@ function fetchJobPostings() {
       const result = await res.json();
       if (result.success) {
         showCVStatus("Document deleted", "success");
-        btn.closest('.document-item').remove();
+        btn.closest('.document-item').remove();  // 🧼 removes it from UI
       } else {
         showCVStatus("Delete failed", "danger");
       }
@@ -933,61 +961,49 @@ function fetchJobPostings() {
     };
     
     
-  
-    cvUploadBtn.addEventListener('click', () => {
-      cvUploadInput.click();
-      console.log("📄 Upload CV button clicked - triggering file input");
-
-    });
-  
-    cvUploadInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      console.log("Selected file:", file);
-
-      if (!file) {
-        showCVStatus("No file selected. Please upload a PDF.", "danger");
-        return;
-      }
-
-      console.log("File type:", file.type);
-
-
-      if (file) {
-        if (file.type === 'application/pdf') {
-          showCVStatus("CV uploaded: My_CV.pdf", "success");
-        } else {
-          showCVStatus("Upload failed: Please upload a PDF", "danger");
-          e.target.value = '';
-        }
-      }
-
-      const formData = new FormData();
-      formData.append('cv_file', file);
+    async function deleteRawCV() {
+      const confirmDelete = confirm("Are you sure you want to delete your CV?");
+      if (!confirmDelete) return;
     
       try {
-        const res = await fetch('/upload_cv/', {
+        const res = await fetch('/delete_raw_cv/', {
           method: 'POST',
-          body: formData,
+          headers: {
+            'X-CSRFToken': getCSRFToken()
+          },
         });
     
         const result = await res.json();
-        console.log("📤 Uploading CV to /upload_cv/");
-        console.log("✅ Server response received:", result);
-
+    
         if (result.success) {
-          showCVStatus("CV uploaded! Auto-filling form...", "success");
-          autofillCVForm(result.data);  // 👈 Trigger the form fill
-          document.getElementById('cvModal').style.display = 'block'; // Open the CV modal
-        } else {
-          showCVStatus("Upload failed", "danger");
+          showCVStatus("CV deleted successfully.", "success");
+        
+          // Reset the global rawCVInfo object
+          rawCVInfo.filename = '';
+          rawCVInfo.uploaded_at = '';
+          rawCVInfo.file_url = '';
+        
+          // Update DOM
+          const docInfo = document.querySelector('.document-info');
+          if (docInfo) {
+            docInfo.querySelector('h3').textContent = "No CV uploaded yet";
+            docInfo.querySelector('p').textContent = "Updated N/A";
+          }
+        
+          const docActions = document.querySelector('.document-actions');
+          if (docActions) {
+            docActions.innerHTML = `<p style="color: gray;">No file uploaded</p>`;
+          }
+        }
+         else {
+          showCVStatus(result.error || "Delete failed.", "danger");
         }
       } catch (err) {
-        console.error(err);
-        console.error("❌ Error during upload fetch:", err);
-
-        showCVStatus("Error made during upload", "danger");
+        console.error("❌ Error deleting CV:", err);
+        showCVStatus("Error deleting CV", "danger");
       }
-    });
+    }
+    
 
     function autofillCVForm(data) {
       if (!data) return;
@@ -1193,8 +1209,3 @@ function fetchJobPostings() {
     // Now build the dashboard
     createDashboard();
   });
-  
-  
-  
-  
-  

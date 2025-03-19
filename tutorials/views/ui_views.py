@@ -489,37 +489,87 @@ def apply_step1(request):
 # Step 2: Personal Information
 @login_required
 def apply_step2(request):
+    application_data = request.session.get('application_data', {})
+    application_type = application_data.get('application_type')
+
     if request.method == 'POST':
-        application_data = request.session.get('application_data', {})
-        # Save personal info (adjust field names to match your form)
-        application_data['title'] = request.POST.get('title')
-        application_data['first_name'] = request.POST.get('first_name')
-        application_data['last_name'] = request.POST.get('last_name')
-        application_data['preferred_name'] = request.POST.get('preferred_name')
-        application_data['email'] = request.POST.get('email')
-        application_data['phone'] = request.POST.get('phone')
-        application_data['country'] = request.POST.get('country')
-        application_data['address_line1'] = request.POST.get('address_line1')
-        application_data['address_line2'] = request.POST.get('address_line2')
-        application_data['address_line3'] = request.POST.get('address_line3')
-        application_data['city'] = request.POST.get('city')
-        application_data['county'] = request.POST.get('county')
-        application_data['postcode'] = request.POST.get('postcode')
-        # For education, work experience, skills – store as needed (example below)
-        application_data['institution'] = request.POST.get('institution')
-        application_data['degree'] = request.POST.get('degree')
-        application_data['edu_start'] = request.POST.get('edu_start')
-        application_data['edu_end'] = request.POST.get('edu_end')
-        application_data['company_name_exp'] = request.POST.get('company_name')
-        application_data['position'] = request.POST.get('position')
-        application_data['work_start'] = request.POST.get('work_start')
-        application_data['work_end'] = request.POST.get('work_end')
-        # You may also process dynamic skills (this example assumes one field)
-        application_data['skills'] = request.POST.getlist('skill')
-        
+        # Save user input from the form
+        application_data.update({
+            'title': request.POST.get('title'),
+            'first_name': request.POST.get('first_name'),
+            'last_name': request.POST.get('last_name'),
+            'preferred_name': request.POST.get('preferred_name'),
+            'email': request.POST.get('email'),
+            'phone': request.POST.get('phone'),
+            'country': request.POST.get('country'),
+            'address_line1': request.POST.get('address_line1'),
+            'address_line2': request.POST.get('address_line2'),
+            'address_line3': request.POST.get('address_line3'),
+            'city': request.POST.get('city'),
+            'county': request.POST.get('county'),
+            'postcode': request.POST.get('postcode'),
+            'institution': request.POST.get('institution'),
+            'degree': request.POST.get('degree'),
+            'edu_start': request.POST.get('edu_start'),
+            'edu_end': request.POST.get('edu_end'),
+            'company_name_exp': request.POST.get('company_name'),
+            'position': request.POST.get('position'),
+            'work_start': request.POST.get('work_start'),
+            'work_end': request.POST.get('work_end'),
+            'skills': request.POST.getlist('skill'),
+        })
         request.session['application_data'] = application_data
         return redirect('apply_step3')
-    return render(request, 'step2.html')
+
+    # On GET — decide whether to autofill or not
+    initial_data = {}
+
+    if application_type == 'cv':
+        try:
+            user_cv = UserCV.objects.get(user=request.user)
+            personal = user_cv.personal_info or {}
+
+            initial_data = {
+                'title': personal.get('title', ''),
+                'first_name': personal.get('first_name', ''),
+                'last_name': personal.get('last_name', ''),
+                'preferred_name': personal.get('preferred_name', ''),
+                'email': personal.get('email', request.user.email),
+                'phone': personal.get('phone', ''),
+                'country': personal.get('country', ''),
+                'address_line1': personal.get('address_line1', ''),
+                'address_line2': personal.get('address_line2', ''),
+                'address_line3': personal.get('address_line3', ''),
+                'city': personal.get('city', ''),
+                'county': personal.get('county', ''),
+                'postcode': personal.get('postcode', ''),
+            }
+
+            if user_cv.education:
+                edu = user_cv.education[0]
+                initial_data.update({
+                    'institution': edu.get('university', ''),
+                    'degree': edu.get('degreeType', ''),
+                    'edu_start': edu.get('dates', '').split('-')[0] if 'dates' in edu else '',
+                    'edu_end': edu.get('dates', '').split('-')[-1] if 'dates' in edu else '',
+                })
+
+            if user_cv.work_experience:
+                exp = user_cv.work_experience[0]
+                initial_data.update({
+                    'company_name_exp': exp.get('employer_name', ''),
+                    'position': exp.get('job_title', ''),
+                    'work_start': exp.get('dates', '').split('-')[0] if 'dates' in exp else '',
+                    'work_end': exp.get('dates', '').split('-')[-1] if 'dates' in exp else '',
+                })
+
+            initial_data['skills'] = (user_cv.key_skills or "").split(',') if user_cv.key_skills else []
+
+        except UserCV.DoesNotExist:
+            initial_data = {}  # fallback to blank
+
+    return render(request, 'step2.html', {'initial_data': initial_data})
+
 
 # Step 3: Job-Specific Questions
 @login_required
@@ -749,25 +799,27 @@ def upload_cv(request):
         skills_raw = structured.get("skills", [])
         technical_skills, soft_skills = split_skills(skills_raw)
 
-        cv, _ = CVApplication.objects.get_or_create(user=user)
-        cv.full_name = user.get_full_name()
-        cv.email = user.email or 'unknown@example.com'
-        cv.phone = structured.get("personal_info", {}).get("phone", "N/A")
-        cv.address = structured.get("personal_info", {}).get("address", "N/A")
-        cv.postcode = structured.get("personal_info", {}).get("postcode", "N/A")
-        cv.key_skills = ", ".join(sorted(soft_skills))
-        cv.technical_skills = ", ".join(sorted(technical_skills))
-        cv.languages = ", ".join(structured.get("languages", []))
-        cv.motivation_statement = structured.get("motivations", "")
-        cv.fit_for_role = structured.get("fit_for_role", "")
-        cv.career_aspirations = structured.get("career_aspirations", "")
-
-        raw_date = structured.get("preferred_start_date", "")
-        parsed_date = parse_date(raw_date) if raw_date else None
-        cv.preferred_start_date = parsed_date
+        cv, _ = CVApplication.objects.update_or_create(
+            user=user,
+            defaults={
+                'full_name': user.get_full_name(),
+                'email': user.email or 'unknown@example.com',
+                'phone': structured.get("personal_info", {}).get("phone", "N/A"),
+                'address': structured.get("personal_info", {}).get("address", "N/A"),
+                'postcode': structured.get("personal_info", {}).get("postcode", "N/A"),
+                'key_skills': ", ".join(sorted(soft_skills)),
+                'technical_skills': ", ".join(sorted(technical_skills)),
+                'languages': ", ".join(structured.get("languages", [])),
+                'motivation_statement': structured.get("motivations", ""),
+                'fit_for_role': structured.get("fit_for_role", ""),
+                'career_aspirations': structured.get("career_aspirations", ""),
+                'preferred_start_date': parse_date(structured.get("preferred_start_date", "")) if structured.get("preferred_start_date") else None,
+            }
+        )
 
         cv.cv_file.save(file.name, file)
         cv.save()
+
 
         user_cv, _ = UserCV.objects.get_or_create(user=user)
         user_cv.personal_info = structured.get("personal_info", {})
