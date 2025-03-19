@@ -24,6 +24,12 @@ def process_login(request):
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
+
+            # Redirect the "admin" user to the Django admin panel
+            if user.username == "admin":
+                return redirect('/admin/')
+
+            # Redirect based on user type
             if user.is_company:
                 return redirect('edit_company', company_id=user.id)
             else:
@@ -46,7 +52,7 @@ def process_login(request):
             'user_form': UserLoginForm(prefix='user'),
             'company_form': CompanyLoginForm(prefix='company')
         })
-
+    
 
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
