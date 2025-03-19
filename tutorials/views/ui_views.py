@@ -493,7 +493,7 @@ def apply_step2(request):
     application_type = application_data.get('application_type')
 
     if request.method == 'POST':
-        # Save user input from the form
+        # Basic contact and address
         application_data.update({
             'title': request.POST.get('title'),
             'first_name': request.POST.get('first_name'),
@@ -508,22 +508,48 @@ def apply_step2(request):
             'city': request.POST.get('city'),
             'county': request.POST.get('county'),
             'postcode': request.POST.get('postcode'),
-            'institution': request.POST.get('institution'),
-            'degree': request.POST.get('degree'),
-            'edu_start': request.POST.get('edu_start'),
-            'edu_end': request.POST.get('edu_end'),
-            'company_name_exp': request.POST.get('company_name'),
-            'position': request.POST.get('position'),
-            'work_start': request.POST.get('work_start'),
-            'work_end': request.POST.get('work_end'),
             'skills': request.POST.getlist('skill'),
         })
+
+        # ✅ Handle multiple education entries
+        institutions = request.POST.getlist('institution')
+        degrees = request.POST.getlist('degree')
+        edu_starts = request.POST.getlist('edu_start')
+        edu_ends = request.POST.getlist('edu_end')
+        education_list = []
+
+        for i in range(len(institutions)):
+            if institutions[i] or degrees[i] or edu_starts[i] or edu_ends[i]:
+                education_list.append({
+                    'university': institutions[i],
+                    'degreeType': degrees[i],
+                    'dates': f"{edu_starts[i]} - {edu_ends[i]}"
+                })
+
+        application_data['education_list'] = education_list
+
+        # ✅ Handle multiple work experience entries
+        companies = request.POST.getlist('company_name')
+        positions = request.POST.getlist('position')
+        work_starts = request.POST.getlist('work_start')
+        work_ends = request.POST.getlist('work_end')
+        work_experience_list = []
+
+        for i in range(len(companies)):
+            if companies[i] or positions[i] or work_starts[i] or work_ends[i]:
+                work_experience_list.append({
+                    'employer_name': companies[i],
+                    'job_title': positions[i],
+                    'dates': f"{work_starts[i]} - {work_ends[i]}"
+                })
+
+        application_data['work_experience_list'] = work_experience_list
+
         request.session['application_data'] = application_data
         return redirect('apply_step3')
 
-    # On GET — decide whether to autofill or not
+    # On GET — preload data if using CV
     initial_data = {}
-
     if application_type == 'cv':
         try:
             user_cv = UserCV.objects.get(user=request.user)
@@ -543,30 +569,12 @@ def apply_step2(request):
                 'city': personal.get('city', ''),
                 'county': personal.get('county', ''),
                 'postcode': personal.get('postcode', ''),
+                'skills': [s.strip() for s in user_cv.key_skills.split(',')] if user_cv.key_skills else [],
+                'education_list': user_cv.education or [],
+                'work_experience_list': user_cv.work_experience or [],
             }
-
-            if user_cv.education:
-                edu = user_cv.education[0]
-                initial_data.update({
-                    'institution': edu.get('university', ''),
-                    'degree': edu.get('degreeType', ''),
-                    'edu_start': edu.get('dates', '').split('-')[0] if 'dates' in edu else '',
-                    'edu_end': edu.get('dates', '').split('-')[-1] if 'dates' in edu else '',
-                })
-
-            if user_cv.work_experience:
-                exp = user_cv.work_experience[0]
-                initial_data.update({
-                    'company_name_exp': exp.get('employer_name', ''),
-                    'position': exp.get('job_title', ''),
-                    'work_start': exp.get('dates', '').split('-')[0] if 'dates' in exp else '',
-                    'work_end': exp.get('dates', '').split('-')[-1] if 'dates' in exp else '',
-                })
-
-            initial_data['skills'] = (user_cv.key_skills or "").split(',') if user_cv.key_skills else []
-
         except UserCV.DoesNotExist:
-            initial_data = {}  # fallback to blank
+            initial_data = {}
 
     return render(request, 'step2.html', {'initial_data': initial_data})
 
