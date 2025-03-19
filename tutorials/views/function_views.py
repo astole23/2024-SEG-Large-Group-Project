@@ -11,22 +11,31 @@ from django.contrib.auth.decorators import login_required
 def process_login(request):
     if request.method == 'POST':
         user_type = request.POST.get('user_type')
-        
+        remember_me = request.POST.get('remember_me')  # Check if "Stay Logged In" was selected
+
         if user_type == 'company':
             form = CompanyLoginForm(request=request, data=request.POST, prefix='company')
         else:
             form = UserLoginForm(request=request, data=request.POST, prefix='user')
-        
+
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
+
+            # Handle "Stay Logged In" functionality
+            if remember_me:
+                request.session.set_expiry(1209600)  # 2 weeks (14 days)
+            else:
+                request.session.set_expiry(0)  # Session expires when browser closes
+
             if user.is_company:
                 return redirect('edit_company', company_id=user.id)
             else:
                 return redirect('user_dashboard')
         else:
             messages.error(request, "Invalid credentials.")
-            # Pass the form with errors for the correct user type.
+
+            # Pass the form with errors for the correct user type
             if user_type == 'company':
                 return render(request, 'login.html', {
                     'company_form': form,

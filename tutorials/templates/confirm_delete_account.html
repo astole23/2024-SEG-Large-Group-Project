@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Account Deletion</title>
+</head>
+<body>
+    <h1>Confirm Account Deletion</h1>
+    <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+    <form method="POST" action="{% url 'delete_account' %}">
+        {% csrf_token %}
+        <button type="submit">Yes, delete my account</button>
+        <a href="{% url 'settings' %}">No, take me back</a>
+    </form>
+</body>
+</html>
