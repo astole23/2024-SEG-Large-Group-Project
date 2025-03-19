@@ -58,7 +58,7 @@ urlpatterns = [
     path('user/applications/', ui_views.user_applications, name='user_applications'),
     path('user/applications/<int:application_id>/', ui_views.user_application_detail, name='user_application_detail'),
     # urls.py
-    path('upload_cv/', ui_views.upload_cv, name='upload_cv'),
+    path('upload_cv/', ui_views.upload_cv, name='upload_cvp'),
     path('upload_raw_cv/', ui_views.upload_raw_cv, name='upload_raw_cv'),
     path("upload_user_document/", ui_views.get_user_documents, name="upload_user_document"),
     path("delete_user_document/", ui_views.delete_user_document, name="delete_user_document"),

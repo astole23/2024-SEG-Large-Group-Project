@@ -12,7 +12,7 @@ from django.http import JsonResponse
 
 def process_login(request):
     if request.method == 'POST':
-        user_type = request.POST.ge
+        user_type = request.POST.get('user_type')
         if user_type == 'company':
             form = CompanyLoginForm(request=request, data=request.POST, prefix='company')
         else:
