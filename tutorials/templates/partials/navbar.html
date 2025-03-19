@@ -6,15 +6,9 @@
       <img src="{% static 'images/SHY.png' %}" alt="SHY Logo" class="logo-img">    
     </a>
   </div>
-
-  {% if not is_guest %}
-  <div class="search-container">
-    <span class="search-icon">🔍</span>
-    <input type="search" placeholder="Search jobs..." class="search-input">
-  </div>
-  {% endif %}
   
   <div class="user-actions">
+    <button class="login-btn" onclick="window.location.href='/search/'"><i class="fas fa-search"></i></button>
     <button class="login-btn" onclick="window.location.href='/'"><i class="fas fa-house"></i></button>
     <button class="login-btn" onclick="window.location.href='/login/'">Sign up/Log in</button>
     <button class="login-btn" onclick="window.location.href='/employer_dashboard/'">Post a Job</button>

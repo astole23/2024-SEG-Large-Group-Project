@@ -1,6 +1,7 @@
-{% extends 'base_content.html' %}
+{% extends 'employer_base.html' %}
+{% load static %}
 
-{% block content %}
+{% block main_content %}
   <h1>Edit Company Details</h1>
 
   <form method="POST" enctype="multipart/form-data">
@@ -25,7 +26,7 @@
     <button id="addJobButton" class="btn btn-primary">Add Job Listing</button>
   </div>
 
-  <a href="{% url 'company_detail' company.id %}">Back to Company Profile</a>
+  <a href="{% url 'company_profile' %}">Back to Company Profile</a>
 
   <div id="jobModal" class="modal" aria-hidden="true" role="dialog">
     <div class="modal-content">

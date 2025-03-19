@@ -37,6 +37,7 @@ REGIONAL_MAPPING = {
 LOCATION_TO_REGION = {city: region for region, cities in REGIONAL_MAPPING.items() for city in cities}
 
 def is_location_match(user_locations, job_location):
+    print(f"user location is {user_locations}")
     """Adjust job score based on location match with user preferences."""
     if not user_locations or not job_location:
         print(f"❌ No location match: {job_location} (Penalty: -0.50)")
