@@ -35,6 +35,7 @@ class JobApplication(models.Model):
     cover_letter = models.TextField(blank=True, null=True)
     # Store answers to job-specific questions (from step 3) as JSON.
     job_answers = models.JSONField(blank=True, null=True)
+    tracked = models.BooleanField(default=False)
     # Unique application ID (e.g., "ABC123XYZ")
     application_id = models.CharField(max_length=12, unique=True, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='submitted')
