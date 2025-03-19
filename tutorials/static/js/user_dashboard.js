@@ -1,25 +1,4 @@
-  
-  // Mock data for demonstration
-const mockJobs = [
-  { 
-    title: 'React Developer',
-    company: 'Apple',
-    location: 'Cupertino, CA',
-    salary: '$120k - $180k'
-  },
-  { 
-    title: 'Frontend Engineer',
-    company: 'Meta',
-    location: 'Remote',
-    salary: '$130k - $190k'
-  },
-  { 
-    title: 'Full Stack Developer',
-    company: 'Amazon',
-    location: 'Seattle, WA',
-    salary: '$140k - $200k'
-  }
-];
+
 // Mock CV data
   const userCVScript = document.getElementById('cv-data');
   const mockCV = userCVScript ? JSON.parse(userCVScript.textContent) : {};
@@ -97,81 +76,6 @@ function renderSuggestedJobs(jobs) {
 
   suggestedJobsContainer.appendChild(viewAllButton);  // ✅ Append the button
 }
-
-
-// ✅ Show "Loading..." before fetching jobs
-document.addEventListener('DOMContentLoaded', () => {
-  const suggestedJobsContainer = document.getElementById('suggested-jobs');
-
-  if (suggestedJobsContainer) {
-      // ✅ Keep "Loading..." visible while waiting for the response
-      suggestedJobsContainer.innerHTML = "<p>Loading job recommendations...</p>";
-  }
-
-  fetchJobPostings().then(jobs => {
-      setTimeout(() => {
-          renderSuggestedJobs(jobs);  // ✅ Replace "Loading..." with job results
-      }, 500); // 🔹 Artificial delay to ensure "Loading..." is seen
-  });
-});
-
-  function renderJobListings(jobs) {
-    const listingsContainer = document.getElementById('temporary-job-listings-container');
-    listingsContainer.innerHTML = ''; // Clear any existing content
-
-    jobs.forEach(job => {
-      // Create a job card similar to the employer grid
-      const card = document.createElement('div');
-      card.className = 'job-card';
-      card.innerHTML = `
-        <h5 class="job-title">${job.job_title}</h5>
-        <p class="company-name">${job.company_name}</p>
-        <p class="location"><span>📍</span> ${job.location}</p>
-        <p class="pay-contract">${job.salary_range} | ${job.contract_type}</p>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
-          View &amp; Apply
-        </button>
-      `;
-      listingsContainer.appendChild(card);
-
-      // Create a corresponding modal for job details
-      const modalDiv = document.createElement('div');
-      modalDiv.className = 'modal fade';
-      modalDiv.id = `jobModal${job.id}`;
-      modalDiv.tabIndex = -1;
-      modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
-      modalDiv.setAttribute('aria-hidden', 'true');
-      modalDiv.innerHTML = `
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
-          <div class="modal-content">
-            <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-              <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="alert alert-info alert-dismissible fade show" id="cvStatusAlert" style="display: none;" role="alert">
-              <span id="cvStatusMessage">Status message here</span>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p><strong>Company:</strong> ${job.company_name}</p>
-              <p><strong>Location:</strong> ${job.location}</p>
-              <p><strong>Salary:</strong> ${job.salary_range}</p>
-              <p><strong>Contract:</strong> ${job.contract_type}</p>
-              <p><strong>Job Overview:</strong> ${job.job_overview}</p>
-              <p><strong>Roles &amp; Responsibilities:</strong> ${job.roles_responsibilities}</p>
-              <p><strong>Required Skills:</strong> ${job.required_skills}</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
-            </div>
-          </div>
-        </div>
-      `;
-      // Append modal to body (or another container outside the dashboard if preferred)
-      document.body.appendChild(modalDiv);
-    });
-  }
   
   console.log("Parsed CV from backend:", mockCV);
 
@@ -378,11 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </aside>
       </div>
 
-      <!-- Temporary section for testing available job listings -->
-      <section class="temporary-job-listings">
-        <h2>Available Job Listings (Temporary)</h2>
-        <div id="temporary-job-listings-container"></div>
-      </section>
   
       <!-- CV Edit Modal -->
       <div id="cvModal" class="modal">
@@ -531,26 +430,16 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    fetchJobPostings().then(jobs => {
-      renderJobListings(jobs);
-    });
+    // After the dashboard is rendered, set the loading message
+  const suggestedJobsContainer = document.getElementById('suggested-jobs');
+  if (suggestedJobsContainer) {
+      suggestedJobsContainer.innerHTML = "<p>Loading job recommendations...</p>";
+  }
   
-    // Populate suggested jobs
-    const suggestedJobsContainer = document.getElementById('suggested-jobs');
-    mockJobs.forEach(job => {
-      const jobElement = document.createElement('div');
-      jobElement.className = 'job-card';
-      jobElement.innerHTML = `
-        <h3 class="job-title">${job.title}</h3>
-        <p class="company-name">${job.company}</p>
-        <div class="job-location">
-          <span>📍</span>
-          ${job.location}
-        </div>
-        <p class="salary-range">${job.salary}</p>
-      `;
-      suggestedJobsContainer.appendChild(jobElement);
-    });
+  // Now fetch and render the suggested jobs
+  fetchJobPostings().then(jobs => {
+      renderSuggestedJobs(jobs);
+  });
 
     const viewApplicationsBtn = document.getElementById('viewApplicationsBtn');
     if (viewApplicationsBtn) {
