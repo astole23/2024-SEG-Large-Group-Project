@@ -1,12 +1,11 @@
+import random
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.db.models import Count
 from tutorials.models.jobposting import JobPosting
 from tutorials.models.accounts import CustomUser
 from tutorials.matchmaking_helper import match_job_to_cv_together, is_location_match
 from tutorials.models.standard_cv import CVApplication
-import random
-
-
 
 def get_random_job_postings(limit=100):
     """Fetch a limited number of random job postings using offset."""
@@ -23,21 +22,32 @@ def get_random_job_postings(limit=100):
 def job_recommendation(request):
     user = request.user
     user_industry = user.user_industry or []
-    user_locations = user.user_location or []
+    user_locations = user.user_location
 
     print(f"user location is {user_locations}")
     print(f"user industry is {user_industry}")
 
-    if not user_industry:
-        return JsonResponse(
-            {"error": "No industries specified for the user."},
-            status=400
-        ) if request.headers.get('X-Requested-With') == 'XMLHttpRequest' else render(
-            request, 'job_postings.html', {'error_message': 'No industries specified for the user.'}
-        )
-
     # ✅ Fetch only 100 random job postings instead of all of them
     job_postings = get_random_job_postings(100)
+
+    # ✅ If no user industry or location is specified, return jobs as is
+    if not user_industry and not user_locations:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            recommended_jobs = [
+                {
+                    "id": job.id,
+                    "job_title": job.job_title,
+                    "company_name": job.company.company_name,
+                    "location": job.location,
+                    "salary_range": job.salary_range,
+                    "contract_type": job.contract_type
+                }
+                for job in job_postings
+            ]
+            return JsonResponse({"recommended_jobs": recommended_jobs})
+
+        return render(request, 'job_postings.html', {'sorted_matches': [(job, 0) for job in job_postings]})  # Score = 0 since no matching
+
     job_lookup = {job.job_title: job for job in job_postings}
     job_titles = list(job_lookup.keys())
 
