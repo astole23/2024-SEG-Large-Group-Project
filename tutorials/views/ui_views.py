@@ -936,6 +936,64 @@ def profile_settings(request):
         'password_form': password_form,
     })
 
+@login_required
+def add_job_by_code(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        code = data.get('code')
+        if not code:
+            return JsonResponse({'success': False, 'error': 'No code provided.'}, status=400)
+
+        user = request.user
+        job_application = JobApplication.objects.filter(application_id=code).first()
+        # If your code is stored in application_id or another field, adjust accordingly.
+
+        if not job_application:
+            return JsonResponse({'success': False, 'error': 'Job application not found.'}, status=404)
+        if job_application.applicant != user:
+            return JsonResponse({'success': False, 'error': 'This job application does not belong to you.'}, status=403)
+
+        # Mark tracked
+        job_application.tracked = True
+        job_application.save()
+
+        return JsonResponse({'success': True})
+    
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from tutorials.models.applications import JobApplication  # adjust import to match your structure
+
+@login_required
+def tracked_jobs_api(request):
+    # The user must be logged in or else @login_required will redirect to login.
+    user = request.user
+    
+    # Filter for tracked applications. 
+    tracked_apps = JobApplication.objects.filter(applicant=user, tracked=True)
+
+    # Build a list of dicts for JSON output.
+    data = []
+    for app in tracked_apps:
+        data.append({
+            'id': app.id,
+            'title': app.job_posting.job_title,
+            'company': str(app.job_posting.company),
+            # If you store a current_stage or similar, adapt accordingly:
+            'currentStage': 0,  
+        })
+
+    return JsonResponse(data, safe=False)
+
+
 def normalize_edu(e):
     return (
         e.get("university", "").strip().lower(),

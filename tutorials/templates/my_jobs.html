@@ -1,11 +1,8 @@
 {% extends 'base_content.html' %}
-
 {% load static %}
 
 {% block content %}
-
 <link rel="stylesheet" href="{% static 'css/my_jobs.css' %}">
-
 
 <head>
   <meta charset="UTF-8" />
@@ -18,77 +15,42 @@
   <div class="status-background">
     <div class="page-content">
       <div class="page-title">
-        <h1>Starred Applications</h1>
+        <h1>Tracked Applications</h1>
         <button class="add-jobs-btn" onclick="openAddJobsPopup()">+ Add Jobs</button>
       </div>
-      
-
-      <!-- Container for starred job cards -->
-      <div id="starred-jobs-container">
-        <!-- Example job cards will be injected via JS for demonstration -->
+      <!-- Container for tracked job cards -->
+      <div id="jobs-container">
+        <!-- Job cards will be injected here via JavaScript -->
       </div>
     </div>
   </div>
 
-  <!-- UNSTAR CONFIRMATION POPUP -->
-  <div class="modal-overlay" id="unstarModal">
-    <div class="modal-content">
-      <h2>Unstar This Job?</h2>
-      <p>Are you sure you want to unstar this job application?</p>
-      <div class="modal-btns">
-        <button class="confirm-btn" id="confirmUnstar">Yes</button>
-        <button class="cancel-btn" onclick="closeUnstarModal()">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADD JOBS POPUP -->
+  <!-- ADD JOBS POPUP with Code Input -->
   <div class="add-jobs-overlay" id="addJobsModal">
     <div class="add-jobs-content">
-      <h2>Select Jobs to Star</h2>
-      <p>Choose from your unstarred applications:</p>
-      <div class="add-jobs-list" id="unstarred-jobs-list"></div>
+      <h2>Add Job by Code</h2>
+      <p>Enter the unique code from your job application:</p>
+      <input type="text" id="jobCodeInput" placeholder="Enter your code" />
       <div class="popup-btns">
-        <button class="confirm-btn" onclick="confirmAddJobs()">Done</button>
+        <button class="confirm-btn" onclick="submitJobCode()">Submit</button>
         <button class="cancel-btn" onclick="closeAddJobsPopup()">Cancel</button>
       </div>
     </div>
   </div>
 
   <script>
-    /*************************************************************
-      Mock Data
-     *************************************************************/
-    const allJobs = [
-      { id: 1, title: 'Frontend Developer', company: 'Google', currentStage: 3, starred: true },
-      { id: 2, title: 'Backend Engineer', company: 'Amazon', currentStage: 0, starred: false },
-      { id: 3, title: 'Data Scientist', company: 'Meta', currentStage: 0, starred: false },
-      { id: 4, title: 'QA Analyst', company: 'Apple', currentStage: 1, starred: true },
-      { id: 5, title: 'DevOps Specialist', company: 'Microsoft', currentStage: 0, starred: false }
-    ];
+    // Instead of mock data, we start with an empty array.
+    let trackedJobs = [];
 
-    const stageNames = [
-      'Applied',
-      'Review',
-      'Interview',
-      'Assessment',
-      'Decision',
-      'Offer'
-    ];
+    // If you still need a status bar for each job, define your stage names.
+    const stageNames = ['Applied', 'Review', 'Interview', 'Assessment', 'Decision', 'Offer'];
 
-    let jobToUnstar = null;
-
-    /*************************************************************
-      Rendering Starred Jobs
-     *************************************************************/
-    function renderStarredJobs() {
-      const container = document.getElementById('starred-jobs-container');
+    // Renders tracked jobs fetched from the backend.
+    function renderTrackedJobs() {
+      const container = document.getElementById('jobs-container');
       container.innerHTML = '';
 
-      // Filter for starred
-      const starred = allJobs.filter(job => job.starred);
-
-      starred.forEach(job => {
+      trackedJobs.forEach(job => {
         const card = document.createElement('div');
         card.className = 'job-card';
 
@@ -106,32 +68,22 @@
         jobInfo.appendChild(titleEl);
         jobInfo.appendChild(companyEl);
 
-        // Create the status bar
+        // Optionally create a status bar if needed.
         const statusBar = createStatusBar(job);
         jobInfo.appendChild(statusBar);
 
         card.appendChild(jobInfo);
-
-        // Star icon for un-starring
-        const starEl = document.createElement('div');
-        starEl.className = 'star-icon';
-        starEl.textContent = '★';
-        starEl.onclick = () => openUnstarModal(job);
-        card.appendChild(starEl);
-
         container.appendChild(card);
       });
     }
 
-    // Creates the 6-step status bar with labels
+    // Creates a 6-step status bar for a job.
     function createStatusBar(job) {
       const statusWrapper = document.createElement('div');
       statusWrapper.className = 'status-bar';
 
-      // 6 steps total
       for (let i = 0; i < 6; i++) {
-        // If not the first circle, insert a connecting line
-        if(i > 0) {
+        if (i > 0) {
           const lineDiv = document.createElement('div');
           lineDiv.className = 'bar';
           statusWrapper.appendChild(lineDiv);
@@ -140,103 +92,111 @@
         const stepDiv = document.createElement('div');
         stepDiv.className = 'status-step';
 
-        // Circle
         const circleDiv = document.createElement('div');
         circleDiv.className = 'circle';
-        circleDiv.textContent = i + 1; // Or display an icon instead of a number.
+        circleDiv.textContent = i + 1;
 
-        // Label
         const labelDiv = document.createElement('div');
         labelDiv.className = 'step-label';
         labelDiv.textContent = stageNames[i];
 
-        // Mark as active if the job's currentStage is >= i
         if (job.currentStage >= i) {
           stepDiv.classList.add('active');
         }
 
-        // Click => set job's current stage to i
+        // If you want to allow changing the stage, keep this onclick:
         stepDiv.onclick = () => {
           job.currentStage = i;
-          renderStarredJobs();
+          renderTrackedJobs();
         };
 
         stepDiv.appendChild(circleDiv);
         stepDiv.appendChild(labelDiv);
-
         statusWrapper.appendChild(stepDiv);
       }
-
       return statusWrapper;
     }
 
-    /*************************************************************
-      Unstar Logic
-     *************************************************************/
-    function openUnstarModal(job) {
-      jobToUnstar = job;
-      document.getElementById('unstarModal').style.display = 'flex';
-    }
-    function closeUnstarModal() {
-      jobToUnstar = null;
-      document.getElementById('unstarModal').style.display = 'none';
-    }
-    document.getElementById('confirmUnstar').onclick = function() {
-      if(jobToUnstar) {
-        jobToUnstar.starred = false;
-      }
-      closeUnstarModal();
-      renderStarredJobs();
-    };
-
-    /*************************************************************
-      Add Jobs Popup
-     *************************************************************/
+    // Popup functions for adding a job by code.
     function openAddJobsPopup() {
-      const unstarredList = document.getElementById('unstarred-jobs-list');
-      unstarredList.innerHTML = '';
-
-      const unstarred = allJobs.filter(j => !j.starred);
-      unstarred.forEach(job => {
-        const jobOption = document.createElement('div');
-        jobOption.className = 'job-option';
-
-        const label = document.createElement('label');
-        label.style.width = '100%';
-        label.textContent = `${job.title} @ ${job.company}`;
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = job.id;
-
-        jobOption.appendChild(checkbox);
-        jobOption.appendChild(label);
-
-        unstarredList.appendChild(jobOption);
-      });
-
+      document.getElementById('jobCodeInput').value = '';
       document.getElementById('addJobsModal').style.display = 'flex';
     }
+
     function closeAddJobsPopup() {
       document.getElementById('addJobsModal').style.display = 'none';
     }
 
-    function confirmAddJobs() {
-      const unstarredList = document.getElementById('unstarred-jobs-list');
-      const checkboxes = unstarredList.querySelectorAll('input[type="checkbox"]:checked');
-      checkboxes.forEach(cb => {
-        const job = allJobs.find(j => j.id === parseInt(cb.value));
-        if(job) job.starred = true;
-      });
-      closeAddJobsPopup();
-      renderStarredJobs();
+    // Utility: get CSRF token from cookies.
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
     }
 
-    /*************************************************************
-      Initialize
-     *************************************************************/
+    // Fetch tracked jobs from the backend API.
+    function fetchTrackedJobs() {
+      fetch('/api/tracked-jobs/', {  // Make sure this endpoint exists on the backend.
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        trackedJobs = data;  // Assuming data is an array of job objects.
+        renderTrackedJobs();
+      })
+      .catch(error => {
+        console.error("Error fetching tracked jobs:", error);
+      });
+    }
+
+    // Submit the unique code to add a job to tracked applications.
+    function submitJobCode() {
+      const code = document.getElementById('jobCodeInput').value.trim();
+      if (!code) {
+        alert("Please enter a valid code.");
+        return;
+      }
+      
+      fetch('/add-job-by-code/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ code: code })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Job added successfully!");
+          fetchTrackedJobs();  // Reload tracked jobs from backend.
+          closeAddJobsPopup();
+        } else {
+          alert(data.error || "Invalid code or job does not belong to you.");
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while adding the job.");
+      });
+    }
+
+    // Initialize by fetching tracked jobs.
     window.onload = () => {
-      renderStarredJobs();
+      fetchTrackedJobs();
     };
   </script>
 </body>
