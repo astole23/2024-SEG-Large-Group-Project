@@ -535,7 +535,6 @@ function fetchJobPostings() {
 
   
 
-    const cvUploadInput = document.getElementById('cvUpload');
     const uploadRawCvBtn = document.getElementById('uploadRawCvBtn');
     const uploadAutoCvBtn = document.getElementById('uploadAutoCvBtn');
   
@@ -736,25 +735,18 @@ function fetchJobPostings() {
 
       cvUploadInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
-        const formData = new FormData();
-        formData.append('cv_file', file);
-
-        try {
-          const res = await fetch('/upload_raw_cv/', {
-            method: 'POST',
-            body: formData
-          });
-
+        if (!file) return;
+      
         const currentDocs = document.querySelectorAll('#supportDocsContainer .document-item');
         console.log("Current document count:", currentDocs.length);
         if (currentDocs.length >= 5) {
           showCVStatus("You can only upload up to 5 documents.", "danger");
           return;
         }
-
+      
         const formData = new FormData();
         formData.append('document', file);
-
+      
         try {
           const res = await fetch('/upload_user_document/', {
             method: 'POST',
@@ -763,23 +755,23 @@ function fetchJobPostings() {
             },
             body: formData
           });
-        
-
+      
           const result = await res.json();
           console.log("📎 Document upload result:", result);
-
+      
           if (result.success) {
             showCVStatus("Document uploaded!", "success");
             addSupportingDocument(result.filename, result.uploaded_at, result.file_url);
-
           } else {
             showCVStatus(result.error || "Upload failed", "danger");
           }
+      
         } catch (err) {
           console.error("❌ Upload failed:", err);
           showCVStatus("Upload error", "danger");
         }
       });
+      
     }
 
     
