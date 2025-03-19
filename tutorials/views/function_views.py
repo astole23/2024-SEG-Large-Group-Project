@@ -31,7 +31,7 @@ def process_login(request):
 
             # Redirect based on user type
             if user.is_company:
-                return redirect('edit_company', company_id=user.id)
+                return redirect('employer_dashboard')
             else:
                 return redirect('user_dashboard')
         else:
