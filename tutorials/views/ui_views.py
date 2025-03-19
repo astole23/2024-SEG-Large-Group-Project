@@ -150,8 +150,9 @@ def user_dashboard(request):
         'user_info_json': json.dumps(user_info),
         'cv_data_json': json.dumps(cv_data, cls=DjangoJSONEncoder),
         'raw_cv_info_json': json.dumps(raw_cv_info),
-        'documents': uploaded_documents
+        'documents_json': json.dumps(documents_list),  # ✅ ADD THIS
     })
+
 
 
 def search(request):

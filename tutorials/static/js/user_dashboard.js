@@ -406,6 +406,7 @@ function fetchJobPostings() {
     `;
 
     // After the dashboard is rendered, set the loading message
+
   const suggestedJobsContainer = document.getElementById('suggested-jobs');
   if (suggestedJobsContainer) {
       suggestedJobsContainer.innerHTML = "<p>Loading job recommendations...</p>";
@@ -442,6 +443,7 @@ function fetchJobPostings() {
     const cvToggle = document.getElementById('cvToggle');
     const cvContent = document.getElementById('cvContent');
     const toggleIcon = cvToggle.querySelector('.toggle-icon');
+    
   
     cvToggle.addEventListener('click', () => {
       cvContent.classList.toggle('collapsed');
@@ -534,9 +536,11 @@ function fetchJobPostings() {
 
 
   
-
+    const cvUploadInput = document.getElementById('cvUpload');
+    const cvUploadBtn = document.getElementById('cvUploadBtn');
     const uploadRawCvBtn = document.getElementById('uploadRawCvBtn');
     const uploadAutoCvBtn = document.getElementById('uploadAutoCvBtn');
+    
   
     let currentUploadMode = '';
   
@@ -725,8 +729,8 @@ function fetchJobPostings() {
   
   
     // File upload handling
-    const cvUploadBtn = document.getElementById('cvUploadBtn');
-    const cvUploadInput = document.getElementById('cvUpload');
+    
+    
 
     if (cvUploadBtn && cvUploadInput) {
       cvUploadBtn.addEventListener('click', () => {

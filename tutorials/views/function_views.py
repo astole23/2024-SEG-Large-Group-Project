@@ -7,13 +7,12 @@ from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
-from tutorials.models import UploadedCV
+from tutorials.models.user_dashboard import UploadedCV
 from django.http import JsonResponse
 
 def process_login(request):
     if request.method == 'POST':
-        user_type = request.POST.get('user_type')
-        
+        user_type = request.POST.ge
         if user_type == 'company':
             form = CompanyLoginForm(request=request, data=request.POST, prefix='company')
         else:
