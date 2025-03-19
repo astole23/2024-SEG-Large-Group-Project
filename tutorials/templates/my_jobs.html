@@ -3,33 +3,243 @@
 {% load static %}
 
 {% block content %}
+
 <link rel="stylesheet" href="{% static 'css/my_jobs.css' %}">
 
-<div class="application-container">
-    <div class="application-header">
-      <h2>Track My Job Applications</h2>
-    </div>
-  
-    <div class="progress-container">
-      <div class="progress-bar">
-        <div class="progress-step active">
-          <input type="checkbox" class="step-checkbox">
-          <div class="step-text">Applied</div>
-        </div>
-        <div class="progress-step">
-          <input type="checkbox" class="step-checkbox">
-          <div class="step-text">Assesment</div>
-        </div>
-        <div class="progress-step">
-          <input type="checkbox" class="step-checkbox">
-          <div class="step-text">Interview</div>
-        </div>
-        <div class="progress-step">
-          <input type="checkbox" class="step-checkbox">
-          <div class="step-text">Job Offer</div>
-        </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Applications Status</title>
+</head>
+<body>
+
+  <!-- MAIN PAGE CONTENT -->
+  <div class="status-background">
+    <div class="page-content">
+      <div class="page-title">
+        <h1>Starred Applications</h1>
+        <button class="add-jobs-btn" onclick="openAddJobsPopup()">+ Add Jobs</button>
+      </div>
+      
+
+      <!-- Container for starred job cards -->
+      <div id="starred-jobs-container">
+        <!-- Example job cards will be injected via JS for demonstration -->
       </div>
     </div>
   </div>
-  
+
+  <!-- UNSTAR CONFIRMATION POPUP -->
+  <div class="modal-overlay" id="unstarModal">
+    <div class="modal-content">
+      <h2>Unstar This Job?</h2>
+      <p>Are you sure you want to unstar this job application?</p>
+      <div class="modal-btns">
+        <button class="confirm-btn" id="confirmUnstar">Yes</button>
+        <button class="cancel-btn" onclick="closeUnstarModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD JOBS POPUP -->
+  <div class="add-jobs-overlay" id="addJobsModal">
+    <div class="add-jobs-content">
+      <h2>Select Jobs to Star</h2>
+      <p>Choose from your unstarred applications:</p>
+      <div class="add-jobs-list" id="unstarred-jobs-list"></div>
+      <div class="popup-btns">
+        <button class="confirm-btn" onclick="confirmAddJobs()">Done</button>
+        <button class="cancel-btn" onclick="closeAddJobsPopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /*************************************************************
+      Mock Data
+     *************************************************************/
+    const allJobs = [
+      { id: 1, title: 'Frontend Developer', company: 'Google', currentStage: 3, starred: true },
+      { id: 2, title: 'Backend Engineer', company: 'Amazon', currentStage: 0, starred: false },
+      { id: 3, title: 'Data Scientist', company: 'Meta', currentStage: 0, starred: false },
+      { id: 4, title: 'QA Analyst', company: 'Apple', currentStage: 1, starred: true },
+      { id: 5, title: 'DevOps Specialist', company: 'Microsoft', currentStage: 0, starred: false }
+    ];
+
+    const stageNames = [
+      'Applied',
+      'Review',
+      'Interview',
+      'Assessment',
+      'Decision',
+      'Offer'
+    ];
+
+    let jobToUnstar = null;
+
+    /*************************************************************
+      Rendering Starred Jobs
+     *************************************************************/
+    function renderStarredJobs() {
+      const container = document.getElementById('starred-jobs-container');
+      container.innerHTML = '';
+
+      // Filter for starred
+      const starred = allJobs.filter(job => job.starred);
+
+      starred.forEach(job => {
+        const card = document.createElement('div');
+        card.className = 'job-card';
+
+        const jobInfo = document.createElement('div');
+        jobInfo.className = 'job-info';
+
+        const titleEl = document.createElement('div');
+        titleEl.className = 'job-title';
+        titleEl.textContent = job.title;
+
+        const companyEl = document.createElement('div');
+        companyEl.className = 'company-name';
+        companyEl.textContent = job.company;
+
+        jobInfo.appendChild(titleEl);
+        jobInfo.appendChild(companyEl);
+
+        // Create the status bar
+        const statusBar = createStatusBar(job);
+        jobInfo.appendChild(statusBar);
+
+        card.appendChild(jobInfo);
+
+        // Star icon for un-starring
+        const starEl = document.createElement('div');
+        starEl.className = 'star-icon';
+        starEl.textContent = '★';
+        starEl.onclick = () => openUnstarModal(job);
+        card.appendChild(starEl);
+
+        container.appendChild(card);
+      });
+    }
+
+    // Creates the 6-step status bar with labels
+    function createStatusBar(job) {
+      const statusWrapper = document.createElement('div');
+      statusWrapper.className = 'status-bar';
+
+      // 6 steps total
+      for (let i = 0; i < 6; i++) {
+        // If not the first circle, insert a connecting line
+        if(i > 0) {
+          const lineDiv = document.createElement('div');
+          lineDiv.className = 'bar';
+          statusWrapper.appendChild(lineDiv);
+        }
+
+        const stepDiv = document.createElement('div');
+        stepDiv.className = 'status-step';
+
+        // Circle
+        const circleDiv = document.createElement('div');
+        circleDiv.className = 'circle';
+        circleDiv.textContent = i + 1; // Or display an icon instead of a number.
+
+        // Label
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'step-label';
+        labelDiv.textContent = stageNames[i];
+
+        // Mark as active if the job's currentStage is >= i
+        if (job.currentStage >= i) {
+          stepDiv.classList.add('active');
+        }
+
+        // Click => set job's current stage to i
+        stepDiv.onclick = () => {
+          job.currentStage = i;
+          renderStarredJobs();
+        };
+
+        stepDiv.appendChild(circleDiv);
+        stepDiv.appendChild(labelDiv);
+
+        statusWrapper.appendChild(stepDiv);
+      }
+
+      return statusWrapper;
+    }
+
+    /*************************************************************
+      Unstar Logic
+     *************************************************************/
+    function openUnstarModal(job) {
+      jobToUnstar = job;
+      document.getElementById('unstarModal').style.display = 'flex';
+    }
+    function closeUnstarModal() {
+      jobToUnstar = null;
+      document.getElementById('unstarModal').style.display = 'none';
+    }
+    document.getElementById('confirmUnstar').onclick = function() {
+      if(jobToUnstar) {
+        jobToUnstar.starred = false;
+      }
+      closeUnstarModal();
+      renderStarredJobs();
+    };
+
+    /*************************************************************
+      Add Jobs Popup
+     *************************************************************/
+    function openAddJobsPopup() {
+      const unstarredList = document.getElementById('unstarred-jobs-list');
+      unstarredList.innerHTML = '';
+
+      const unstarred = allJobs.filter(j => !j.starred);
+      unstarred.forEach(job => {
+        const jobOption = document.createElement('div');
+        jobOption.className = 'job-option';
+
+        const label = document.createElement('label');
+        label.style.width = '100%';
+        label.textContent = `${job.title} @ ${job.company}`;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = job.id;
+
+        jobOption.appendChild(checkbox);
+        jobOption.appendChild(label);
+
+        unstarredList.appendChild(jobOption);
+      });
+
+      document.getElementById('addJobsModal').style.display = 'flex';
+    }
+    function closeAddJobsPopup() {
+      document.getElementById('addJobsModal').style.display = 'none';
+    }
+
+    function confirmAddJobs() {
+      const unstarredList = document.getElementById('unstarred-jobs-list');
+      const checkboxes = unstarredList.querySelectorAll('input[type="checkbox"]:checked');
+      checkboxes.forEach(cb => {
+        const job = allJobs.find(j => j.id === parseInt(cb.value));
+        if(job) job.starred = true;
+      });
+      closeAddJobsPopup();
+      renderStarredJobs();
+    }
+
+    /*************************************************************
+      Initialize
+     *************************************************************/
+    window.onload = () => {
+      renderStarredJobs();
+    };
+  </script>
+</body>
+</html>
+
 {% endblock %}
