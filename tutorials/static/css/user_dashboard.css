@@ -39,6 +39,7 @@ body {
   max-width: 1200px;
   margin: 2rem auto; 
   padding: 0 2rem;
+  padding-top: 120px;
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 2rem;
