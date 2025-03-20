@@ -86,7 +86,6 @@ def process_signup(request):
             company_form = CompanySignUpForm(request.POST, prefix='company')
             user_form = UserSignUpForm(prefix='user')  # Ensure user_form exists
 
-            print(f"🏢 Processing company signup - Valid? {company_form.is_valid()}")  # Debug
 
             if company_form.is_valid():
                 company = company_form.save(commit=False)
@@ -103,14 +102,11 @@ def process_signup(request):
                     messages.error(request, "Company signup successful, but auto-login failed. Please log in manually.")
                     return redirect("login")
             else:
-                print(f"❌ Company Form Errors: {company_form.errors}")  # Debugging
                 messages.error(request, "Company signup failed. Please check the form and try again.")
 
         elif user_type == "user":
             user_form = UserSignUpForm(request.POST, prefix='user')
             company_form = CompanySignUpForm(prefix='company')  # Ensure company_form exists
-
-            print(f"👤 Processing user signup - Valid? {user_form.is_valid()}")  # Debug
 
             if user_form.is_valid():
                 user = user_form.save(commit=False)
@@ -129,11 +125,9 @@ def process_signup(request):
                     messages.error(request, "User signup successful, but auto-login failed. Please log in manually.")
                     return redirect("login")
             else:
-                print(f"❌ User Form Errors: {user_form.errors}")  # Debugging
                 messages.error(request, "User signup failed. Please check the form and try again.")
 
     else:
-        print("🟢 GET request received, rendering signup page")  # Debug
         user_form = UserSignUpForm(prefix='user')
         company_form = CompanySignUpForm(prefix='company')
 

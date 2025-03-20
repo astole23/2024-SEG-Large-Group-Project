@@ -1,15 +1,14 @@
 {% extends 'employer_base.html' %}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'css/employer_sections.css' %}">
 
 
 {% block main_content %}
+<link rel="stylesheet" href="{% static 'css/employer_sections.css' %}">
+
 <div class="dashboard-container">
     <div class="company-header">
         <div class="company-logo-container">
-            <a href="{% url 'edit_company' company_id=user.id %}">Edit Profile</a>
-
             {% if company.logo %}
                 <img src="{{ company.logo.url }}" alt="{{ company.company_name }} Logo" class="company-logo">
             {% else %}
@@ -23,33 +22,51 @@
         </div>
 
         <hr class="company-divider">
-        <p class="company-industry"><strong>Industry:</strong> {{ company.industry }}</p>
+        <div class="company-info">
+            <p class="company-industry"><strong>Industry:</strong> {{ company.industry }}</p>
+            <div class="company-contact">
+                <p><strong>Email:</strong> {{ company.email }}</p>
+                <p><strong>Phone:</strong> {{ company.phone }}</p>
+                <p><strong>Headquarters:</strong> {{ company.location }}</p>
+            </div>
+        </div>
     </div>
 
-    <div class="company-contact">
-        <p><strong>Email:</strong> {{ company.email }}</p>
-        <p><strong>Phone:</strong> {{ company.phone }}</p>
-        <p><strong>Headquarters:</strong> {{ company.location }}</p>
+
+
+    <!-- Change Edit Profile to Button -->
+    <div class="company-actions">
+        <a href="{% url 'edit_company' company_id=user.id %}">
+            <button class="btn btn-secondary mt-2">Edit Company Details</button>
+        </a>
     </div>
 
+    <!-- Job Listings Section -->
     <section class="job-listings">
         <h2>Job Listings</h2>
         <div class="scrollable-section">
             <div class="grid-container">
-              {% if job_postings %}
-                {% for job in job_postings %}
-                  <div class="grid-button card shadow-sm p-3 mb-4">
-                    <h5>{{ job.job_title }}</h5>
-                    <p>{{ job.company.company_name }}</p>
-                    <p>{{ job.location }}</p>
-                    <p>{{ job.work_type }}</p>
-                    <p>{{ job.company_overview|truncatewords:10 }}</p>
-                    <button class="btn btn-secondary mt-2" data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">View More</button>
-                  </div>
-                {% endfor %}
-              {% else %}
-                <p class="text-muted">No job postings available.</p>
-              {% endif %}
+                {% if job_postings %}
+                    {% for job in job_postings|slice:":6" %}
+                    <div class="grid-button card shadow-sm p-3 mb-4">
+                        <h5>{{ job.job_title }}</h5>
+                        <p>{{ job.company.company_name }}</p>
+                        <p>{{ job.location }}</p>
+                        <p>{{ job.work_type }}</p>
+                        <p>{{ job.company_overview|truncatewords:10 }}</p>
+                        <button class="btn btn-secondary mt-2" data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">View More</button>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No job postings available.</p>
+                {% endif %}
+            </div>
+
+            <!-- View All Button -->
+            <div class="view-all-btn-container">
+                <a href="/employer_dashboard/">
+                    <button class="btn btn-primary">View All</button>
+                </a>
             </div>
         </div>
     </section>
@@ -197,6 +214,3 @@
 
 {% endblock %}
 
-{% block extra_stylesheets %}
-    <link rel="stylesheet" href="{% static 'css/company_detail.css' %}">
-{% endblock %}

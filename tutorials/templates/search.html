@@ -26,7 +26,7 @@
     <div class="filters">
       <!-- Job Type Filter -->
       <div class="filter-item">
-        <label>💼 Job Type</label>
+        <label> <i class="fa fa-briefcase" aria-hidden="true"></i> Job Type</label>
         <div class="dropdown-checkbox" id="jobTypeDropdown">
           <button type="button" class="btn btn-outline" data-default="Select Job Types" onclick="toggleDropdown('jobTypeDropdown', 'Select Job Types')">
             Select Job Types
@@ -44,7 +44,7 @@
   
       <!-- Industry Filter -->
       <div class="filter-item">
-        <label>🏢 Industry</label>
+        <label><i class="fa fa-building" aria-hidden="true"></i> Industry</label>
         <div class="dropdown-checkbox" id="industryDropdown">
           <button type="button" class="btn btn-outline" data-default="Select Industries" onclick="toggleDropdown('industryDropdown', 'Select Industries')">
             Select Industries
@@ -62,7 +62,7 @@
   
       <!-- Location Filter -->
       <div class="filter-item">
-        <label>📍 Location</label>
+        <label><i class="fa fa-map-marker" aria-hidden="true"></i> Location</label>
         <div class="dropdown-checkbox" id="locationDropdown">
           <button type="button" class="btn btn-outline" data-default="Select Locations" onclick="toggleDropdown('locationDropdown', 'Select Locations')">
             Select Locations
@@ -80,7 +80,7 @@
   
       <!-- Salary Range Filter -->
       <div class="filter-item">
-        <label>💷 Min Salary Range (Annual GBP)</label>
+        <label><i class="fa fa-credit-card" aria-hidden="true"></i> Min Salary Range (Annual GBP)</label>
         <input type="range" class="form-range" id="salary_range_slider" min="20000" max="100000" step="5000" value="{{ request.GET.salary_range|default:'20000' }}">
         <div id="salaryRangeDisplay">Salary: {{ request.GET.salary_range|default:"20000" }} GBP</div>
         <div class="salary-buttons">
@@ -92,7 +92,7 @@
   
       <!-- Education Level Filter -->
       <div class="filter-item">
-        <label>🎓 Education Level</label>
+        <label><i class="fa fa-graduation-cap" aria-hidden="true"></i>  Education Level</label>
         <div class="dropdown-checkbox" id="educationDropdown">
           <button type="button" class="btn btn-outline" data-default="Select Education Levels" onclick="toggleDropdown('educationDropdown', 'Select Education Levels')">
             Select Education Levels
@@ -128,7 +128,7 @@
   
       <!-- Work Flexibility Filter -->
       <div class="filter-item">
-        <label>🏠 Work Flexibility</label>
+        <label><i class="fa fa-home" aria-hidden="true"></i>  Work Flexibility</label>
         <div class="dropdown-checkbox" id="flexibilityDropdown">
           <button type="button" class="btn btn-outline" data-default="Select Work Options" onclick="toggleDropdown('flexibilityDropdown', 'Select Work Options')">
             Select Work Options
@@ -156,7 +156,7 @@
   
       <!-- Benefits & Perks Filter -->
       <div class="filter-item">
-        <label>🎁 Benefits & Perks</label>
+        <label><i class="fa fa-gift" aria-hidden="true"></i>  Benefits & Perks</label>
         <div class="dropdown-checkbox" id="benefitsDropdown">
           <button type="button" class="btn btn-outline" data-default="Select Benefits" onclick="toggleDropdown('benefitsDropdown', 'Select Benefits')">
             Select Benefits

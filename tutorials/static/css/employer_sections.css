@@ -11,6 +11,27 @@
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    grid-template-columns: repeat(4, 1fr); /* 2 columns */
     grid-gap: 10px; /* Space between the buttons */
   }
+
+  .company-logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.company-logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.company-info {
+    margin-top: 20px;
+}
+
+.view-all-btn-container {
+    text-align: center;
+    margin-top: 20px;
+}
+

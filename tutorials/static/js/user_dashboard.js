@@ -900,7 +900,7 @@ console.log("📂 User Documents:", userDocuments);
       container.appendChild(docDiv);
     }
 
-    async function deleteSupportingDocument(filename, btn) {
+    window.deleteSupportingDocument = async function(filename, btn) {
       const formData = new FormData();
       formData.append('filename', filename);
     
