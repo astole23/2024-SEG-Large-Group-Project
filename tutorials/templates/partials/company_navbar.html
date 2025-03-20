@@ -22,7 +22,7 @@
       <button class="login-btn"><i class="fas fa-user"></i></button>
       <div class="dropdown-content">
         <a href="/employer_dashboard/">View Dashboard</a>
-        <a href="{% url 'edit_company' company_id=user.id %}">Settings</a>
+        <a href="/settings/">Settings</a>
         <a href="/job-postings/">Job Postings</a>
         <a href="{% url 'logout' %}">Sign Out</a>
       </div>

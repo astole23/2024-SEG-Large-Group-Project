@@ -28,7 +28,7 @@ def process_login(request):
             if remember_me:
                 request.session.set_expiry(1209600)  # 2 weeks (14 days)
             else:
-                request.session.set_expiry(0)  # Session expires when browser closes
+                request.session.set_expiry(0)  # Session expires when browser closes - doesnt work
 
             if user.is_company:
                 return redirect('edit_company', company_id=user.id)

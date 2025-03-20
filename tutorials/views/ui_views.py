@@ -39,6 +39,7 @@ from tutorials.models.user_dashboard import UploadedCV, UserDocument
 CustomUser = get_user_model()
 
 from django.contrib.auth import update_session_auth_hash
+from django.core.paginator import Paginator
 
 @login_required
 def employer_dashboard(request):
@@ -48,8 +49,12 @@ def employer_dashboard(request):
         messages.error(request, "Access restricted to company accounts only.")
         return redirect('login')  
     
-    # Filter job postings by the logged-in company
-    job_postings = JobPosting.objects.filter(company=request.user).order_by('-created_at')
+    job_list = JobPosting.objects.filter(company=request.user).order_by('-created_at')
+
+    paginator = Paginator(job_list, 10)
+    page_number = request.GET.get('page')
+    job_postings = paginator.get_page(page_number)
+
     return render(request, 'employer_dashboard.html', {'job_postings': job_postings})
 
 def user_logout(request):
