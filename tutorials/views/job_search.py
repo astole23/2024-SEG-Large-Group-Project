@@ -34,13 +34,22 @@ def job_recommendation(request):
     if not user_industry and not user_locations:
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             recommended_jobs = [
-                {
-                    "id": job.id,
-                    "job_title": job.job_title,
-                    "company_name": job.company.company_name,
-                    "location": job.location,
-                    "salary_range": job.salary_range,
-                    "contract_type": job.contract_type
+            {
+                "id": job.id,
+                "job_title": job.job_title,
+                        "company_name": job.company.company_name,
+                "location": job.location,
+                "salary_range": job.salary_range,
+                "contract_type": job.contract_type,
+                "job_overview": job.job_overview,
+                "roles_responsibilities": job.roles_responsibilities,
+                "required_skills": job.required_skills,
+                "preferred_skills": job.preferred_skills,
+                "education_required": job.education_required,
+                "perks": job.perks,
+                "company_overview": job.company_overview,
+                "why_join_us": job.why_join_us,
+                "company_reviews": job.company_reviews,
                 }
                 for job in job_postings
             ]

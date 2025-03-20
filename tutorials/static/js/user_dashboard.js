@@ -94,82 +94,48 @@ console.log("📂 User Documents:", userDocuments);
       console.error("❌ Error fetching recommended jobs:", error);
     });
   }
-  
-
   function renderJobListings(jobs) {
+    console.log("📢 Jobs received for rendering:", jobs); // Debugging
+  
     const listingsContainer = document.getElementById('temporary-job-listings-container');
-    listingsContainer.innerHTML = ''; // Clear any existing content
+    listingsContainer.innerHTML = ''; // Clear existing content
   
     jobs.forEach(job => {
+      console.log(`🔍 Job Data for ${job.job_title}:`, job); // Log each job to debug missing fields
+  
+      // Ensure all fields have a fallback value
+      const jobOverview = job.job_overview?.trim() || '<span style="color:red;">MISSING</span>';
+      const rolesResponsibilities = job.roles_responsibilities?.trim() || '<span style="color:red;">MISSING</span>';
+      const requiredSkills = job.required_skills?.trim() || '<span style="color:red;">MISSING</span>';
+      const preferredSkills = job.preferred_skills?.trim() || 'Not specified';
+      const educationRequired = job.education_required?.trim() || 'Not specified';
+      const perks = job.perks?.trim() || 'No perks listed';
+  
       // Create job card
       const card = document.createElement('div');
       card.className = 'job-card';
       card.innerHTML = `
         <h5 class="job-title">${job.job_title}</h5>
         <p class="company-name"><strong>Company:</strong> ${job.company_name}</p>
-        <p class="location"><span>📍</span> ${job.location}</p>
-        <p class="pay-contract"><strong>Salary:</strong> ${job.salary_range} | <strong>Contract:</strong> ${job.contract_type}</p>
-        <p class="work-type"><strong>Work Type:</strong> ${job.work_type || 'N/A'}</p>
-        <p class="deadline"><strong>Deadline:</strong> ${job.application_deadline || 'N/A'}</p>
+        <p class="location"><strong>Location:</strong> ${job.location}</p>
+        <p class="salary"><strong>Salary:</strong> ${job.salary_range || 'Not specified'}</p>
+        <p class="contract-type"><strong>Contract:</strong> ${job.contract_type || 'Not specified'}</p>
+        <p class="overview"><strong>Job Overview:</strong> ${jobOverview}</p>
+        <p class="roles"><strong>Roles & Responsibilities:</strong> ${rolesResponsibilities}</p>
+        <p class="skills"><strong>Required Skills:</strong> ${requiredSkills}</p>
+        <p class="preferred-skills"><strong>Preferred Skills:</strong> ${preferredSkills}</p>
+        <p class="education"><strong>Education Required:</strong> ${educationRequired}</p>
+        <p class="perks"><strong>Perks:</strong> ${perks}</p>
   
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
           View & Apply
         </button>
       `;
       listingsContainer.appendChild(card);
-  
-      // Create Bootstrap modal
-      const modalDiv = document.createElement('div');
-      modalDiv.className = 'modal fade';
-      modalDiv.id = `jobModal${job.id}`;
-      modalDiv.tabIndex = -1;
-      modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
-      modalDiv.setAttribute('aria-hidden', 'true');
-      modalDiv.innerHTML = `
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
-          <div class="modal-content">
-            <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-              <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p><strong>Company:</strong> ${job.company_name}</p>
-              <p><strong>Location:</strong> ${job.location}</p>
-              <p><strong>Work Type:</strong> ${job.work_type || 'N/A'}</p>
-              <p><strong>Salary:</strong> ${job.salary_range}</p>
-              <p><strong>Contract:</strong> ${job.contract_type || ''}</p>
-              <p><strong>Deadline:</strong> ${job.application_deadline || 'N/A'}</p>
-              <hr>
-              <h6><strong>Job Overview</strong></h6>
-              <p>${job.job_overview || 'Not provided.'}</p>
-              <h6><strong>Roles & Responsibilities</strong></h6>
-              <p>${job.roles_responsibilities || 'Not provided.'}</p>
-              <h6><strong>Required Skills</strong></h6>
-              <p>${job.required_skills || 'Not provided.'}</p>
-              <h6><strong>Preferred Skills</strong></h6>
-              <p>${job.preferred_skills || 'Not provided.'}</p>
-              <h6><strong>Education Required</strong></h6>
-              <p>${job.education_required || 'Not specified.'}</p>
-              <h6><strong>Perks</strong></h6>
-              <p>${job.perks || 'Not specified.'}</p>
-              <hr>
-              <h6><strong>About the Company</strong></h6>
-              <p><strong>Overview:</strong> ${job.company_overview || 'Not provided.'}</p>
-              <p><strong>Why Join Us:</strong> ${job.why_join_us || 'Not provided.'}</p>
-              <p><strong>Reviews:</strong> ${job.company_reviews || 'No reviews available.'}</p>
-              <p class="text-muted"><small>Posted on ${job.created_at || 'N/A'}</small></p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
-            </div>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modalDiv);
     });
   }
   
+
   console.log("Parsed CV from backend:", mockCV);
 
   function createDashboard() {
