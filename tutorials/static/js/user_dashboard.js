@@ -143,9 +143,9 @@ console.log("📂 User Documents:", userDocuments);
 
 
     // Grab the script tag with id="current-user"
-    const userInfoScript = document.getElementById('current-user');
-    const userInfo = userInfoScript ? JSON.parse(userInfoScript.textContent) : {};
-    console.log("Dashboard is loading");
+    const dashboardDataScript = document.getElementById('dashboard-data');
+    const dashboardData = dashboardDataScript ? JSON.parse(dashboardDataScript.textContent) : {};
+    const userInfo = dashboardData.user_info || {};
     console.log("User info:", userInfo);
 
     // Inside createDashboard()
@@ -165,7 +165,7 @@ console.log("📂 User Documents:", userDocuments);
               <p>Senior Software Developer</p>
               <div class="location">
                 <span>📍</span>
-                San Francisco, CA
+                <h1>${userInfo.location}</h1>
               </div>
             </div>
             <button class="btn-outline">Edit Profile</button>

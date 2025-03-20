@@ -87,10 +87,11 @@ def user_dashboard(request):
 
     # 1. User Info (for frontend)
     user_info = {
-        'first_name': request.user.first_name,
-        'last_name': request.user.last_name,
-        'full_name': f"{request.user.first_name} {request.user.last_name}"
-    }
+    'first_name': request.user.first_name,
+    'last_name': request.user.last_name,
+    'full_name': f"{request.user.first_name} {request.user.last_name}",
+     'location': request.user.user_location[0] if isinstance(request.user.user_location, list) and request.user.user_location else 'Unknown'
+}
 
     # 2. CV Structured Data (AI parsed)
     try:
