@@ -11,6 +11,7 @@ from tutorials.models.jobposting import JobPosting
 from tutorials.models.company_review import Review
 from django.contrib.auth import get_user_model
 from django.utils.dateparse import parse_date
+import traceback
 from tutorials.forms import (
     UserLoginForm, CompanyLoginForm,
     UserSignUpForm, CompanySignUpForm,
@@ -340,14 +341,22 @@ def company_profile(request):
 
     return render(request, 'company_profile.html', {'company': company, 'form': form, 'job_postings': job_postings,})
 
+@login_required
+@require_POST
 def leave_review(request, company_id):
-    if request.method == 'POST':
-        text = request.POST.get('text')
-        rating = request.POST.get('rating')
-        review = Review(text=text, rating=rating)
-        review.save()
-        return JsonResponse({'message': 'Review submitted successfully!'}, status=200)
-    return render(request, 'company_detail.html', {'company_id': company_id})
+    text = request.POST.get('text')
+    rating = request.POST.get('rating')
+
+    if not text or not rating:
+        messages.error(request, "Both fields are required.")
+        return redirect('company_profile')
+
+    company = get_object_or_404(CustomUser, id=company_id, is_company=True)
+    Review.objects.create(company=company, text=text, rating=rating)
+
+    messages.success(request, "Review submitted successfully!")
+    return redirect('company_profile')
+
 
 def edit_company(request, company_id):
     """

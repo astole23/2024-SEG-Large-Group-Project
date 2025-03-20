@@ -1,7 +1,7 @@
 {% extends 'employer_base.html' %}
 {% load static %}
-{% block main_content %}
 
+{% block main_content %}
 <div class="dashboard-container">
     <div class="company-header">
         <div class="company-logo-container">
@@ -14,14 +14,15 @@
             {% endif %}
             <h1 class="company-name">{{ company.company_name }}</h1>
         </div>
-        <!-- Review Company Button in a purple box -->
+
         <div class="review-box">
             <button class="review-button" id="reviewButton">Review Company</button>
         </div>
-        <!-- Thin Purple Line (Updated) -->
+
         <hr class="company-divider">
         <p class="company-industry"><strong>Industry:</strong> {{ company.industry }}</p>
     </div>
+
     <div class="company-contact">
         <p><strong>Email:</strong> {{ company.email }}</p>
         <p><strong>Phone:</strong> {{ company.phone }}</p>
@@ -47,7 +48,7 @@
                 <p class="text-muted">No job postings available.</p>
               {% endif %}
             </div>
-          </div>
+        </div>
     </section>
 
     <!-- Review Modal -->
@@ -55,12 +56,15 @@
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
             <h2>Leave a Review</h2>
-            <form id="reviewForm" method="POST">
+
+            <!-- Traditional HTML Form -->
+            <form method="POST" action="{% url 'leave_review' company_id=company.id %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="reviewText">Review Text:</label>
                     <textarea id="reviewText" name="text" rows="4" required></textarea>
                 </div>
+
                 <div class="form-group">
                     <label for="reviewRating">Rating:</label>
                     <select id="reviewRating" name="rating" required>
@@ -71,71 +75,33 @@
                         <option value="5">5</option>
                     </select>
                 </div>
+
                 <button type="submit" class="submit-review">Submit Review</button>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Simple JS for Modal (optional but recommended for UX) -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Get modal and review button elements
+    document.addEventListener('DOMContentLoaded', () => {
         const reviewButton = document.getElementById('reviewButton');
         const reviewModal = document.getElementById('reviewModal');
         const closeModal = document.getElementById('closeModal');
-        const reviewForm = document.getElementById('reviewForm');
 
-        // Show the modal when the button is clicked
-        reviewButton.addEventListener('click', function () {
-            reviewModal.style.display = 'block';
-            reviewModal.setAttribute('aria-hidden', 'false');
-        });
+        reviewButton.onclick = () => reviewModal.style.display = 'block';
+        closeModal.onclick = () => reviewModal.style.display = 'none';
+        
+        window.onclick = event => {
+            if (event.target === reviewModal) reviewModal.style.display = 'none';
+        };
 
-        // Hide the modal when the close button is clicked
-        closeModal.addEventListener('click', function () {
-            reviewModal.style.display = 'none';
-            reviewModal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = 'auto';
-        });
-
-        // Close modal if the "Escape" key is pressed
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                reviewModal.style.display = 'none';
-                reviewModal.setAttribute('aria-hidden', 'true');
-            }
-        });
-
-        // Hide the modal when the form is submitted
-        reviewForm.addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent form from submitting normally
-            
-            const formData = new FormData(reviewForm);
-
-            // Send the review data via AJAX
-            fetch('{% url "leave_review" company_id=company.id %}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === 'Review submitted successfully!') {
-                    alert('Review submitted!');
-                    reviewModal.style.display = 'none'; // Close modal
-                    reviewModal.setAttribute('aria-hidden', 'true');
-                    reviewForm.reset(); // Reset the form fields
-                } else {
-                    alert('Error submitting review');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
+        document.onkeydown = event => {
+            if (event.key === 'Escape') reviewModal.style.display = 'none';
+        };
     });
 </script>
+
 {% endblock %}
 
 {% block extra_stylesheets %}
