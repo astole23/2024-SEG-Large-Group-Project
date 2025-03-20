@@ -344,24 +344,25 @@ console.log("📂 User Documents:", userDocuments);
             <h2>Edit Online CV</h2>
             <span class="close-modal">&times;</span>
           </div>
-          <form id="cvForm" class="cv-form">
+          <form id="cvForm" class="cv-form" novalidate>
+
             <div class="form-section">
               <h3>1. Personal Information</h3>
               <div class="form-group">
                 <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" name="fullName" required>
+                <input type="text" id="fullName" name="fullName">
               </div>
               <div class="form-group">
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email">
               </div>
               <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required>
+                <input type="tel" id="phone" name="phone">
               </div>
               <div class="form-group">
                 <label for="address">Current Address (including postcode)</label>
-                <input type="text" id="address" name="address" required>
+                <input type="text" id="address" name="address" >
               </div>
             </div>
   
@@ -402,11 +403,11 @@ console.log("📂 User Documents:", userDocuments);
               <h3>5. Skills</h3>
               <div class="form-group">
                 <label for="keySkills">Key Skills</label>
-                <textarea id="keySkills" name="keySkills" placeholder="e.g., communication, teamwork" required></textarea>
+                <textarea id="keySkills" name="keySkills" placeholder="e.g., communication, teamwork"></textarea>
               </div>
               <div class="form-group">
                 <label for="technicalSkills">Technical Skills</label>
-                <textarea id="technicalSkills" name="technicalSkills" placeholder="e.g., Python, Excel, SQL" required></textarea>
+                <textarea id="technicalSkills" name="technicalSkills" placeholder="e.g., Python, Excel, SQL"></textarea>
               </div>
               <div class="form-group">
                 <label for="languages">Languages</label>
@@ -418,15 +419,15 @@ console.log("📂 User Documents:", userDocuments);
               <h3>6. Motivation</h3>
               <div class="form-group">
                 <label for="interest">Why are you interested in this internship? (250-500 words)</label>
-                <textarea id="interest" name="interest" required></textarea>
+                <textarea id="interest" name="interest" ></textarea>
               </div>
               <div class="form-group">
                 <label for="fitForRole">Why are you a good fit for this role? (skills, experiences)</label>
-                <textarea id="fitForRole" name="fitForRole" required></textarea>
+                <textarea id="fitForRole" name="fitForRole" ></textarea>
               </div>
               <div class="form-group">
                 <label for="aspirations">Career Aspirations</label>
-                <textarea id="aspirations" name="aspirations" required></textarea>
+                <textarea id="aspirations" name="aspirations"></textarea>
               </div>
             </div>
   
@@ -434,11 +435,11 @@ console.log("📂 User Documents:", userDocuments);
               <h3>7. Availability</h3>
               <div class="form-group">
                 <label for="startDate">Preferred Start Date</label>
-                <input type="date" id="startDate" name="startDate" required>
+                <input type="date" id="startDate" name="startDate" >
               </div>
               <div class="form-group">
                 <label for="duration">Internship Duration</label>
-                <input type="text" id="duration" name="duration" placeholder="e.g., 3 months, 6 months" required>
+                <input type="text" id="duration" name="duration" placeholder="e.g., 3 months, 6 months" >
               </div>
               <div class="form-group">
                 <label>Willingness to Relocate</label>
@@ -455,7 +456,7 @@ console.log("📂 User Documents:", userDocuments);
               <h3>8. References</h3>
               <div class="form-group">
                 <label for="reference1">Reference 1 (Name, Position, Company, Contact Details)</label>
-                <textarea id="reference1" name="reference1" required></textarea>
+                <textarea id="reference1" name="reference1" ></textarea>
               </div>
               <div class="form-group">
                 <label for="reference2">Reference 2 (optional)</label>
@@ -484,6 +485,27 @@ console.log("📂 User Documents:", userDocuments);
       </div>
 
     `;
+
+    // Remove all browser validation attributes (e.g., required, email pattern blocking)
+    setTimeout(() => {
+      document.querySelectorAll('#cvForm input, #cvForm textarea, #cvForm select').forEach(field => {
+        field.removeAttribute('required');
+        field.removeAttribute('pattern');
+        field.removeAttribute('min');
+        field.removeAttribute('max');
+      });
+    }, 0);
+    
+
+    cvForm.addEventListener('submit', (e) => {       
+      e.preventDefault(); // ✅ This skips native validation
+      showCVStatus("CV updated.", "success");
+      modal.style.display = 'none';
+    });
+
+
+    
+
 
     jobs => {
       renderJobListings(jobs);
@@ -566,8 +588,9 @@ console.log("📂 User Documents:", userDocuments);
         console.log("❌ Modal closed via close icon");
 
       });
-}
 
+}
+    
     const cancelEdit = document.getElementById('cancelEdit');
     if (cancelEdit) {
       cancelEdit.addEventListener('click', () => {
@@ -585,6 +608,7 @@ console.log("📂 User Documents:", userDocuments);
         modal.style.display = 'none';
       });
     }
+    removeValidationAttributes();
     const supportDocsContainer = document.getElementById('supportDocsContainer');
     if (supportDocsContainer) {
       supportDocsContainer.innerHTML = '';
@@ -722,15 +746,15 @@ console.log("📂 User Documents:", userDocuments);
           </div>
           <div class="form-group">
             <label for="university-${entryId}">University/Institution Name</label>
-            <input type="text" id="university-${entryId}" name="university" value="${data.university || ''}" required>
+            <input type="text" id="university-${entryId}" name="university" value="${data.university || ''}" >
           </div>
           <div class="form-group">
             <label for="degreeType-${entryId}">Degree Type</label>
-            <input type="text" id="degreeType-${entryId}" name="degreeType" placeholder="e.g., Bachelor's, Master's" value="${data.degreeType || ''}" required>
+            <input type="text" id="degreeType-${entryId}" name="degreeType" placeholder="e.g., Bachelor's, Master's" value="${data.degreeType || ''}">
           </div>
           <div class="form-group">
             <label for="fieldOfStudy-${entryId}">Field of Study</label>
-            <input type="text" id="fieldOfStudy-${entryId}" name="fieldOfStudy" value="${data.fieldOfStudy || ''}" required>
+            <input type="text" id="fieldOfStudy-${entryId}" name="fieldOfStudy" value="${data.fieldOfStudy || ''}" >
           </div>
           <div class="form-group">
             <label for="grade-${entryId}">Expected Grade</label>
@@ -738,7 +762,7 @@ console.log("📂 User Documents:", userDocuments);
           </div>
           <div class="form-group">
             <label for="eduDates-${entryId}">Start and End Dates</label>
-            <input type="text" id="eduDates-${entryId}" name="eduDates" value="${data.dates || ''}" required>
+            <input type="text" id="eduDates-${entryId}" name="eduDates" value="${data.dates || ''}" >
           </div>
           <div class="form-group">
             <label for="modules-${entryId}">Relevant Modules or Coursework (optional)</label>
@@ -759,19 +783,19 @@ console.log("📂 User Documents:", userDocuments);
           </div>
           <div class="form-group">
             <label for="employer-${entryId}">Employer Name</label>
-            <input type="text" id="employer-${entryId}" name="employer" value="${data.employer || ''}" required>
+            <input type="text" id="employer-${entryId}" name="employer" value="${data.employer || ''}" >
           </div>
           <div class="form-group">
             <label for="jobTitle-${entryId}">Job Title</label>
-            <input type="text" id="jobTitle-${entryId}" name="jobTitle" value="${data.jobTitle || ''}" required>
+            <input type="text" id="jobTitle-${entryId}" name="jobTitle" value="${data.jobTitle || ''}" >
           </div>
           <div class="form-group">
             <label for="workDates-${entryId}">Start and End Dates</label>
-            <input type="text" id="workDates-${entryId}" name="workDates" value="${data.dates || ''}" required>
+            <input type="text" id="workDates-${entryId}" name="workDates" value="${data.dates || ''}">
           </div>
           <div class="form-group">
             <label for="responsibilities-${entryId}">Responsibilities and Achievements</label>
-            <textarea id="responsibilities-${entryId}" name="responsibilities" required>${data.responsibilities || ''}</textarea>
+            <textarea id="responsibilities-${entryId}" name="responsibilities" >${data.responsibilities || ''}</textarea>
           </div>
         </div>
       `;
@@ -1023,88 +1047,54 @@ console.log("📂 User Documents:", userDocuments);
         showCVStatus("Error deleting CV", "danger");
       }
     }
-    
+
+
 
     function autofillCVForm(data) {
       if (!data) return;
-    
       console.log("🔄 Autofilling form with data:", data);
     
-      // =====================
-      // Smart skills splitting
-      // =====================
-      const rawSkills = data.Skills || '';
-      let technicalSkills = '';
-      let keySkills = '';
+      // --- Skills ---
+      const technical = data.skills?.technical_skills || data.technical_skills || '';
+      const key = data.skills?.key_skills || data.key_skills || '';
+      const langs = data.skills?.languages || data.languages || '';
     
-      const softSkillMarkers = ["soft skills", "non-technical skills", "transferable skills"];
-      let splitFound = false;
+      document.getElementById('technicalSkills').value = technical;
+      document.getElementById('keySkills').value = key;
+      document.getElementById('languages').value = langs;
     
-      softSkillMarkers.forEach(marker => {
-        const index = rawSkills.toLowerCase().indexOf(marker);
-        if (index !== -1 && !splitFound) {
-          technicalSkills = rawSkills.slice(0, index).trim();
-          keySkills = rawSkills.slice(index).replace(new RegExp(`${marker}:?`, 'i'), '').trim();
-          splitFound = true;
-        }
-      });
+      // --- Motivation Section ---
+      document.getElementById('interest').value = data.interest || data.motivation || data.motivation_statement || '';
+      document.getElementById('fitForRole').value = data.fit_for_role || '';
+      document.getElementById('aspirations').value = data.aspirations || data.career_aspirations || '';
     
-      if (!splitFound) {
-        technicalSkills = rawSkills;
+      // --- Personal Info (optional) ---
+      if (data.personalInfo || data.personal_info) {
+        const p = data.personalInfo || data.personal_info;
+        document.getElementById('fullName').value = p.fullName || '';
+        document.getElementById('email').value = p.email || '';
+        document.getElementById('phone').value = p.phone || '';
+        document.getElementById('address').value = p.address || '';
       }
     
-      // =====================
-      // Fill skill fields
-      // =====================
-      document.getElementById('technicalSkills').value = technicalSkills || '';
-      document.getElementById('keySkills').value = keySkills || '';
-    
-      // =====================
-      // Languages + Motivation
-      // =====================
-      document.getElementById('languages').value = data.Languages || '';
-      document.getElementById('interest').value = "Autofilled from CV";
-      document.getElementById('fitForRole').value = data["Experience & Education"] || '';
-      document.getElementById('aspirations').value = data.Projects || '';
-    
-      // =====================
-      // Personal Info (optional, if available)
-      // =====================
-      // Personal Info (from AI-parsed data)
-      if (data.personalInfo) {
-        const { fullName, email, phone, address } = data.personalInfo;
-        document.getElementById('fullName').value = fullName || '';
-        document.getElementById('email').value = email || '';
-        document.getElementById('phone').value = phone || '';
-        document.getElementById('address').value = address || '';
-      }
-
-    
-      // =====================
-      // Education
-      // =====================
-      const educationData = removeDuplicateEducation(data.education || data.Education || []);
+      // --- Education ---
+      const eduEntries = data.education || data.Education || [];
       const educationContainer = document.getElementById('educationEntries');
       educationContainer.innerHTML = '';
-
-      educationData.forEach(edu => {
-        const entryHTML = createEducationEntry(edu);
-        educationContainer.insertAdjacentHTML('beforeend', entryHTML);
+      removeDuplicateEducation(eduEntries).forEach(edu => {
+        educationContainer.insertAdjacentHTML('beforeend', createEducationEntry(edu));
       });
-
-      // =====================
-      // Work Experience
-      // =====================
-      const workData = removeDuplicateExperience(data.workExperience || data["Work Experience"] || []);
+    
+      // --- Experience ---
+      const expEntries = data.work_experience || data.WorkExperience || data["Work Experience"] || [];
       const workContainer = document.getElementById('workExperienceEntries');
       workContainer.innerHTML = '';
-
-      workData.forEach(exp => {
-        const entryHTML = createWorkExperienceEntry(exp);
-        workContainer.insertAdjacentHTML('beforeend', entryHTML);
+      removeDuplicateExperience(expEntries).forEach(exp => {
+        workContainer.insertAdjacentHTML('beforeend', createWorkExperienceEntry(exp));
       });
-
     }
+    
+    
     
     function showCVStatus(message, type = "success") {
       const alertBox = document.getElementById("cvStatusAlert");
@@ -1203,6 +1193,17 @@ console.log("📂 User Documents:", userDocuments);
       return true;
     });
   }
+  function removeValidationAttributes() {
+    const allFields = document.querySelectorAll('#cvForm input, #cvForm textarea, #cvForm select');
+    allFields.forEach(field => {
+      field.removeAttribute('required');
+      field.removeAttribute('pattern');
+      field.removeAttribute('min');
+      field.removeAttribute('max');
+    });
+    console.log("✅ Removed validation attributes from form fields");
+  }
+  
   
   
   
@@ -1229,4 +1230,6 @@ console.log("📂 User Documents:", userDocuments);
     // Now build the dashboard
     createDashboard();
     fetchRecommendedJobs();
+    
+
   });
