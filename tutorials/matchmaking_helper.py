@@ -108,20 +108,38 @@ def cosine_similarity_manual(vec1, vec2):
     norm2 = math.sqrt(sum(b * b for b in vec2))
     return dot_product / (norm1 * norm2) if norm1 and norm2 else 0.0
 
-def match_job_to_cv_together(job_title, cv_job_titles):
-    """Match job title with CV job titles using Together AI embeddings in a single API call."""
-
-    if not job_title or not cv_job_titles:
+def match_job_to_cv_together(cv_items, job_titles):
+    """Match job titles using Together AI embeddings (CV → Job Titles)."""
+    if not cv_items or not job_titles:
+        print("⚠️ match_job_to_cv_together: Missing input data.")
         return []
 
-    # Step 1: Compute AI-based similarity scores
-    all_texts = job_title + cv_job_titles
+    # Combine CV info into a single search string
+    cv_query = " ".join(item.strip() for item in cv_items if item)
+    if not cv_query:
+        print("⚠️ match_job_to_cv_together: Empty CV query.")
+        return []
+
+    # Send CV query + job titles as input to get embeddings
+    all_texts = [cv_query] + job_titles
     embeddings = get_embeddings(all_texts)
 
-    job_embedding = embeddings[0]
-    cv_embeddings = embeddings[1:]
+    if not embeddings or len(embeddings) < 2:
+        print("❌ match_job_to_cv_together: Failed to get valid embeddings.")
+        return []
 
-    similarities = [cosine_similarity_manual(job_embedding, emb) for emb in cv_embeddings]
+    try:
+        job_embedding = embeddings[0]
+        job_title_embeddings = embeddings[1:]
 
-    # Step 2: Sort results by similarity
-    return sorted(zip(cv_job_titles, similarities), key=lambda x: x[1], reverse=True)
+        similarities = [
+            cosine_similarity_manual(job_embedding, emb)
+            for emb in job_title_embeddings
+        ]
+
+        # Pair job titles with their scores
+        return sorted(zip(job_titles, similarities), key=lambda x: x[1], reverse=True)
+
+    except Exception as e:
+        print(f"❌ Error in similarity computation: {e}")
+        return []
