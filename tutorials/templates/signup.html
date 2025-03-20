@@ -78,7 +78,7 @@
       
           <div class="form-group">
             
-              <input id="location-input" name="user_location" type="text" class="tab-pane active" placeholder="Location">
+              {{ user_form.user_location }}
               {% if user_form.user_location.errors %}
                   <div class="error">{{ user_form.user_location.errors }}</div>
               {% endif %}

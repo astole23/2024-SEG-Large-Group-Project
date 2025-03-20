@@ -7,6 +7,8 @@ from .models.standard_cv import CVApplication
 from django.contrib.auth.forms import PasswordChangeForm
 
 
+
+
 User = get_user_model()
 
 # Form to edit or create a complete company profile (for company users)
@@ -63,6 +65,10 @@ class UserLoginForm(AuthenticationForm):
         'class': 'form-control',
         'placeholder': 'Password'
     }))
+    remember_me = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
 
 class CompanyLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
@@ -73,6 +79,10 @@ class CompanyLoginForm(AuthenticationForm):
         'class': 'form-control',
         'placeholder': 'Password'
     }))
+    remember_me = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
 
 class UserSignUpForm(UserCreationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={

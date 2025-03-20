@@ -35,6 +35,7 @@
     background-color: var(--background-color);
     color: var(--text-primary);
     line-height: 1.5;
+    margin-top: 130px;
   }
 
   /* Wrapper container that holds main content and footer */
@@ -48,17 +49,22 @@
   /* Main content area which will expand as needed */
   .main-content {
     flex: 1;
+    padding-top: 120px;
   }
 
 
   /* Header and Navigation */
   .top-nav {
-    background:  white;
+    background: white;
     padding: 0rem 1rem;
     border-bottom: 1px solid var(--border-color);
-    justify-content: space-between;
+    display: flex;  
+    justify-content: space-between;  
     align-items: center;
     position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
   }
 
   /* LOGO */
@@ -68,33 +74,13 @@
     display: block;
   }
 
-  /* SEARCH */
-  .search-container {
-    position: relative;
-    width: 300px;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 0.5rem 1rem 0.5rem 2rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    outline: none;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-secondary);
-  }
-
   /* USER ACTION BUTTONS */
   .user-actions {
     display: flex;
+    flex: 1 1 auto;
     gap: 1rem;
     align-items: center;
+    justify-content: flex-end;
   }
 
   .login-btn {

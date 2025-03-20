@@ -147,49 +147,48 @@
               <h3>Education</h3>
             </div>
             <div class="review-section-content">
-              <div class="review-item">
-                <div class="review-item-label">Institution:</div>
-                <div class="review-item-value">{{ application_data.institution }}</div>
-              </div>
-              <div class="review-item">
-                <div class="review-item-label">Degree/Qualification:</div>
-                <div class="review-item-value">{{ application_data.degree }}</div>
-              </div>
-              <div class="review-item">
-                <div class="review-item-label">Start Date:</div>
-                <div class="review-item-value">{{ application_data.edu_start }}</div>
-              </div>
-              <div class="review-item">
-                <div class="review-item-label">End Date:</div>
-                <div class="review-item-value">{{ application_data.edu_end }}</div>
-              </div>
+              {% for edu in application_data.education_list %}
+                <div class="review-item">
+                  <div class="review-item-label">Institution:</div>
+                  <div class="review-item-value">{{ edu.university }}</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-item-label">Degree:</div>
+                  <div class="review-item-value">{{ edu.degreeType }}</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-item-label">Dates:</div>
+                  <div class="review-item-value">{{ edu.dates }}</div>
+                </div>
+                <hr>
+              {% endfor %}
             </div>
           </div>
-          
+
           <!-- Work Experience Section -->
           <div class="review-section">
             <div class="review-section-header">
               <h3>Work Experience</h3>
             </div>
             <div class="review-section-content">
-              <div class="review-item">
-                <div class="review-item-label">Company:</div>
-                <div class="review-item-value">{{ application_data.company_name_exp }}</div>
-              </div>
-              <div class="review-item">
-                <div class="review-item-label">Position:</div>
-                <div class="review-item-value">{{ application_data.position }}</div>
-              </div>
-              <div class="review-item">
-                <div class="review-item-label">Start Date:</div>
-                <div class="review-item-value">{{ application_data.work_start }}</div>
-              </div>
-              <div class="review-item">
-                <div class="review-item-label">End Date:</div>
-                <div class="review-item-value">{{ application_data.work_end }}</div>
-              </div>
+              {% for exp in application_data.work_experience_list %}
+                <div class="review-item">
+                  <div class="review-item-label">Company:</div>
+                  <div class="review-item-value">{{ exp.employer_name }}</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-item-label">Position:</div>
+                  <div class="review-item-value">{{ exp.job_title }}</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-item-label">Dates:</div>
+                  <div class="review-item-value">{{ exp.dates }}</div>
+                </div>
+                <hr>
+              {% endfor %}
             </div>
           </div>
+
           
           <!-- Skills Section -->
           <div class="review-section">
@@ -197,14 +196,21 @@
               <h3>Skills</h3>
             </div>
             <div class="review-section-content">
-              {% for skill in application_data.skills %}
-              <div class="review-item">
-                <div class="review-item-label">Skill:</div>
-                <div class="review-item-value">{{ skill }}</div>
-              </div>
-              {% endfor %}
+              {% if application_data.skills %}
+                {% for skill in application_data.skills %}
+                  <div class="review-item">
+                    <div class="review-item-label">Skill:</div>
+                    <div class="review-item-value">{{ skill }}</div>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="review-item">
+                  <div class="review-item-label">No skills provided.</div>
+                </div>
+              {% endif %}
             </div>
           </div>
+
           
           <!-- Job Specific Questions Section -->
           <div class="review-section">
