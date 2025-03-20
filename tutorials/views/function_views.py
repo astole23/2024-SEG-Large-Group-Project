@@ -7,6 +7,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
+from tutorials.models.user_dashboard import UploadedCV
+from django.http import JsonResponse
 
 def process_login(request):
     if request.method == 'POST':
@@ -123,3 +125,17 @@ def split_skills(skills_list):
         else:
             soft.append(skill)
     return technical, soft
+
+
+def delete_raw_cv(request):
+    if request.method == 'POST':
+        try:
+            cv = UploadedCV.objects.get(user=request.user)
+            cv.file.delete(save=False)
+            cv.delete()
+            return JsonResponse({"success": True})
+        except UploadedCV.DoesNotExist:
+            return JsonResponse({"success": False, "error": "No CV found."})
+    return JsonResponse({"success": False, "error": "Invalid request."})
+
+
