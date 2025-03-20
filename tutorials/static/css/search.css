@@ -147,6 +147,19 @@ body {
     transition: all 0.3s ease-in-out;
 }
 
+.filters .apply-filter-item button {
+    background: var(--selected-color);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    flex-direction: column;
+}
+
 .salary-buttons button:hover,
 .filters .filter-item button:hover {
     background: linear-gradient(135deg, #4b0082, #6a0dad);
@@ -164,8 +177,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--primary-color);
+    background: var(--selected-color);
     color: white;
+    flex-direction: column;
 }
 
 .filters .filter-item a.btn-primary:hover {

@@ -173,11 +173,11 @@
       </div>
   
       <!-- Apply and Clear Buttons -->
-      <div class="filter-item">
+      <div class="apply-filter-item">
         <button type="submit" class="btn btn-primary">Apply Filters</button>
-      </div>
-      <div class="filter-item">
-        <a href="{% url 'search' %}" class="btn btn-primary">Clear Filters</a>
+        <a href="{% url 'search' %}">
+          <button class="apply-filter-item mt-2">Clear Filters</button>
+        </a>
       </div>
     </div>
   </form>
