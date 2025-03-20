@@ -2,36 +2,26 @@
 {% load static %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/accessibility.css' %}">
+<link rel="stylesheet" href="{% static 'css/privacy.css' %}">
 
-<div class="container">
-    <div class="accessibility-header">
-        <h1>Accessibility Statement</h1>
-        <p>We are committed to making our platform accessible for everyone.</p>
-    </div>
+<div class="privacy-background" style="padding: 3rem 2rem; min-height: auto;">
+    <div class="privacy-content" style="padding: 1.5rem 2rem; max-height: none;">
+        <h2 class="text-center">Accessibility Statement</h2>
+        <p class="text-center">We are committed to making our platform accessible for everyone.</p>
 
-    <div class="accessibility-section">
-        <h2>Keyboard Navigation</h2>
+        <h3>1. Keyboard Navigation</h3>
         <p>All elements are accessible using keyboard shortcuts. Use <kbd>Tab</kbd> to navigate and <kbd>Enter</kbd> to select.</p>
-    </div>
 
-    <div class="accessibility-section">
-        <h2>Screen Reader Support</h2>
+        <h3>2. Screen Reader Support</h3>
         <p>Our site is optimized for screen readers, ensuring a seamless experience for visually impaired users.</p>
-    </div>
 
-    <div class="accessibility-section">
-        <h2>Contrast & Readability</h2>
+        <h3>3. Contrast & Readability</h3>
         <p>We use high-contrast text and customizable font sizes to improve readability for all users.</p>
-    </div>
 
-    <div class="accessibility-section">
-        <h2>Alternative Text for Images</h2>
+        <h3>4. Alternative Text for Images</h3>
         <p>All images include descriptive alt text to assist visually impaired users.</p>
-    </div>
 
-    <div class="accessibility-section">
-        <h2>Accessibility Feedback</h2>
+        <h3>5. Accessibility Feedback</h3>
         <p>If you experience any accessibility issues, please <a href="{% url 'contact_us' %}">contact us</a>.</p>
     </div>
 </div>
