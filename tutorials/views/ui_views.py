@@ -12,6 +12,7 @@ from tutorials.models.company_review import Review
 from django.contrib.auth import get_user_model
 from django.utils.dateparse import parse_date
 import traceback
+from django.db import transaction
 from django.utils.timezone import localtime
 from tutorials.forms import (
     UserLoginForm, CompanyLoginForm,
@@ -313,10 +314,8 @@ def signup_view(request):
 
         else:
             user_form = UserSignUpForm(request.POST, prefix='user')
-            print(f"📋 User form valid? {user_form.is_valid()}")  # Check if form is valid
 
             if user_form.is_valid():
-                print("✅ User form passed validation")
                 user = user_form.save(commit=False)
                 user.user_industry = user_form.cleaned_data['user_industry'].split(',')
                 user.user_location = user_form.cleaned_data['user_location'].split(',')
@@ -326,23 +325,16 @@ def signup_view(request):
                 user.is_company = False  # Ensure this is set
                 user.save()
 
-                print(f"🔑 Saved user: {user.username}, ID: {user.id}")
 
                 # Authenticate AFTER saving
                 authenticated_user = authenticate(username=user.username, password=user_form.cleaned_data['password1'])
 
-                print(f"🔍 Authenticate returned: {authenticated_user}")  # See what authenticate() returns
 
                 if authenticated_user:
-                    print(f"✅ User authenticated: {authenticated_user.username}")
                     login(request, authenticated_user)
                     return redirect('user_dashboard')
-                else:
-                    print(f"❌ Authentication failed for {user.username}")
-                    print(f"🔍 Saved Password Hash: {user.password}")  # Debugging
-
+                
     else:
-        print("🟢 GET request received, rendering signup page")
         user_form = UserSignUpForm(prefix='user')
         company_form = CompanySignUpForm(prefix='company')
 
@@ -997,37 +989,33 @@ def profile_settings(request):
     if request.method == 'POST':
         if 'update_details' in request.POST:
             details_form = UserUpdateForm(request.POST, instance=request.user)
-            password_form = MyPasswordChangeForm(user=request.user)  # blank
+            password_form = MyPasswordChangeForm(user=request.user)
             if details_form.is_valid():
                 details_form.save()
                 messages.success(request, "Your details have been updated.")
                 return redirect('settings')
             else:
-                error_list = []
-                for field, errors in details_form.errors.items():
-                    error_list.append(f"{field}: {', '.join(errors)}")
-                error_message = " ".join(error_list)
-                print("Details form errors:", error_message)
-                messages.error(request, "Update failed: " + error_message)
+                messages.error(request, "Update failed.")
+        
         elif 'change_password' in request.POST:
-            details_form = UserUpdateForm(instance=request.user)  # keep details form intact
+            details_form = UserUpdateForm(instance=request.user)
             password_form = MyPasswordChangeForm(user=request.user, data=request.POST)
             if password_form.is_valid():
-                old_hash = request.user.password  # Debug: print the current password hash
-                user = password_form.save()  # This should update the password
-                new_hash = user.password      # Debug: print the new password hash
-                print("Old hash:", old_hash)
-                print("New hash:", new_hash)
+                user = password_form.save()
                 update_session_auth_hash(request, user)
                 messages.success(request, "Your password has been changed.")
                 return redirect('settings')
             else:
-                error_list = []
-                for field, errors in password_form.errors.items():
-                    error_list.append(f"{field}: {', '.join(errors)}")
-                error_message = " ".join(error_list)
-                print("Password form errors:", error_message)
-                messages.error(request, "Password change failed: " + error_message)
+                messages.error(request, "Password change failed.")
+
+        elif 'delete_account' in request.POST:
+            user = request.user
+            username = user.username
+            user.delete()
+            logout(request)
+            messages.success(request, f"Account '{username}' has been deleted successfully.")
+            return redirect('guest')
+
     else:
         details_form = UserUpdateForm(instance=request.user)
         password_form = MyPasswordChangeForm(user=request.user)
@@ -1037,25 +1025,30 @@ def profile_settings(request):
         'password_form': password_form,
     })
 
-
 @login_required
 def delete_account(request):
     """Allow a logged-in user to delete their own account."""
     if request.method == 'POST':
         user = request.user
         username = user.username
-        user.delete()
-        logout(request)
-        messages.success(request, f"Account '{username}' has been deleted successfully.")
+        try:
+            with transaction.atomic():
+                user.delete()
+                logout(request)
+                messages.success(request, f"Account '{username}' has been deleted successfully.")
+        except Exception as e:
+            messages.error(request, "An error occurred while deleting your account.")
 
         return redirect('guest')
     return render(request, 'confirm_delete_account.html')
+
 
 def help_centre(request):
     return render(request, 'help_centre.html')
 
 def accessibility(request):
     return render(request, 'accessibility.html')
+
 @login_required
 def add_job_by_code(request):
     if request.method != 'POST':
