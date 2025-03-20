@@ -74,6 +74,8 @@ urlpatterns = [
     path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
     path('job-postings/', ui_views.search, name='search',),
 
+    path('job_recommendation/', job_search.job_recommendation, name='job_recommendation'),
+
     path('api/tracked-jobs/', ui_views.tracked_jobs_api, name='tracked_jobs_api'),
     path('add-job-by-code/', ui_views.add_job_by_code, name='add_job_by_code'),
 

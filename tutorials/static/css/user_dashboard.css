@@ -498,9 +498,25 @@ body {
   text-decoration: none;
 }
 
-.btn-primary {
-  background-color: var(--primary-color);
-  color: white;
+/* Fix for button color */
+.btn, .btn-primary {
+  display: inline-block;
+  padding: 8px 15px;
+  background-color: #007bff !important; /* Force blue */
+  color: white !important; /* Ensure white text */
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  transition: background 0.3s ease;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+}
+
+.btn:hover, .btn-primary:hover {
+  background-color: #0056b3 !important; /* Darker blue on hover */
+  color: white !important;
 }
 
 .btn-outline {

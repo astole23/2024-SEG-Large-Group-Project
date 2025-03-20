@@ -13,86 +13,163 @@ console.log("📄 Raw CV Info:", rawCVInfo);
 console.log("📂 User Documents:", userDocuments);
 
 
-// Your existing code can then use these variables...
-// For example, if you fetch job postings:
-function fetchJobPostings() {
-  return fetch('/api/job_postings/')
+  function fetchRecommendedJobs() {
+    console.log("🚀 Fetching recommended jobs...");
+  
+    fetch('/job_recommendation/', {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
     .then(response => response.json())
+    .then(data => {
+      console.log("✅ Received recommended jobs:", data);
+  
+      const suggestedJobsContainer = document.getElementById('suggested-jobs');
+      suggestedJobsContainer.innerHTML = ''; // Clear existing jobs
+  
+      if (!data.recommended_jobs || data.recommended_jobs.length === 0) {
+        console.log("⚠️ No recommended jobs found.");
+        suggestedJobsContainer.innerHTML = '<p style="color: gray;">No recommended jobs available.</p>';
+        return;
+      }
+  
+      data.recommended_jobs.forEach(job => {
+        // ✅ Create job card with full details
+        const jobElement = document.createElement('div');
+        jobElement.className = 'job-card';
+        jobElement.innerHTML = `
+          <h5 class="job-title">${job.job_title}</h5>
+          <p class="company-name">${job.company_name}</p>
+          <p class="location"><span>📍</span> ${job.location}</p>
+          <p class="pay-contract">${job.salary_range} | ${job.contract_type}</p>
+          <p class="job-overview"><strong>Overview:</strong> ${job.job_overview || 'No overview available'}</p>
+          <p class="roles-responsibilities"><strong>Responsibilities:</strong> ${job.roles_responsibilities || 'Not specified'}</p>
+          <p class="required-skills"><strong>Skills Required:</strong> ${job.required_skills || 'Not listed'}</p>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
+            View &amp; Apply
+          </button>
+        `;
+        suggestedJobsContainer.appendChild(jobElement);
+  
+        // ✅ Create Bootstrap modal for detailed job info
+        const modalDiv = document.createElement('div');
+        modalDiv.className = 'modal fade';
+        modalDiv.id = `jobModal${job.id}`;
+        modalDiv.tabIndex = -1;
+        modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
+        modalDiv.setAttribute('aria-hidden', 'true');
+        modalDiv.innerHTML = `
+          <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+              <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+                <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p><strong>Company:</strong> ${job.company_name}</p>
+                <p><strong>Location:</strong> ${job.location}</p>
+                <p><strong>Salary:</strong> ${job.salary_range}</p>
+                <p><strong>Contract:</strong> ${job.contract_type || ''}</p>
+                <p><strong>Overview:</strong> ${job.job_overview || 'No overview available'}</p>
+                <p><strong>Roles & Responsibilities:</strong> ${job.roles_responsibilities || 'Not specified'}</p>
+                <p><strong>Required Skills:</strong> ${job.required_skills || 'Not listed'}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modalDiv);
+      });
+  
+      // ✅ Preserve the "View all suggestions" button
+      const viewAllButton = document.createElement('a');
+      viewAllButton.href = '/job-postings_view/';
+      viewAllButton.className = 'view-all btn btn-primary';
+      viewAllButton.textContent = 'View all suggestions';
+      suggestedJobsContainer.appendChild(viewAllButton);
+    })
     .catch(error => {
-      console.error('Error fetching job postings:', error);
-      // Fallback mock data
-      return [
-        { id: 1, job_title: 'React Developer', company_name: 'Apple', location: 'Cupertino, CA', salary_range: '$120k - $180k', contract_type: 'Full-time', job_overview: 'Develop user interfaces...', roles_responsibilities: 'Build components, debug code...', required_skills: 'React, JavaScript' },
-        { id: 2, job_title: 'Frontend Engineer', company_name: 'Meta', location: 'Remote', salary_range: '$130k - $190k', contract_type: 'Contract', job_overview: 'Design modern web apps...', roles_responsibilities: 'UI design, testing...', required_skills: 'HTML, CSS, JS' },
-        { id: 3, job_title: 'Full Stack Developer', company_name: 'Amazon', location: 'Seattle, WA', salary_range: '$140k - $200k', contract_type: 'Full-time', job_overview: 'Work across the stack...', roles_responsibilities: 'API design, integration...', required_skills: 'Python, React, SQL' }
-      ];
+      console.error("❌ Error fetching recommended jobs:", error);
     });
-}
+  }
+  
 
-
-
-function renderJobListings(jobs) {
-  const listingsContainer = document.getElementById('temporary-job-listings-container');
-  listingsContainer.innerHTML = ''; // Clear any existing content
-
-  jobs.forEach(job => {
-    // Create job card
-    const card = document.createElement('div');
-    card.className = 'job-card';
-    card.innerHTML = `
-      <h5 class="job-title">${job.job_title}</h5>
-      <p class="company-name">${job.company_name}</p>
-      <p class="location"><span>📍</span> ${job.location}</p>
-      <p class="pay-contract">${job.salary_range} | ${job.contract_type}</p>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
-        View &amp; Apply
-      </button>
-    `;
-    listingsContainer.appendChild(card);
-
-    // Create Bootstrap modal
-    const modalDiv = document.createElement('div');
-    modalDiv.className = 'modal fade';
-    modalDiv.id = `jobModal${job.id}`;
-    modalDiv.tabIndex = -1;
-    modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
-    modalDiv.setAttribute('aria-hidden', 'true');
-    modalDiv.innerHTML = `
-      <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-          <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-            <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p><strong>Company:</strong> ${job.company_name}</p>
-            <p><strong>Location:</strong> ${job.location}</p>
-            <p><strong>Salary:</strong> ${job.salary_range}</p>
-            <p><strong>Contract:</strong> ${job.contract_type || ''}</p>
-            <p><strong>Job Overview:</strong> ${job.job_overview || ''}</p>
-            <p><strong>Roles &amp; Responsibilities:</strong> ${job.roles_responsibilities || ''}</p>
-            <p><strong>Required Skills:</strong> ${job.required_skills || ''}</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
+  function renderJobListings(jobs) {
+    const listingsContainer = document.getElementById('temporary-job-listings-container');
+    listingsContainer.innerHTML = ''; // Clear any existing content
+  
+    jobs.forEach(job => {
+      // Create job card
+      const card = document.createElement('div');
+      card.className = 'job-card';
+      card.innerHTML = `
+        <h5 class="job-title">${job.job_title}</h5>
+        <p class="company-name"><strong>Company:</strong> ${job.company_name}</p>
+        <p class="location"><span>📍</span> ${job.location}</p>
+        <p class="pay-contract"><strong>Salary:</strong> ${job.salary_range} | <strong>Contract:</strong> ${job.contract_type}</p>
+        <p class="work-type"><strong>Work Type:</strong> ${job.work_type || 'N/A'}</p>
+        <p class="deadline"><strong>Deadline:</strong> ${job.application_deadline || 'N/A'}</p>
+  
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
+          View & Apply
+        </button>
+      `;
+      listingsContainer.appendChild(card);
+  
+      // Create Bootstrap modal
+      const modalDiv = document.createElement('div');
+      modalDiv.className = 'modal fade';
+      modalDiv.id = `jobModal${job.id}`;
+      modalDiv.tabIndex = -1;
+      modalDiv.setAttribute('aria-labelledby', `jobModalLabel${job.id}`);
+      modalDiv.setAttribute('aria-hidden', 'true');
+      modalDiv.innerHTML = `
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+          <div class="modal-content">
+            <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+              <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Company:</strong> ${job.company_name}</p>
+              <p><strong>Location:</strong> ${job.location}</p>
+              <p><strong>Work Type:</strong> ${job.work_type || 'N/A'}</p>
+              <p><strong>Salary:</strong> ${job.salary_range}</p>
+              <p><strong>Contract:</strong> ${job.contract_type || ''}</p>
+              <p><strong>Deadline:</strong> ${job.application_deadline || 'N/A'}</p>
+              <hr>
+              <h6><strong>Job Overview</strong></h6>
+              <p>${job.job_overview || 'Not provided.'}</p>
+              <h6><strong>Roles & Responsibilities</strong></h6>
+              <p>${job.roles_responsibilities || 'Not provided.'}</p>
+              <h6><strong>Required Skills</strong></h6>
+              <p>${job.required_skills || 'Not provided.'}</p>
+              <h6><strong>Preferred Skills</strong></h6>
+              <p>${job.preferred_skills || 'Not provided.'}</p>
+              <h6><strong>Education Required</strong></h6>
+              <p>${job.education_required || 'Not specified.'}</p>
+              <h6><strong>Perks</strong></h6>
+              <p>${job.perks || 'Not specified.'}</p>
+              <hr>
+              <h6><strong>About the Company</strong></h6>
+              <p><strong>Overview:</strong> ${job.company_overview || 'Not provided.'}</p>
+              <p><strong>Why Join Us:</strong> ${job.why_join_us || 'Not provided.'}</p>
+              <p><strong>Reviews:</strong> ${job.company_reviews || 'No reviews available.'}</p>
+              <p class="text-muted"><small>Posted on ${job.created_at || 'N/A'}</small></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
+            </div>
           </div>
         </div>
-      </div>
-    `;
-    document.body.appendChild(modalDiv);
-  });
-
-  // ✅ Add View All Suggestions button once listings are rendered
-  const suggestedJobsContainer = document.getElementById('suggested-jobs');
-  if (suggestedJobsContainer) {
-    const viewAllButton = document.createElement('a');
-    viewAllButton.href = '/job-postings_view/';
-    viewAllButton.className = 'view-all btn btn-primary';
-    viewAllButton.textContent = 'View all suggestions';
-    suggestedJobsContainer.appendChild(viewAllButton);
+      `;
+      document.body.appendChild(modalDiv);
+    });
   }
-}
+  
   console.log("Parsed CV from backend:", mockCV);
 
   function createDashboard() {
@@ -283,7 +360,6 @@ function renderJobListings(jobs) {
           <section class="suggested-jobs">
             <h2>Suggested Jobs</h2>
             <div id="suggested-jobs"></div>
-            <a href="#" class="view-all">View all suggestions</a>
           </section>
           <div class="quick-actions">
             <button class="btn btn-primary" id="uploadAutoCvBtn">Autofill CV</button>
@@ -294,12 +370,6 @@ function renderJobListings(jobs) {
           </div>
         </aside>
       </div>
-
-      <!-- Temporary section for testing available job listings -->
-      <section class="temporary-job-listings">
-        <h2>Available Job Listings (Temporary)</h2>
-        <div id="temporary-job-listings-container"></div>
-      </section>
   
       <!-- CV Edit Modal -->
       <div id="cvModal" class="modal">
@@ -449,26 +519,10 @@ function renderJobListings(jobs) {
 
     `;
 
-    fetchJobPostings().then(jobs => {
+    jobs => {
       renderJobListings(jobs);
-    });
+    }
   
-    // Populate suggested jobs
-    const suggestedJobsContainer = document.getElementById('suggested-jobs');
-    mockJobs.forEach(job => {
-      const jobElement = document.createElement('div');
-      jobElement.className = 'job-card';
-      jobElement.innerHTML = `
-        <h3 class="job-title">${job.title}</h3>
-        <p class="company-name">${job.company}</p>
-        <div class="job-location">
-          <span>📍</span>
-          ${job.location}
-        </div>
-        <p class="salary-range">${job.salary}</p>
-      `;
-      suggestedJobsContainer.appendChild(jobElement);
-    });
 
     const viewApplicationsBtn = document.getElementById('viewApplicationsBtn');
     if (viewApplicationsBtn) {
@@ -1208,4 +1262,5 @@ function renderJobListings(jobs) {
   
     // Now build the dashboard
     createDashboard();
+    fetchRecommendedJobs();
   });
