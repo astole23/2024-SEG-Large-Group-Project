@@ -68,6 +68,8 @@ urlpatterns = [
     path('upload_raw_cv/', ui_views.upload_raw_cv, name='upload_raw_cv'),
     path("upload_user_document/", ui_views.get_user_documents, name="upload_user_document"),
     path("delete_user_document/", ui_views.delete_user_document, name="delete_user_document"),
+    path('delete_raw_cv/', ui_views.delete_raw_cv, name='delete_raw_cv'),
+
     # Company applications
     path('company/applications/', ui_views.company_applications, name='company_applications'),
     path('company/applications/<int:application_id>/', ui_views.company_application_detail, name='company_application_detail'),
