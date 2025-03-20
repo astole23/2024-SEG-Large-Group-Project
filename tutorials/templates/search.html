@@ -197,7 +197,7 @@
       <div class="header">
         <div class="row">
           <div class="col-md-6">
-            <h4>Search Results</h4>
+            <h4 class="search-header">Search Results:</h4>
           </div>
         </div>
       </div>
@@ -231,7 +231,7 @@
   
           </div>
           {% empty %}
-          <p>No job postings found matching the applied filters.</p>
+          <p class ="search-message">No job postings found matching applied filters.</p>
           {% endfor %}
         </div>
     </div>
@@ -321,6 +321,31 @@
       </div>
     </div>
   {% endfor %}
+
+  <div class="pagination-container">
+    <div class="pagination">
+      <div class="step-links">
+        {% if job_postings.has_previous %}
+          <a href="?page={{ job_postings.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_education %}&education_required={{ selected_education|join:"," }}{% endif %}{% if selected_job_types %}&job_type={{ selected_job_types|join:"," }}{% endif %}{% if selected_industries %}&industry={{ selected_industries|join:"," }}{% endif %}{% if selected_locations %}&location_filter={{ selected_locations|join:"," }}{% endif %}{% if selected_perks %}&benefits={{ selected_perks|join:"," }}{% endif %}{% if selected_work_flexibility %}&work_flexibility={{ selected_work_flexibility|join:"," }}{% endif %}{% if selected_salary %}&salary_range={{ selected_salary }}{% endif %}"> < </a>
+        {% endif %}
+        {% if not job_postings.has_next%}
+          <a> > </a>
+        {% endif %}
+        {% if not job_postings.has_previous%}
+          <a> < </a>
+        {% endif %}
+        {% if job_postings.has_next %}
+          <a href="?page={{ job_postings.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_education %}&education_required={{ selected_education|join:"," }}{% endif %}{% if selected_job_types %}&job_type={{ selected_job_types|join:"," }}{% endif %}{% if selected_industries %}&industry={{ selected_industries|join:"," }}{% endif %}{% if selected_locations %}&location_filter={{ selected_locations|join:"," }}{% endif %}{% if selected_perks %}&benefits={{ selected_perks|join:"," }}{% endif %}{% if selected_work_flexibility %}&work_flexibility={{ selected_work_flexibility|join:"," }}{% endif %}{% if selected_salary %}&salary_range={{ selected_salary }}{% endif %}"> > </a>
+        {% endif %}
+      </div>
+      <div class="page-info">
+        <span class="current">
+          Page {{ job_postings.number }} of {{ job_postings.paginator.num_pages }}
+        </span>
+      </div>
+    </div>
+  </div>
+  
   
   <!-- Bootstrap JS and Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

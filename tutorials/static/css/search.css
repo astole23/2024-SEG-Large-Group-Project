@@ -282,3 +282,111 @@ body {
     transform: scale(1.05); /* Slight zoom effect */
   }
   
+/* Adjusting the grid-container to have four columns */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Creates four equal-width columns */
+    gap: 20px; /* Adjust the spacing between the grid items */
+    margin-top: 20px;
+    margin: 20px;
+}
+
+.grid-button {
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.grid-button:hover {
+    transform: scale(1.05);
+}
+
+/* Applied Filters Styling */
+.search-filters {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+}
+
+/* Styling for Search Results header */
+.search-header {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    font-weight: bold;
+    text-align: left;
+    margin-top: 50px;
+    margin-left: 20px;
+}
+
+/* Styling for "No job postings found" message */
+.search-message {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    text-align: left;
+    margin-left: 20px;
+}
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: column; /* Stack the elements vertically */
+    gap: 10px;
+    align-items: center; /* Center the buttons */
+}
+
+.page-info {
+    font-size: 16px; /* Adjust as needed */
+    text-align: center;
+}
+
+.step-links {
+    display: flex;
+    gap: 10px;
+}
+
+.step-links a {
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    color: #fff;
+    background-color: var(--primary-color); /* Purple background */
+    font-size: 14px; /* Adjust font size if needed */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect for the links */
+.step-links a:hover {
+    background: linear-gradient(135deg, #4b0082, #6a0dad);; /* Darker purple on hover */
+    color: #fff; /* Ensure text stays white on hover */
+}
+
+.step-links .previous, .step-links .next {
+    background: linear-gradient(135deg, #4b0082, #6a0dad); /* Purple color */
+}
+
+.step-links .previous:hover, .step-links .next:hover {
+    background: linear-gradient(135deg, #4b0082, #6a0dad); /* Darker purple on hover */
+}
+
+
+
+/* Make the grid responsive: stacks into 1 column on small screens */
+@media (max-width: 1200px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr; /* Stack into a single column on smaller screens */
+    }
+}

@@ -221,6 +221,10 @@ def search(request):
     if selected_salary:
         job_postings = job_postings.filter(salary_range__gte=selected_salary)
 
+    paginator = Paginator(job_postings, 12)  # 10 job postings per page
+    page_number = request.GET.get('page')
+    job_postings = paginator.get_page(page_number)
+
     context = {
         'query': query,
         'selected_education': selected_education,
@@ -241,9 +245,6 @@ def search(request):
     print("Selected job types:", selected_job_types)
     print("Job postings count before filtering:", JobPosting.objects.count())
 
-    if query:
-        job_postings = job_postings.filter(job_title__icontains=query)
-        print("Count after query filter:", job_postings.count())
     return render(request, 'search.html', context)
 
 def about_us(request):
