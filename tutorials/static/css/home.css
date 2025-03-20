@@ -65,6 +65,7 @@ body {
     font-size: 1.25rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-weight: bold;
 }
 
 .search-bar button:hover {
