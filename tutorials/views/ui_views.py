@@ -1037,6 +1037,23 @@ def profile_settings(request):
         'password_form': password_form,
     })
 
+@csrf_exempt
+@login_required
+@require_POST
+def delete_raw_cv(request):
+    try:
+        uploaded_cv = UploadedCV.objects.filter(user=request.user).first()
+        if uploaded_cv and uploaded_cv.file:
+            # Delete the file from storage
+            if os.path.exists(uploaded_cv.file.path):
+                os.remove(uploaded_cv.file.path)
+            uploaded_cv.delete()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'error': 'No uploaded CV found.'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
 
 @login_required
 def delete_account(request):
