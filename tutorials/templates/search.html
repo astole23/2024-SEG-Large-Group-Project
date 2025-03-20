@@ -77,21 +77,49 @@
           </div>
         </div>
       </div>
-  
+
       <!-- Salary Range Filter -->
       <div class="filter-item">
         <label><i class="fa fa-credit-card" aria-hidden="true"></i> Min Salary Range (Annual GBP)</label>
         <input type="range" class="form-range" id="salary_range_slider" min="20000" max="100000" step="5000" value="{{ request.GET.salary_range|default:'20000' }}">
         <div id="salaryRangeDisplay">Salary: {{ request.GET.salary_range|default:"20000" }} GBP</div>
         <div class="salary-buttons">
-          <button type="button" id="setPriceButton" class="btn btn-secondary btn-sm">Set Price</button>
-          <button type="button" id="unsetPriceButton" class="btn btn-secondary btn-sm">Unset Price</button>
+          <button type="salary-button" id="setPriceButton" class="btn btn-secondary btn-sm">Set Price</button>
+          <button type="salary-button" id="unsetPriceButton" class="btn btn-secondary btn-sm">Unset Price</button>
         </div>
         <input type="hidden" name="salary_range" id="salary_range" value="{{ request.GET.salary_range|default:'' }}">
       </div>
-  
-      <!-- Education Level Filter -->
+
+      <!-- Work Flexibility Filter -->
       <div class="filter-item">
+        <label><i class="fa fa-home" aria-hidden="true"></i>  Work Flexibility</label>
+        <div class="dropdown-checkbox" id="flexibilityDropdown">
+          <button type="button" class="btn btn-outline" data-default="Select Work Options" onclick="toggleDropdown('flexibilityDropdown', 'Select Work Options')">
+            Select Work Options
+          </button>
+          <div class="dropdown-content">
+            <label>
+              <input type="checkbox" name="work_flexibility" value="flexible" {% if "flexible" in selected_work_flexibility %}checked{% endif %}>
+              Flexible Work Hours
+            </label>
+            <label>
+              <input type="checkbox" name="work_flexibility" value="hybrid" {% if "hybrid" in selected_work_flexibility %}checked{% endif %}>
+              Hybrid (Remote & On-site)
+            </label>
+            <label>
+              <input type="checkbox" name="work_flexibility" value="on_site" {% if "on_site" in selected_work_flexibility %}checked{% endif %}>
+              On-site
+            </label>
+            <label>
+              <input type="checkbox" name="work_flexibility" value="remote" {% if "remote" in selected_work_flexibility %}checked{% endif %}>
+              Remote
+            </label>
+          </div>
+        </div>
+      </div>
+
+       <!-- Education Level Filter -->
+       <div class="filter-item">
         <label><i class="fa fa-graduation-cap" aria-hidden="true"></i>  Education Level</label>
         <div class="dropdown-checkbox" id="educationDropdown">
           <button type="button" class="btn btn-outline" data-default="Select Education Levels" onclick="toggleDropdown('educationDropdown', 'Select Education Levels')">
@@ -126,34 +154,6 @@
         </div>
       </div>
   
-      <!-- Work Flexibility Filter -->
-      <div class="filter-item">
-        <label><i class="fa fa-home" aria-hidden="true"></i>  Work Flexibility</label>
-        <div class="dropdown-checkbox" id="flexibilityDropdown">
-          <button type="button" class="btn btn-outline" data-default="Select Work Options" onclick="toggleDropdown('flexibilityDropdown', 'Select Work Options')">
-            Select Work Options
-          </button>
-          <div class="dropdown-content">
-            <label>
-              <input type="checkbox" name="work_flexibility" value="flexible" {% if "flexible" in selected_work_flexibility %}checked{% endif %}>
-              Flexible Work Hours
-            </label>
-            <label>
-              <input type="checkbox" name="work_flexibility" value="hybrid" {% if "hybrid" in selected_work_flexibility %}checked{% endif %}>
-              Hybrid (Remote & On-site)
-            </label>
-            <label>
-              <input type="checkbox" name="work_flexibility" value="on_site" {% if "on_site" in selected_work_flexibility %}checked{% endif %}>
-              On-site
-            </label>
-            <label>
-              <input type="checkbox" name="work_flexibility" value="remote" {% if "remote" in selected_work_flexibility %}checked{% endif %}>
-              Remote
-            </label>
-          </div>
-        </div>
-      </div>
-  
       <!-- Benefits & Perks Filter -->
       <div class="filter-item">
         <label><i class="fa fa-gift" aria-hidden="true"></i>  Benefits & Perks</label>
@@ -171,14 +171,13 @@
           </div>
         </div>
       </div>
-  
-      <!-- Apply and Clear Buttons -->
-      <div class="apply-filter-item">
-        <button type="submit" class="btn btn-primary">Apply Filters</button>
-        <a href="{% url 'search' %}">
-          <button class="apply-filter-item mt-2">Clear Filters</button>
-        </a>
-      </div>
+    </div>
+    <!-- Apply and Clear Buttons -->
+    <div class="apply-filter-item">
+      <button type="submit" class="btn btn-primary">Apply Filters</button>
+    </div>
+    <div class="filter-item">
+      <a href="{% url 'search' %}" class="btn btn-primary">Clear Filters</a>
     </div>
   </form>
   
