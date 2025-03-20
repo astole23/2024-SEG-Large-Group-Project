@@ -38,6 +38,7 @@ urlpatterns = [
     path('company/<int:company_id>/', ui_views.company_detail, name='company_detail'),
     path('company/<int:company_id>/review/', ui_views.leave_review, name='leave_review'),
     path('company/<int:company_id>/edit/', ui_views.edit_company, name='edit_company'),
+    path('settings/', ui_views.profile_settings, name='settings'),
     path('profile/settings/', ui_views.profile_settings, name='profile_settings'),
     path('settings/', ui_views.profile_settings, name='settings'),  # Alias for settings
 
@@ -61,9 +62,9 @@ urlpatterns = [
     path('user/applications/', ui_views.user_applications, name='user_applications'),
     path('user/applications/<int:application_id>/', ui_views.user_application_detail, name='user_application_detail'),
     # urls.py
-    path('upload_cv/', ui_views.upload_cv, name='upload_cv'),
+    path('upload_cv/', ui_views.upload_cv, name='upload_cvp'),
     path('upload_raw_cv/', ui_views.upload_raw_cv, name='upload_raw_cv'),
-    path("upload_user_document/", ui_views.upload_user_document, name="upload_user_document"),
+    path("upload_user_document/", ui_views.get_user_documents, name="upload_user_document"),
     path("delete_user_document/", ui_views.delete_user_document, name="delete_user_document"),
     # Company applications
     path('company/applications/', ui_views.company_applications, name='company_applications'),
@@ -74,6 +75,8 @@ urlpatterns = [
     path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
     path('job-postings/', ui_views.search, name='search',),
 
+    path('api/tracked-jobs/', ui_views.tracked_jobs_api, name='tracked_jobs_api'),
+    path('add-job-by-code/', ui_views.add_job_by_code, name='add_job_by_code'),
 
  path('job-postings_view/', job_search.job_recommendation, name='job_postings'),
  path('job_recommendations/', job_search.job_recommendation, name='job_recommendations'),  

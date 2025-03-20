@@ -86,16 +86,31 @@
     document.addEventListener('DOMContentLoaded', function() {
       const applicationTypeBtns = document.querySelectorAll('.application-type-btn');
       const applicationTypeInput = document.getElementById('application_type');
-      // Set default selection
-      applicationTypeBtns[0].classList.add('selected');
+    
+      // Load saved choice (if available)
+      const savedChoice = sessionStorage.getItem('application_type') || 'manual';
+      applicationTypeInput.value = savedChoice;
+    
+      applicationTypeBtns.forEach(btn => {
+        if (btn.getAttribute('data-value') === savedChoice) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+    
       applicationTypeBtns.forEach(btn => {
         btn.addEventListener('click', function() {
           applicationTypeBtns.forEach(b => b.classList.remove('selected'));
           this.classList.add('selected');
           applicationTypeInput.value = this.getAttribute('data-value');
+    
+          // Save choice in sessionStorage (persists after navigating back)
+          sessionStorage.setItem('application_type', this.getAttribute('data-value'));
         });
       });
     });
+    
   </script>
 </body>
 </html>

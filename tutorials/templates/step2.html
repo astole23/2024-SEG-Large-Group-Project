@@ -10,167 +10,165 @@
 <body>
   <div class="container">
     <h1>Personal Information</h1>
-    
+
     <form action="/apply/step2/" method="post">
       {% csrf_token %}
+
       <!-- Contact Information -->
       <div class="application-section">
         <h3>Contact Information</h3>
-        <div class="form-group">
-          <label for="title">Title</label>
-          <input type="text" id="title" name="title" placeholder="Mr., Ms., Dr., etc.">
-        </div>
-        <div class="form-group">
-          <label for="first_name">First Name</label>
-          <input type="text" id="first_name" name="first_name" required>
-        </div>
-        <div class="form-group">
-          <label for="last_name">Last Name</label>
-          <input type="text" id="last_name" name="last_name" required>
-        </div>
-        <div class="form-group">
-          <label for="preferred_name">Preferred First Name (Optional)</label>
-          <input type="text" id="preferred_name" name="preferred_name">
-        </div>
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="example@domain.com" required>
-        </div>
-        <div class="form-group">
-          <label for="phone">Phone Number (Country Code + Number)</label>
-          <input type="tel" id="phone" name="phone" placeholder="+1 234 567 8900" required>
-        </div>
+        <div class="form-group"><label for="title">Title</label><input type="text" id="title" name="title" value="{{ initial_data.title|default:'' }}"></div>
+        <div class="form-group"><label for="first_name">First Name</label><input type="text" id="first_name" name="first_name" required value="{{ initial_data.first_name|default:'' }}"></div>
+        <div class="form-group"><label for="last_name">Last Name</label><input type="text" id="last_name" name="last_name" required value="{{ initial_data.last_name|default:'' }}"></div>
+        <div class="form-group"><label for="preferred_name">Preferred First Name</label><input type="text" id="preferred_name" name="preferred_name" value="{{ initial_data.preferred_name|default:'' }}"></div>
+        <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" required value="{{ initial_data.email|default:'' }}"></div>
+        <div class="form-group"><label for="phone">Phone</label><input type="tel" id="phone" name="phone" required value="{{ initial_data.phone|default:'' }}"></div>
       </div>
 
       <!-- Address -->
       <div class="application-section">
         <h3>Address</h3>
-        <div class="form-group">
-          <label for="country">Country</label>
-          <input type="text" id="country" name="country" required>
-        </div>
-        <div class="form-group">
-          <label for="address_line1">Address Line 1</label>
-          <input type="text" id="address_line1" name="address_line1" required>
-        </div>
-        <div class="form-group">
-          <label for="address_line2">Address Line 2 (Optional)</label>
-          <input type="text" id="address_line2" name="address_line2">
-        </div>
-        <div class="form-group">
-          <label for="address_line3">Address Line 3 (Optional)</label>
-          <input type="text" id="address_line3" name="address_line3">
-        </div>
-        <div class="form-group">
-          <label for="city">City or Town</label>
-          <input type="text" id="city" name="city" required>
-        </div>
-        <div class="form-group">
-          <label for="county">County/State/Province (Optional)</label>
-          <input type="text" id="county" name="county">
-        </div>
-        <div class="form-group">
-          <label for="postcode">Postcode/ZIP</label>
-          <input type="text" id="postcode" name="postcode" required>
-        </div>
+        <div class="form-group"><label for="country">Country</label><input type="text" id="country" name="country" required value="{{ initial_data.country|default:'' }}"></div>
+        <div class="form-group"><label for="address_line1">Address Line 1</label><input type="text" id="address_line1" name="address_line1" required value="{{ initial_data.address_line1|default:'' }}"></div>
+        <div class="form-group"><label for="address_line2">Address Line 2</label><input type="text" id="address_line2" name="address_line2" value="{{ initial_data.address_line2|default:'' }}"></div>
+        <div class="form-group"><label for="address_line3">Address Line 3</label><input type="text" id="address_line3" name="address_line3" value="{{ initial_data.address_line3|default:'' }}"></div>
+        <div class="form-group"><label for="city">City</label><input type="text" id="city" name="city" required value="{{ initial_data.city|default:'' }}"></div>
+        <div class="form-group"><label for="county">County</label><input type="text" id="county" name="county" value="{{ initial_data.county|default:'' }}"></div>
+        <div class="form-group"><label for="postcode">Postcode</label><input type="text" id="postcode" name="postcode" required value="{{ initial_data.postcode|default:'' }}"></div>
       </div>
 
       <!-- Education -->
       <div class="application-section">
         <h3>Education</h3>
-        <!-- You can replicate the pattern below to allow multiple entries if desired -->
-        <div class="form-group">
-          <label for="institution">Institution</label>
-          <input type="text" id="institution" name="institution" placeholder="University or College name">
+        <div id="education-container">
+          {% for edu in initial_data.education_list %}
+            <div class="education-entry">
+              <div class="form-group">
+                <label>Institution</label>
+                <input type="text" name="institution" value="{{ edu.university|default:'' }}">
+              </div>
+              <div class="form-group">
+                <label>Degree</label>
+                <input type="text" name="degree" value="{{ edu.degreeType|default:'' }}">
+              </div>
+              <div class="form-group">
+                <label>Start Date</label>
+                <input type="text" name="edu_start" value="{{ edu.dates|default:''|slice:":4" }}">
+              </div>
+              <div class="form-group">
+                <label>End Date</label>
+                <input type="text" name="edu_end" value="{{ edu.dates|default:''|slice:"-4:" }}">
+              </div>
+            </div>
+          {% endfor %}
         </div>
-        <div class="form-group">
-          <label for="degree">Degree/Qualification</label>
-          <input type="text" id="degree" name="degree" placeholder="e.g., Bachelor's in Computer Science">
-        </div>
-        <div class="form-group">
-          <label for="edu_start">Start Date</label>
-          <input type="text" id="edu_start" name="edu_start" placeholder="e.g., 2018">
-        </div>
-        <div class="form-group">
-          <label for="edu_end">End Date</label>
-          <input type="text" id="edu_end" name="edu_end" placeholder="e.g., 2022 or Present">
-        </div>
+        <button type="button" id="add-edu">Add Education</button>
       </div>
+
 
       <!-- Work Experience -->
       <div class="application-section">
         <h3>Work Experience</h3>
-        <!-- Again, replicate for multiple entries if needed -->
-        <div class="form-group">
-          <label for="company_name">Company</label>
-          <input type="text" id="company_name" name="company_name" placeholder="Company name">
+        <div id="experience-container">
+          {% for exp in initial_data.work_experience_list %}
+            <div class="work-entry">
+              <div class="form-group">
+                <label>Company</label>
+                <input type="text" name="company_name" value="{{ exp.employer_name|default:'' }}">
+              </div>
+              <div class="form-group">
+                <label>Position</label>
+                <input type="text" name="position" value="{{ exp.job_title|default:'' }}">
+              </div>
+              <div class="form-group">
+                <label>Start Date</label>
+                <input type="text" name="work_start" value="{{ exp.dates|default:''|slice:":4" }}">
+              </div>
+              <div class="form-group">
+                <label>End Date</label>
+                <input type="text" name="work_end" value="{{ exp.dates|default:''|slice:"-4:" }}">
+              </div>
+            </div>
+          {% endfor %}
         </div>
-        <div class="form-group">
-          <label for="position">Position</label>
-          <input type="text" id="position" name="position" placeholder="e.g., Software Developer">
-        </div>
-        <div class="form-group">
-          <label for="work_start">Start Date</label>
-          <input type="text" id="work_start" name="work_start" placeholder="e.g., 2022">
-        </div>
-        <div class="form-group">
-          <label for="work_end">End Date</label>
-          <input type="text" id="work_end" name="work_end" placeholder="e.g., Present">
-        </div>
+        <button type="button" id="add-work-experience">Add Work Experience</button>
       </div>
 
-      <!-- Skills Section -->
+
+      <!-- Skills -->
       <div class="application-section">
-        <h2>Skills</h2>
-        <div id="skills-container">
-          <!-- Dynamic skill fields will appear here -->
-        </div>
-        <button id="add-skill-btn" class="btn" type="button">Add Skill</button>
+        <h3>Skills</h3>
+        <div id="skills-container"></div>
+        <button type="button" id="add-skill-btn">Add Skill</button>
       </div>
 
       <div class="application-footer">
         <a href="/apply/step1/" class="btn btn-secondary">Back</a>
-        <button type="submit" class="btn">Continue</button> 
+        <button type="submit" class="btn">Continue</button>
       </div>
     </form>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      let skillCount = 0;
+    document.addEventListener('DOMContentLoaded', function () {
+      const educationData = {{ initial_data.education|default:"[]"|safe }};
+      const experienceData = {{ initial_data.workExperience|default:"[]"|safe }};
+      const skillsData = {{ initial_data.skills|default:"[]"|safe }};
+    
+      const eduContainer = document.getElementById('education-container');
+      const expContainer = document.getElementById('experience-container');
       const skillsContainer = document.getElementById('skills-container');
-      const addSkillBtn = document.getElementById('add-skill-btn');
-
-      function createSkillField() {
-        skillCount++;
-        const field = document.createElement('div');
-        field.className = 'dynamic-field';
-        field.innerHTML = `
-          <input type="text" name="skill_${skillCount}" placeholder="Enter skill">
+    
+      function createEducationField(edu = {}) {
+        const div = document.createElement('div');
+        div.classList.add('education-entry');
+        div.innerHTML = `
+          <div class="form-group"><label>Institution</label><input type="text" name="institution" value="${edu.university || ''}"></div>
+          <div class="form-group"><label>Degree</label><input type="text" name="degree" value="${edu.degreeType || ''}"></div>
+          <div class="form-group"><label>Start Date</label><input type="text" name="edu_start" value="${(edu.dates || '').split('-')[0] || ''}"></div>
+          <div class="form-group"><label>End Date</label><input type="text" name="edu_end" value="${(edu.dates || '').split('-')[1] || ''}"></div>
           <button type="button" class="remove-field">Remove</button>
         `;
-        field.querySelector('.remove-field').addEventListener('click', function() {
-          skillsContainer.removeChild(field);
-          skillCount--;
-          if (skillCount === 1) {
-            const firstRemove = document.querySelector('#skills-container .dynamic-field:first-child .remove-field');
-            if (firstRemove) firstRemove.style.display = 'none';
-          }
-        });
-        return field;
+        div.querySelector('.remove-field').addEventListener('click', () => div.remove());
+        eduContainer.appendChild(div);
       }
-
-      addSkillBtn.addEventListener('click', function() {
-        const newField = createSkillField();
-        skillsContainer.appendChild(newField);
-        if (skillCount > 1) {
-          document.querySelectorAll('#skills-container .remove-field').forEach(btn => btn.style.display = 'inline');
-        }
-      });
-
-      // Initialize with one skill field
-      skillsContainer.appendChild(createSkillField());
+    
+      function createExperienceField(exp = {}) {
+        const div = document.createElement('div');
+        div.classList.add('work-entry');
+        div.innerHTML = `
+          <div class="form-group"><label>Company</label><input type="text" name="company_name" value="${exp.employer_name || ''}"></div>
+          <div class="form-group"><label>Position</label><input type="text" name="position" value="${exp.job_title || ''}"></div>
+          <div class="form-group"><label>Start Date</label><input type="text" name="work_start" value="${(exp.dates || '').split('-')[0] || ''}"></div>
+          <div class="form-group"><label>End Date</label><input type="text" name="work_end" value="${(exp.dates || '').split('-')[1] || ''}"></div>
+          <button type="button" class="remove-field">Remove</button>
+        `;
+        div.querySelector('.remove-field').addEventListener('click', () => div.remove());
+        expContainer.appendChild(div);
+      }
+    
+      function createSkillField(skill = '') {
+        const div = document.createElement('div');
+        div.classList.add('skill-entry');
+        div.innerHTML = `
+          <div class="form-group"><input type="text" name="skill" placeholder="Enter skill" value="${skill}"></div>
+          <button type="button" class="remove-field">Remove</button>
+        `;
+        div.querySelector('.remove-field').addEventListener('click', () => div.remove());
+        skillsContainer.appendChild(div);
+      }
+    
+      document.getElementById('add-edu').addEventListener('click', () => createEducationField());
+      document.getElementById('add-work-experience').addEventListener('click', () => createExperienceField());
+      document.getElementById('add-skill-btn').addEventListener('click', () => createSkillField());
+    
+      // Init with existing data or one empty row
+      (educationData.length ? educationData : [{}]).forEach(createEducationField);
+      (experienceData.length ? experienceData : [{}]).forEach(createExperienceField);
+      (skillsData.length ? skillsData : ['']).forEach(createSkillField);
     });
-  </script>
+    </script>
+    
+
 </body>
 </html>
