@@ -3,6 +3,8 @@ from django.core.validators import FileExtensionValidator, ValidationError
 import os
 import fitz  # PyMuPDF
 import together
+import re
+import json
 from dotenv import load_dotenv
 
 # Load .env variables
@@ -26,8 +28,8 @@ def extract_text_from_pdf(pdf_file):
 # Send resume to Together AI for structured analysis
 def classify_resume_with_together(text):
     prompt = f"""
-    
-You are an AI that extracts structured JSON from resume text. Return only a JSON object in this format:
+You are an AI that extracts structured JSON from resume text. JSON Output:
++ Now return only one flat JSON object like above, without any extra arrays or wrapping.
 
 {{
   "personal_info": {{
@@ -54,17 +56,15 @@ You are an AI that extracts structured JSON from resume text. Return only a JSON
       "dates": "string",
       "responsibilities": "string"
     }}
-    ],
-    [
-    {{
-    "skills": ["communication", "teamwork", "problem-solving"],
-    "technical_skills": ["Python", "JavaScript", "SQL"],
-    "languages": ["English", "Spanish"],
-    "motivations": "string",
-    "fit_for_role": "string",
-    "career_aspirations": "string",
-    "preferred_start_date": "YYYY-MM-DD"
-    }}
+  ],
+  "skills": ["communication", "teamwork", "problem-solving"],
+  "technical_skills": ["Python", "JavaScript", "SQL"],
+  "languages": ["English", "Spanish"],
+  "motivations": "string",
+  "fit_for_role": "string",
+  "career_aspirations": "string",
+  "preferred_start_date": "YYYY-MM-DD"
+}}
 
 Do not include commentary. If any value is missing, leave it as an empty string or empty array. Use only the following resume content:
 
@@ -82,9 +82,25 @@ JSON Output:
         temperature=0.1
     )
 
-    print(response)  # Debug output (optional)
-    return response["choices"][0]["text"]
+    
+    raw_text = response["choices"][0]["text"]
+    print("🧠 AI OUTPUT:\n", raw_text)
 
+    try:
+        # Extract only the JSON part
+        start = raw_text.find('{')
+        end = raw_text.rfind('}')
+        if start == -1 or end == -1:
+            raise ValueError("Could not locate JSON brackets.")
+
+        cleaned_json_str = raw_text[start:end+1]
+        structured_data = json.loads(cleaned_json_str)
+        return structured_data
+
+    except Exception as e:
+        print("❌ Failed to parse structured JSON:", e)
+        raise e  # Let upload_cv() handle it
+    
 # Optional Django model that uses the extraction logic
 class CV(models.Model):
     name = models.CharField(max_length=255)
@@ -107,3 +123,4 @@ class CV(models.Model):
 
     def __str__(self):
         return self.name
+

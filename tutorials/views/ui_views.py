@@ -11,6 +11,7 @@ from tutorials.models.jobposting import JobPosting
 from tutorials.models.company_review import Review
 from django.contrib.auth import get_user_model
 from django.utils.dateparse import parse_date
+from django.utils.timezone import localtime
 from tutorials.forms import (
     UserLoginForm, CompanyLoginForm,
     UserSignUpForm, CompanySignUpForm,
@@ -82,12 +83,14 @@ def user_dashboard(request):
         messages.error(request, "Access restricted to normal users only.")
         return redirect('login')
 
+    # 1. User Info (for frontend)
     user_info = {
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         'full_name': f"{request.user.first_name} {request.user.last_name}"
     }
 
+    # 2. CV Structured Data (AI parsed)
     try:
         cv = UserCV.objects.get(user=request.user)
         structured = {
@@ -107,11 +110,49 @@ def user_dashboard(request):
         }
     except UserCV.DoesNotExist:
         cv_data = {}
+    except Exception as e:
+        print("⚠️ Error loading UserCV:", e)
+        cv_data = {}
+
+    # 3. Raw PDF CV Upload Info
+    try:
+        uploaded_cv = UploadedCV.objects.get(user=request.user)
+        raw_cv_info = {
+            'filename': uploaded_cv.file.name.split('/')[-1],
+            'file_url': uploaded_cv.file.url,
+            'uploaded_at': localtime(uploaded_cv.uploaded_at).strftime("%b %d, %Y %I:%M %p")
+        }
+    except UploadedCV.DoesNotExist:
+        raw_cv_info = {}
+    except Exception as e:
+        print("⚠️ Error loading UploadedCV:", e)
+        raw_cv_info = {}
+
+    # 4. Up to 5 Supporting Documents
+    try:
+        uploaded_documents = UserDocument.objects.filter(user=request.user).order_by('-uploaded_at')[:5]
+        documents_list = []
+        for doc in uploaded_documents:
+            documents_list.append({
+                'filename': doc.file.name.split('/')[-1],
+                'file_url': doc.file.url,
+                'uploaded_at': doc.uploaded_at.strftime("%b %d, %Y %I:%M %p"),
+                'uploaded_at_human': timesince(doc.uploaded_at) + " ago",
+            })
+
+    except Exception as e:
+        print("⚠️ Error loading UserDocuments:", e)
+        uploaded_documents = []
+
+    print("🧾 raw_cv_info_json:", raw_cv_info)
 
     return render(request, 'user_dashboard.html', {
         'user_info_json': json.dumps(user_info),
-        'cv_data_json': json.dumps(cv_data)
+        'cv_data_json': json.dumps(cv_data, cls=DjangoJSONEncoder),
+        'raw_cv_info_json': json.dumps(raw_cv_info),
+        'documents_json': json.dumps(documents_list),  # ✅ ADD THIS
     })
+
 
 
 def search(request):
@@ -448,37 +489,95 @@ def apply_step1(request):
 # Step 2: Personal Information
 @login_required
 def apply_step2(request):
+    application_data = request.session.get('application_data', {})
+    application_type = application_data.get('application_type')
+
     if request.method == 'POST':
-        application_data = request.session.get('application_data', {})
-        # Save personal info (adjust field names to match your form)
-        application_data['title'] = request.POST.get('title')
-        application_data['first_name'] = request.POST.get('first_name')
-        application_data['last_name'] = request.POST.get('last_name')
-        application_data['preferred_name'] = request.POST.get('preferred_name')
-        application_data['email'] = request.POST.get('email')
-        application_data['phone'] = request.POST.get('phone')
-        application_data['country'] = request.POST.get('country')
-        application_data['address_line1'] = request.POST.get('address_line1')
-        application_data['address_line2'] = request.POST.get('address_line2')
-        application_data['address_line3'] = request.POST.get('address_line3')
-        application_data['city'] = request.POST.get('city')
-        application_data['county'] = request.POST.get('county')
-        application_data['postcode'] = request.POST.get('postcode')
-        # For education, work experience, skills – store as needed (example below)
-        application_data['institution'] = request.POST.get('institution')
-        application_data['degree'] = request.POST.get('degree')
-        application_data['edu_start'] = request.POST.get('edu_start')
-        application_data['edu_end'] = request.POST.get('edu_end')
-        application_data['company_name_exp'] = request.POST.get('company_name')
-        application_data['position'] = request.POST.get('position')
-        application_data['work_start'] = request.POST.get('work_start')
-        application_data['work_end'] = request.POST.get('work_end')
-        # You may also process dynamic skills (this example assumes one field)
-        application_data['skills'] = request.POST.getlist('skill')
-        
+        # Basic contact and address
+        application_data.update({
+            'title': request.POST.get('title'),
+            'first_name': request.POST.get('first_name'),
+            'last_name': request.POST.get('last_name'),
+            'preferred_name': request.POST.get('preferred_name'),
+            'email': request.POST.get('email'),
+            'phone': request.POST.get('phone'),
+            'country': request.POST.get('country'),
+            'address_line1': request.POST.get('address_line1'),
+            'address_line2': request.POST.get('address_line2'),
+            'address_line3': request.POST.get('address_line3'),
+            'city': request.POST.get('city'),
+            'county': request.POST.get('county'),
+            'postcode': request.POST.get('postcode'),
+            'skills': request.POST.getlist('skill'),
+        })
+
+        # ✅ Handle multiple education entries
+        institutions = request.POST.getlist('institution')
+        degrees = request.POST.getlist('degree')
+        edu_starts = request.POST.getlist('edu_start')
+        edu_ends = request.POST.getlist('edu_end')
+        education_list = []
+
+        for i in range(len(institutions)):
+            if institutions[i] or degrees[i] or edu_starts[i] or edu_ends[i]:
+                education_list.append({
+                    'university': institutions[i],
+                    'degreeType': degrees[i],
+                    'dates': f"{edu_starts[i]} - {edu_ends[i]}"
+                })
+
+        application_data['education_list'] = education_list
+
+        # ✅ Handle multiple work experience entries
+        companies = request.POST.getlist('company_name')
+        positions = request.POST.getlist('position')
+        work_starts = request.POST.getlist('work_start')
+        work_ends = request.POST.getlist('work_end')
+        work_experience_list = []
+
+        for i in range(len(companies)):
+            if companies[i] or positions[i] or work_starts[i] or work_ends[i]:
+                work_experience_list.append({
+                    'employer_name': companies[i],
+                    'job_title': positions[i],
+                    'dates': f"{work_starts[i]} - {work_ends[i]}"
+                })
+
+        application_data['work_experience_list'] = work_experience_list
+
         request.session['application_data'] = application_data
         return redirect('apply_step3')
-    return render(request, 'step2.html')
+
+    # On GET — preload data if using CV
+    initial_data = {}
+    if application_type == 'cv':
+        try:
+            user_cv = UserCV.objects.get(user=request.user)
+            personal = user_cv.personal_info or {}
+
+            initial_data = {
+                'title': personal.get('title', ''),
+                'first_name': personal.get('first_name', ''),
+                'last_name': personal.get('last_name', ''),
+                'preferred_name': personal.get('preferred_name', ''),
+                'email': personal.get('email', request.user.email),
+                'phone': personal.get('phone', ''),
+                'country': personal.get('country', ''),
+                'address_line1': personal.get('address_line1', ''),
+                'address_line2': personal.get('address_line2', ''),
+                'address_line3': personal.get('address_line3', ''),
+                'city': personal.get('city', ''),
+                'county': personal.get('county', ''),
+                'postcode': personal.get('postcode', ''),
+                'skills': [s.strip() for s in user_cv.key_skills.split(',')] if user_cv.key_skills else [],
+                'education_list': user_cv.education or [],
+                'work_experience_list': user_cv.work_experience or [],
+            }
+        except UserCV.DoesNotExist:
+            initial_data = {}
+
+    return render(request, 'step2.html', {'initial_data': initial_data})
+
 
 # Step 3: Job-Specific Questions
 @login_required
@@ -700,34 +799,35 @@ def upload_cv(request):
             temp_path = temp_file.name
 
         text = extract_text_from_pdf(temp_path)
-        ai_output = classify_resume_with_together(text)
-        try:
-            structured = json.loads(ai_output)
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'error': 'Failed to parse CV data from AI'}, status=500)
+        structured = classify_resume_with_together(text)
+
+        structured['education'] = remove_duplicate_education(structured.get('education', []))
+        structured['work_experience'] = remove_duplicate_experience(structured.get('work_experience', []))
 
         skills_raw = structured.get("skills", [])
         technical_skills, soft_skills = split_skills(skills_raw)
 
-        cv, _ = CVApplication.objects.get_or_create(user=user)
-        cv.full_name = user.get_full_name()
-        cv.email = user.email or 'unknown@example.com'
-        cv.phone = structured.get("personal_info", {}).get("phone", "N/A")
-        cv.address = structured.get("personal_info", {}).get("address", "N/A")
-        cv.postcode = structured.get("personal_info", {}).get("postcode", "N/A")
-        cv.key_skills = ", ".join(sorted(soft_skills))
-        cv.technical_skills = ", ".join(sorted(technical_skills))
-        cv.languages = ", ".join(structured.get("languages", []))
-        cv.motivation_statement = structured.get("motivations", "")
-        cv.fit_for_role = structured.get("fit_for_role", "")
-        cv.career_aspirations = structured.get("career_aspirations", "")
-
-        raw_date = structured.get("preferred_start_date", "")
-        parsed_date = parse_date(raw_date) if raw_date else None
-        cv.preferred_start_date = parsed_date
+        cv, _ = CVApplication.objects.update_or_create(
+            user=user,
+            defaults={
+                'full_name': user.get_full_name(),
+                'email': user.email or 'unknown@example.com',
+                'phone': structured.get("personal_info", {}).get("phone", "N/A"),
+                'address': structured.get("personal_info", {}).get("address", "N/A"),
+                'postcode': structured.get("personal_info", {}).get("postcode", "N/A"),
+                'key_skills': ", ".join(sorted(soft_skills)),
+                'technical_skills': ", ".join(sorted(technical_skills)),
+                'languages': ", ".join(structured.get("languages", [])),
+                'motivation_statement': structured.get("motivations", ""),
+                'fit_for_role': structured.get("fit_for_role", ""),
+                'career_aspirations': structured.get("career_aspirations", ""),
+                'preferred_start_date': parse_date(structured.get("preferred_start_date", "")) if structured.get("preferred_start_date") else None,
+            }
+        )
 
         cv.cv_file.save(file.name, file)
         cv.save()
+
 
         user_cv, _ = UserCV.objects.get_or_create(user=user)
         user_cv.personal_info = structured.get("personal_info", {})
@@ -737,9 +837,8 @@ def upload_cv(request):
         if user_cv.work_experience is None:
             user_cv.work_experience = []
 
-        existing_edu = {json.dumps(e, sort_keys=True) for e in user_cv.education}
-        for edu in structured.get("education", []):
-            new_edu = {
+        user_cv.education = [
+            {
                 'university': edu.get("university", ""),
                 'degreeType': edu.get("degree_type", ""),
                 'fieldOfStudy': edu.get("field_of_study", ""),
@@ -747,19 +846,19 @@ def upload_cv(request):
                 'dates': edu.get("dates", ""),
                 'modules': edu.get("modules", "")
             }
-            if json.dumps(new_edu, sort_keys=True) not in existing_edu:
-                user_cv.education.append(new_edu)
+            for edu in structured.get("education", [])
+        ]
 
-        existing_exp = {json.dumps(e, sort_keys=True) for e in user_cv.work_experience}
-        for exp in structured.get("work_experience", []):
-            new_exp = {
+
+        user_cv.work_experience = [
+            {
                 'employer_name': exp.get("company", ""),
                 'job_title': exp.get("job_title", ""),
                 'responsibilities': exp.get("responsibilities", ""),
                 'dates': exp.get("dates", "")
             }
-            if json.dumps(new_exp, sort_keys=True) not in existing_exp:
-                user_cv.work_experience.append(new_exp)
+            for exp in structured.get("work_experience", [])
+        ]
 
         existing_skills = set(user_cv.key_skills.split(",")) if user_cv.key_skills else set()
         new_skills = set(soft_skills)
@@ -820,30 +919,32 @@ def upload_raw_cv(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
-@csrf_exempt
 @login_required
-@require_POST
-def upload_user_document(request):
-    if request.FILES.get('document'):
-        if request.user.documents.count() >= 5:
-            return JsonResponse({'success': False, 'error': 'Maximum 5 documents allowed'}, status=400)
+def get_user_documents(request):
+    user = request.user
+    if UserDocument.objects.filter(user=user).count() >= 5:
+        return JsonResponse({'success': False, 'error': 'You can only upload up to 5 documents.'}, status=400)
 
-        doc = UserDocument.objects.create(user=request.user, file=request.FILES['document'])
-        return JsonResponse({
-            'success': True,
-            'filename': doc.file.name,
-            'url': doc.file.url,
-            'uploaded_at': doc.uploaded_at.strftime("%Y-%m-%d %H:%M")
-        })
+    uploaded_file = request.FILES.get('document')
+    if not uploaded_file:
+        return JsonResponse({'success': False, 'error': 'No file uploaded.'}, status=400)
 
-    return JsonResponse({'success': False, 'error': 'No file provided'}, status=400)
-
+    doc = UserDocument.objects.create(user=user, file=uploaded_file)
+    return JsonResponse({
+        'success': True,
+        'filename': doc.file.name.split('/')[-1],
+        'file_url': doc.file.url,
+        'uploaded_at': doc.uploaded_at.strftime('%b %d, %Y %I:%M %p'),
+        'uploaded_at_human': 'just now'
+    })
 @csrf_exempt
 @login_required
 @require_POST
 def delete_user_document(request):
     file_name = request.POST.get('filename')
     doc = UserDocument.objects.filter(user=request.user, file__icontains=file_name).first()
+
+
     if doc:
         doc.file.delete()
         doc.delete()
@@ -914,3 +1015,101 @@ def help_centre(request):
 
 def accessibility(request):
     return render(request, 'accessibility.html')
+@login_required
+def add_job_by_code(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        code = data.get('code')
+        if not code:
+            return JsonResponse({'success': False, 'error': 'No code provided.'}, status=400)
+
+        user = request.user
+        job_application = JobApplication.objects.filter(application_id=code).first()
+        # If your code is stored in application_id or another field, adjust accordingly.
+
+        if not job_application:
+            return JsonResponse({'success': False, 'error': 'Job application not found.'}, status=404)
+        if job_application.applicant != user:
+            return JsonResponse({'success': False, 'error': 'This job application does not belong to you.'}, status=403)
+
+        # Mark tracked
+        job_application.tracked = True
+        job_application.save()
+
+        return JsonResponse({'success': True})
+    
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from tutorials.models.applications import JobApplication  # adjust import to match your structure
+
+@login_required
+def tracked_jobs_api(request):
+    # The user must be logged in or else @login_required will redirect to login.
+    user = request.user
+    
+    # Filter for tracked applications. 
+    tracked_apps = JobApplication.objects.filter(applicant=user, tracked=True)
+
+    # Build a list of dicts for JSON output.
+    data = []
+    for app in tracked_apps:
+        data.append({
+            'id': app.id,
+            'title': app.job_posting.job_title,
+            'company': str(app.job_posting.company),
+            # If you store a current_stage or similar, adapt accordingly:
+            'currentStage': 0,  
+        })
+
+    return JsonResponse(data, safe=False)
+
+
+def normalize_edu(e):
+    return (
+        e.get("university", "").strip().lower(),
+        e.get("degree_type", "").strip().lower(),
+        e.get("field_of_study", "").strip().lower(),
+        e.get("grade", "").strip().lower(),
+        e.get("dates", "").strip().lower(),
+        e.get("modules", "").strip().lower(),
+    )
+
+def normalize_exp(e):
+    return (
+        e.get("company", "").strip().lower(),
+        e.get("job_title", "").strip().lower(),
+        e.get("responsibilities", "").strip().lower(),
+        e.get("dates", "").strip().lower(),
+    )
+
+def normalize_str(s):
+    return str(s or '').strip().lower().replace('–', '-').replace('—', '-').replace('’', "'")
+    
+def remove_duplicate_education(entries):
+    seen = set()
+    cleaned = []
+    for edu in entries:
+        key = f"{normalize_str(edu.get('university'))}|{normalize_str(edu.get('degreeType'))}|{normalize_str(edu.get('fieldOfStudy'))}|{normalize_str(edu.get('dates'))}"
+        if key not in seen:
+            seen.add(key)
+            cleaned.append(edu)
+    return cleaned
+
+def remove_duplicate_experience(entries):
+    seen = set()
+    cleaned = []
+    for exp in entries:
+        key = f"{normalize_str(exp.get('employer'))}|{normalize_str(exp.get('jobTitle'))}|{normalize_str(exp.get('dates'))}"
+        if key not in seen:
+            seen.add(key)
+            cleaned.append(exp)
+    return cleaned
