@@ -40,6 +40,9 @@ urlpatterns = [
     path('company/<int:company_id>/review/', ui_views.leave_review, name='leave_review'),
     path('company/<int:company_id>/edit/', ui_views.edit_company, name='edit_company'),
     path('settings/', ui_views.profile_settings, name='settings'),
+    path('profile/settings/', ui_views.profile_settings, name='profile_settings'),
+
+
     path('terms_conditions/', ui_views.terms_conditions, name='terms_conditions'),
     path('privacy/', ui_views.privacy, name='privacy'),
     path('user_agreement/', ui_views.user_agreement, name='user_agreement'),
@@ -73,6 +76,8 @@ urlpatterns = [
     path('api/job_postings/', ui_views.job_postings_api, name='job_postings_api'),
     path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
     path('job-postings/', ui_views.search, name='search',),
+
+    path('job_recommendation/', job_search.job_recommendation, name='job_recommendation'),
 
     path('api/tracked-jobs/', ui_views.tracked_jobs_api, name='tracked_jobs_api'),
     path('add-job-by-code/', ui_views.add_job_by_code, name='add_job_by_code'),

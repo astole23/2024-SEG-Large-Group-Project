@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from tutorials.forms import UserLoginForm, CompanyLoginForm, CompanySignUpForm, UserSignUpForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from tutorials.forms import UserSignUpForm, CompanySignUpForm
 
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
@@ -24,6 +28,12 @@ def process_login(request):
             user = form.get_user()
             auth_login(request, user)
 
+            # Redirect the "admin" user to the Django admin panel
+            if user.username == "admin":
+                return redirect('/admin/')
+
+            # Redirect based on user type
+
             # Handle "Stay Logged In" functionality
             if remember_me:
                 request.session.set_expiry(1209600)  # 2 weeks (14 days)
@@ -31,7 +41,7 @@ def process_login(request):
                 request.session.set_expiry(0)  # Session expires when browser closes - doesnt work
 
             if user.is_company:
-                return redirect('edit_company', company_id=user.id)
+                return redirect('employer_dashboard')
             else:
                 return redirect('user_dashboard')
         else:
@@ -53,7 +63,17 @@ def process_login(request):
             'user_form': UserLoginForm(prefix='user'),
             'company_form': CompanyLoginForm(prefix='company')
         })
+    
 
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from tutorials.forms import UserSignUpForm, CompanySignUpForm
+
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from tutorials.forms import UserSignUpForm, CompanySignUpForm
 
 def process_signup(request):
     """
@@ -63,33 +83,57 @@ def process_signup(request):
         user_type = request.POST.get("user_type")
 
         if user_type == "company":
-            form = CompanySignUpForm(request.POST, prefix='company')
-            if form.is_valid():
-                form.save()
-                
-                messages.success(request, "Company registered successfully!")
-                return redirect("employer_dashboard")
+            company_form = CompanySignUpForm(request.POST, prefix='company')
+            user_form = UserSignUpForm(prefix='user')  # Ensure user_form exists
+
+            print(f"🏢 Processing company signup - Valid? {company_form.is_valid()}")  # Debug
+
+            if company_form.is_valid():
+                company = company_form.save(commit=False)
+                company.set_password(company_form.cleaned_data['password1'])  # Hash password
+                company.save()
+
+                authenticated_user = authenticate(username=company.username, password=company_form.cleaned_data['password1'])
+
+                if authenticated_user:
+                    login(request, authenticated_user)
+                    messages.success(request, "Company registered and logged in successfully!")
+                    return redirect("employer_dashboard")
+                else:
+                    messages.error(request, "Company signup successful, but auto-login failed. Please log in manually.")
+                    return redirect("login")
             else:
-                messages.error(request, "Error in company signup form.")
-                company_form = form  # Keep the data user just submitted
-                user_form = UserSignUpForm(prefix='user')
+                print(f"❌ Company Form Errors: {company_form.errors}")  # Debugging
+                messages.error(request, "Company signup failed. Please check the form and try again.")
+
         elif user_type == "user":
-            form = UserSignUpForm(request.POST, prefix='user')
-            if form.is_valid():
-                user = form.save(commit=False)
-                user.user_industry = form.cleaned_data['user_industry']  # Store as JSON list
-                user.user_location = form.cleaned_data['user_location']
-                form.save()
-              
-                messages.success(request, "User registered successfully!")
-                return redirect("user_dashboard")
+            user_form = UserSignUpForm(request.POST, prefix='user')
+            company_form = CompanySignUpForm(prefix='company')  # Ensure company_form exists
+
+            print(f"👤 Processing user signup - Valid? {user_form.is_valid()}")  # Debug
+
+            if user_form.is_valid():
+                user = user_form.save(commit=False)
+                user.user_industry = user_form.cleaned_data['user_industry']
+                user.user_location = user_form.cleaned_data['user_location']
+                user.set_password(user_form.cleaned_data['password1'])  # Hash password
+                user.save()
+
+                authenticated_user = authenticate(username=user.username, password=user_form.cleaned_data['password1'])
+
+                if authenticated_user:
+                    login(request, authenticated_user)
+                    messages.success(request, "User registered and logged in successfully!")
+                    return redirect("user_dashboard")
+                else:
+                    messages.error(request, "User signup successful, but auto-login failed. Please log in manually.")
+                    return redirect("login")
             else:
-                print(form.errors)  # Debug: print form errors to the terminal
-                messages.error(request, "Error in user signup form.")
-                user_form = form  # Keep the data user just submitted
-                company_form = CompanySignUpForm(prefix='company')
+                print(f"❌ User Form Errors: {user_form.errors}")  # Debugging
+                messages.error(request, "User signup failed. Please check the form and try again.")
+
     else:
-        # If GET or some other method, show blank forms
+        print("🟢 GET request received, rendering signup page")  # Debug
         user_form = UserSignUpForm(prefix='user')
         company_form = CompanySignUpForm(prefix='company')
 
