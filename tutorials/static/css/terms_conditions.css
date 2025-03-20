@@ -1,0 +1,91 @@
+:root {
+    --primary-color: #462191;
+    --secondary-color: #475569;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, system-ui, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100 vh;
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* Header Box */
+.tc-content {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+    margin: auto;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    margin-bottom: 2rem;
+}
+
+/* Each Help Section Container */
+.tc-section {
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+    padding: 2rem;
+    background-color: var(--card-background);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual Help Box*/
+.tc-box {
+    padding: 1.5rem;
+    background-color: var(--card-background);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+.tc-box h3 {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #4b0082;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.tc-box h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #6a0dad;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.tc-box p {
+    font-size: 1.1rem;
+    color: #374151;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* Centering Text */
+.text-center {
+    text-align: center;
+}
