@@ -7,7 +7,7 @@ from tutorials.models.accounts import CustomUser
 from tutorials.matchmaking_helper import match_job_to_cv_together, is_location_match
 from tutorials.models.standard_cv import CVApplication
 
-def get_random_job_postings(limit=100):
+def get_random_job_postings(limit=150):
     """Fetch a limited number of random job postings using offset."""
     total_jobs = JobPosting.objects.count()  # Get total number of job postings
 
