@@ -18,15 +18,14 @@
 }
 
 body {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: var(--font-primary);
     background-color: var(--background-color);
     color: var(--text-primary);
     line-height: 1.5;
     display: flex;
     flex-direction: column;
-    min-height: 100 vh;
+    min-height: 100vh;
 }
-
 
 .main-content {
     flex: 1;
@@ -40,19 +39,8 @@ body {
     gap: 20px;
     flex-wrap: wrap;
     margin: 10px auto;
-    padding: 20px;
-    padding-top: 150px;
+    padding: 150px 20px 20px;
 }
-
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 columns */
-    grid-gap: 10px; /* Space between the buttons */
-  }
-    .scrollable-section {
-      width: 100%;
-      margin: 0 auto;
-    }
 
 .search-bar input {
     padding: 15px;
@@ -60,28 +48,48 @@ body {
     border: 2px solid var(--border-color);
     border-radius: 25px;
     width: 600px;
-    max-width: 600px;
-    transition: all 0.3s ease-in-out;
+    max-width: 100%;
+    transition: 0.3s ease-in-out;
 }
 
-.search-bar input:focus {
+.apply-filters-item .btn,
+.search-bar .submit {
+    padding: 15px 30px; 
+    font-size: 1.25rem; 
+    border-radius: 25px; 
+    background-color: var(--primary-color); 
+    color: white; 
+    border: none; 
+    margin-left: 10px;
+    flex-direction: row;
+}
+
+.search-bar input:focus,
+.filters input:focus,
+.filters select:focus {
     border-color: #6a0dad;
     outline: none;
     box-shadow: 0 0 6px rgba(106, 13, 173, 0.3);
 }
 
-.search-bar button {
-    padding: 15px 30px;
-    font-size: 1.25rem;
-    border-radius: 25px;
+.search-bar button,
+.salary-buttons button,
+.apply-filters-btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
     background: var(--primary-color);
     color: white;
     border: none;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    transition: 0.3s ease-in-out;
 }
 
-.search-bar button:hover {
+.search-bar button:hover,
+.salary-buttons button:hover,
+.filters .filter-item button:hover,
+.apply-filters-btn:hover {
     background: linear-gradient(135deg, #4b0082, #6a0dad);
     transform: scale(1.05);
 }
@@ -98,7 +106,6 @@ body {
     background: linear-gradient(135deg, #ffffff, #f8f9fc);
     border-radius: 12px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    flex-direction: row;
 }
 
 .filters .filter-item {
@@ -106,7 +113,6 @@ body {
     flex-direction: column;
     min-width: 220px;
     padding: 15px;
-    border-radius: 0px;
 }
 
 .filters label {
@@ -124,68 +130,41 @@ body {
     font-size: 1rem;
     border: 2px solid var(--border-color);
     border-radius: 8px;
-    transition: all 0.3s ease-in-out;
+    transition: 0.3s ease-in-out;
 }
 
-.filters input:focus,
-.filters select:focus {
-    border-color: #6a0dad;
-    outline: none;
-    box-shadow: 0 0 6px rgba(106, 13, 173, 0.3);
-}
 
-/* Styled Buttons (Set Price, Unset Price, Apply Filters) */
-.salary-buttons button,
-.filters .filter-item button {
-    background: var(--selected-color);
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-.filters .apply-filter-item button {
-    background: var(--selected-color);
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    flex-direction: column;
-}
-
-.salary-buttons button:hover,
-.filters .filter-item button:hover {
-    background: linear-gradient(135deg, #4b0082, #6a0dad);
-    transform: scale(1.05);
-}
-
-/* Apply Filters & Clear Filters Button */
-.filters .filter-item a.btn-primary {
-    text-decoration: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 1rem;
-    text-align: center;
+/* Salary Filter */
+.salary-filter {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: var(--selected-color);
-    color: white;
-    flex-direction: column;
+    gap: 10px;
 }
 
-.filters .filter-item a.btn-primary:hover {
-    background: linear-gradient(135deg, #4b0082, #6a0dad);
-    transform: scale(1.05);
+.salary-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filters .filter-item button,
+.salary-buttons button {
+    background: var(--background-color);
+    border: 2px solid var(--primary-color);
+    padding: 5px 10px;
+    border-radius: 3px;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.filters .filter-item button:hover,
+.salary-buttons button:hover {
+    background: var(--primary-color);
+    color: white;
 }
 
 /* Dropdown Checkbox */
@@ -244,13 +223,15 @@ body {
 
 .dropdown-checkbox .dropdown-content input[type="checkbox"]:checked {
     background: var(--selected-color);
-    border-color:var(--primary-color);
+    border-color: var(--primary-color);
 }
+
+/* Filters Action Box */
 .filters-action-box {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #fff;
+    background: var(--card-background);
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -259,29 +240,7 @@ body {
     text-align: center;
 }
 
-/* Apply Filters Button */
-.apply-filters-btn {
-    background: var(--primary-color);
-    border: none;
-    padding: 12px 18px;
-    border-radius: 8px;
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    flex: 1;
-    margin-right: 10px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.search-filters {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
 }
-
-.apply-filters-btn:hover {
-    background: linear-gradient(135deg, #4b0082, #6a0dad);
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-
-
-

@@ -14,7 +14,7 @@
   <div class="search-bar">
     <form action="{% url 'search' %}" method="GET" style="display: flex; align-items: center;">
       <input type="text" name="q" placeholder="What are you looking for today?" value="{{ query|default:'' }}">
-      <button type="submit" style="padding: 15px 30px; font-size: 1.25rem; border-radius: 25px; background-color: var(--primary-color); color: white; border: none; margin-left: 10px;">
+      <button type="submit" class="submit">
         Search
       </button>
     </form>
@@ -83,11 +83,12 @@
         <label><i class="fa fa-credit-card" aria-hidden="true"></i> Min Salary Range (Annual GBP)</label>
         <input type="range" class="form-range" id="salary_range_slider" min="20000" max="100000" step="5000" value="{{ request.GET.salary_range|default:'20000' }}">
         <div id="salaryRangeDisplay">Salary: {{ request.GET.salary_range|default:"20000" }} GBP</div>
-        <div class="salary-buttons">
-          <button type="salary-button" id="setPriceButton" class="btn btn-secondary btn-sm">Set Price</button>
-          <button type="salary-button" id="unsetPriceButton" class="btn btn-secondary btn-sm">Unset Price</button>
-        </div>
+        
         <input type="hidden" name="salary_range" id="salary_range" value="{{ request.GET.salary_range|default:'' }}">
+      </div>
+      <div class="salary-buttons">
+        <button type="salary-button" id="setPriceButton" class="btn btn-secondary btn-sm">Set Price</button>
+        <button type="salary-button" id="unsetPriceButton" class="btn btn-secondary btn-sm">Unset Price</button>
       </div>
 
       <!-- Work Flexibility Filter -->
@@ -173,10 +174,10 @@
       </div>
     </div>
     <!-- Apply and Clear Buttons -->
-    <div class="apply-filter-item">
+    <div class="apply-filters-item">
       <button type="submit" class="btn btn-primary">Apply Filters</button>
     </div>
-    <div class="filter-item">
+    <div class="apply-filters-item">
       <a href="{% url 'search' %}" class="btn btn-primary">Clear Filters</a>
     </div>
   </form>
@@ -187,7 +188,7 @@
       <strong>Applied Filters:</strong>
       {% for key, value in request.GET.items %}
         {% if key != 'q' and value %}
-          {{ key|title }}: {{ value }}&nbsp;&nbsp;
+          {{ value }}&nbsp;&nbsp;
         {% endif %}
       {% endfor %}
     </div>

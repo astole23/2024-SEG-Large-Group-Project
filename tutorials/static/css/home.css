@@ -105,3 +105,13 @@ body {
         font-size: 1rem;    /* Adjust button font size */
     }
 }
+
+.info-section h2 a {
+    text-decoration: none; /* Removes underline */
+    color: var(--primary-color); /* Sets color to primary color */
+}
+
+.info-section h2 a:hover {
+    text-decoration: underline; /* Optional: Underline on hover */
+    color: #6a0dad; /* Optional: Slightly different color on hover */
+}
