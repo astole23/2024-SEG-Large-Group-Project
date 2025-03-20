@@ -150,6 +150,8 @@ console.log("📂 User Documents:", userDocuments);
 
     // Inside createDashboard()
 
+    const profilePhotoUrl = userInfo.user_profile_photo || "https://i.pravatar.cc/128";
+
   
 
     const app = document.querySelector('#app');
@@ -158,17 +160,17 @@ console.log("📂 User Documents:", userDocuments);
         <main>
           <section class="profile-section">
             <div class="profile-picture">
-              <img src="https://i.pravatar.cc/128" alt="John Doe" width="64" height="64">
+            <img src="${profilePhotoUrl}" alt="${userInfo.full_name}" width="64" height="64">
             </div>
             <div class="profile-info">
               <h1>${userInfo.full_name}</h1>
-              <p>Senior Software Developer</p>
               <div class="location">
                 <span>📍</span>
                 <h1>${userInfo.location}</h1>
               </div>
             </div>
             <button class="btn-outline">Edit Profile</button>
+
           </section>
   
           <section class="cv-section">
@@ -1128,6 +1130,7 @@ console.log("📂 User Documents:", userDocuments);
         modal.style.display = 'none';
       }
     });
+
   }
 
   window.deleteRawCV = async function () {

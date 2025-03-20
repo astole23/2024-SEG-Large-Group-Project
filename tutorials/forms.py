@@ -163,7 +163,7 @@ User = get_user_model()
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'industry', 'location')
+        fields = ('username', 'first_name', 'last_name', 'email', 'industry', 'location', "user_profile_photo")
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your username'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}),
@@ -172,6 +172,11 @@ class UserUpdateForm(forms.ModelForm):
             'industry': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your industry'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your location'}),
         }
+
+        user_profile_photo = forms.ImageField(
+            required=False,
+            widget=forms.ClearableFileInput(attrs={'class': 'form-control'})
+        )
 
 class MyPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):

@@ -20,6 +20,9 @@ class CustomUser(AbstractUser):
     
     # If True, the account is for a company; if False, a regular user.
     is_company = models.BooleanField(default=False)
+
+    # Profile photo field (can be null and optional)
+    user_profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
     
     # Company-specific fields – only applicable if is_company is True.
     company_name = models.CharField(max_length=255, blank=True, null=True)

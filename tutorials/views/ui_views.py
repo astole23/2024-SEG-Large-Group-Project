@@ -87,11 +87,12 @@ def user_dashboard(request):
 
     # 1. User Info (for frontend)
     user_info = {
-    'first_name': request.user.first_name,
-    'last_name': request.user.last_name,
-    'full_name': f"{request.user.first_name} {request.user.last_name}",
-     'location': request.user.user_location[0] if isinstance(request.user.user_location, list) and request.user.user_location else 'Unknown'
-}
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'full_name': f"{request.user.first_name} {request.user.last_name}",
+        'location': request.user.user_location[0] if isinstance(request.user.user_location, list) and request.user.user_location else 'Unknown',
+        'profile_photo': request.user.user_profile_photo.url if request.user.user_profile_photo else None
+    }
 
     # 2. CV Structured Data (AI parsed)
     try:
@@ -987,20 +988,24 @@ def delete_user_document(request):
 
 @login_required
 def profile_settings(request):
+    user = request.user  # Get the logged-in user
+    
     if request.method == 'POST':
         if 'update_details' in request.POST:
-            details_form = UserUpdateForm(request.POST, instance=request.user)
-            password_form = MyPasswordChangeForm(user=request.user)
+            details_form = UserUpdateForm(request.POST, request.FILES, instance=user)  # ✅ Include request.FILES for image upload
+            password_form = MyPasswordChangeForm(user=user)
+            
             if details_form.is_valid():
                 details_form.save()
                 messages.success(request, "Your details have been updated.")
                 return redirect('settings')
             else:
                 messages.error(request, "Update failed.")
-        
+
         elif 'change_password' in request.POST:
-            details_form = UserUpdateForm(instance=request.user)
-            password_form = MyPasswordChangeForm(user=request.user, data=request.POST)
+            details_form = UserUpdateForm(instance=user)
+            password_form = MyPasswordChangeForm(user=user, data=request.POST)
+            
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
@@ -1010,16 +1015,22 @@ def profile_settings(request):
                 messages.error(request, "Password change failed.")
 
         elif 'delete_account' in request.POST:
-            user = request.user
             username = user.username
+            
+            # ✅ Delete profile photo before deleting the account (optional)
+            if user.user_profile_photo:
+                if os.path.isfile(user.user_profile_photo.path):
+                    os.remove(user.user_profile_photo.path)
+            
             user.delete()
             logout(request)
             messages.success(request, f"Account '{username}' has been deleted successfully.")
             return redirect('guest')
 
     else:
-        details_form = UserUpdateForm(instance=request.user)
-        password_form = MyPasswordChangeForm(user=request.user)
+        details_form = UserUpdateForm(instance=user)
+        password_form = MyPasswordChangeForm(user=user)
+        
 
     return render(request, 'settings.html', {
         'details_form': details_form,

@@ -30,14 +30,26 @@
             <!-- Account Details Section -->
             <div class="settings-section">
                 <h3 class="text-center">Account Settings</h3>
-                <form method="post">
+
+                <!-- Display Profile Picture -->
+                <div class="text-center mb-3">
+                    {% if request.user.user_profile_photo %}
+                        <img src="{{ request.user.user_profile_photo.url }}" alt="Profile Photo" class="rounded-circle" width="150" height="150">
+                    {% else %}
+                        <img src="{% static 'images/default_profile.png' %}" alt="Default Profile" class="rounded-circle" width="150" height="150">
+                    {% endif %}
+                </div>
+
+                <form method="post" enctype="multipart/form-data">  <!-- ✅ Added enctype for file uploads -->
                     {% csrf_token %}
                     {{ details_form.as_p }}
-                    <button type="submit" name="update_details" class="btn btn-primary">Save Details</button>
+
+
+                    <button type="submit" name="update_details" class="btn btn-primary mt-3">Save Details</button>
                 </form>
                 
                 <!-- Delete Account Button (Triggers Modal) -->
-                <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                     Delete My Account
                 </button>
             </div>
