@@ -94,6 +94,18 @@ body {
     transform: scale(1.05);
 }
 
+/* Style for the slider thumb (ball) */
+#salary_range_slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);  /* Primary color */
+    border: var(--primary-color);
+    cursor: pointer;
+}
+
 /* Filters Section */
 .filters {
     display: flex;
@@ -244,3 +256,29 @@ body {
     font-size: 1.25rem;
     color: var(--text-secondary);
 }
+
+.apply-filters-buttons-container {
+    display: flex;
+    justify-content: center; /* Center buttons horizontally */
+    gap: 20px; /* Add space between the buttons */
+    margin-top: 20px; /* Adjust the margin for positioning */
+    margin-bottom: 20px;
+}
+  
+  .apply-filters-buttons-container .btn {
+    padding: 12px 40px; /* Thinner and longer buttons */
+    font-size: 1.2rem; /* Adjust font size */
+    border-radius: 5px; /* Rounded corners */
+    background-color: var(--primary-color); /* Primary color */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: 0.3s ease-in-out; /* Smooth hover transition */
+    width: auto; /* Allow buttons to have an automatic width */
+  }
+  
+  .apply-filters-buttons-container .btn:hover {
+    background: linear-gradient(135deg, #4b0082, #6a0dad); /* Hover effect */
+    transform: scale(1.05); /* Slight zoom effect */
+  }
+  
