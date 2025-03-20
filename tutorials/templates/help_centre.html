@@ -1,0 +1,133 @@
+{% extends 'base_content.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/help.css' %}">
+
+<div class="container">
+    <div class="help-header">
+        <h1>Help Centre</h1>
+        <p>Find answers to common questions and issues.</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <input type="text" id="helpSearch" placeholder="Search for help topics..." onkeyup="filterHelpTopics()">
+    </div>
+
+    <!-- Help Topics -->
+    <div class="help-section">
+        <div class="help-card" onclick="showHelpContent('getting-started')">
+            <h2>Getting Started</h2>
+            <ul>
+                <li onclick="event.stopPropagation(); showHelpContent('create-account')"><a href="#">How to create an account</a></li>
+                <li onclick="event.stopPropagation(); showHelpContent('login-logout')"><a href="#">Logging in and out</a></li>
+                <li onclick="event.stopPropagation(); showHelpContent('update-profile')"><a href="#">Updating your profile</a></li>
+            </ul>
+        </div>
+
+        <div class="help-card" onclick="showHelpContent('account-management')">
+            <h2>Account Management</h2>
+            <ul>
+                <li onclick="event.stopPropagation(); showHelpContent('reset-password')"><a href="#">Resetting your password</a></li>
+                <li onclick="event.stopPropagation(); showHelpContent('change-email')"><a href="#">Changing your email address</a></li>
+                <li onclick="event.stopPropagation(); showHelpContent('delete-account')"><a href="#">Deleting your account</a></li>
+            </ul>
+        </div>
+
+        <div class="help-card" onclick="showHelpContent('job-applications')">
+            <h2>Job Applications</h2>
+            <ul>
+                <li onclick="event.stopPropagation(); showHelpContent('apply-for-jobs')"><a href="#">How to apply for jobs</a></li>
+                <li onclick="event.stopPropagation(); showHelpContent('track-applications')"><a href="#">Tracking your applications</a></li>
+                <li onclick="event.stopPropagation(); showHelpContent('edit-application')"><a href="#">Editing an application</a></li>
+            </ul>
+        </div>
+
+        <div class="help-card" onclick="showHelpContent('technical-support')">
+            <h2>Technical Support</h2>
+            <ul>
+                <li onclick="event.stopPropagation(); showHelpContent('troubleshoot-login')"><a href="#">Troubleshooting login issues</a></li>
+                <li onclick="event.stopPropagation(); showHelpContent('browser-compatibility')"><a href="#">Browser compatibility</a></li>
+                <li onclick="event.stopPropagation(); showHelpContent('report-bug')"><a href="#">Reporting a bug</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Help Content Display -->
+    <div id="help-content" class="help-content-container">
+        <h2 id="help-title">Select a topic to view details</h2>
+        <p id="help-text">Click on a topic from the list to see its explanation.</p>
+    </div>
+</div>
+
+<script>
+const helpTopics = {
+    "create-account": {
+        title: "How to Create an Account",
+        text: "To create an account, click on the 'Sign Up' button on the homepage, fill in your details, and submit the form."
+    },
+    "login-logout": {
+        title: "Logging in and Out",
+        text: "To log in, enter your credentials on the login page. To log out, click on your profile menu and select 'Logout'."
+    },
+    "update-profile": {
+        title: "Updating Your Profile",
+        text: "Go to your profile settings, make the necessary changes, and click 'Save'."
+    },
+    "reset-password": {
+        title: "Resetting Your Password",
+        text: "Click on 'Forgot Password' on the login page, enter your email, and follow the instructions in the email you receive."
+    },
+    "change-email": {
+        title: "Changing Your Email Address",
+        text: "Go to 'Account Settings', update your email, and confirm the change via the verification link sent to your new email."
+    },
+    "delete-account": {
+        title: "Deleting Your Account",
+        text: "To delete your account, go to 'Account Settings' and select 'Delete My Account'. This action is irreversible."
+    },
+    "apply-for-jobs": {
+        title: "How to Apply for Jobs",
+        text: "Browse job listings, click on a job, and follow the application instructions on the job page."
+    },
+    "track-applications": {
+        title: "Tracking Your Applications",
+        text: "Go to 'My Applications' to see the status of your submitted job applications."
+    },
+    "edit-application": {
+        title: "Editing an Application",
+        text: "If the job allows edits, you can update your application under 'My Applications' before the deadline."
+    },
+    "troubleshoot-login": {
+        title: "Troubleshooting Login Issues",
+        text: "If you can't log in, ensure your credentials are correct. If the problem persists, reset your password."
+    },
+    "browser-compatibility": {
+        title: "Browser Compatibility",
+        text: "Our site works best on Chrome, Firefox, and Edge. If you experience issues, try clearing your cache."
+    },
+    "report-bug": {
+        title: "Reporting a Bug",
+        text: "If you encounter a bug, contact support with a description of the issue and screenshots if possible."
+    }
+};
+
+function showHelpContent(topicId) {
+    const contentArea = document.getElementById("help-content");
+    const titleElement = document.getElementById("help-title");
+    const textElement = document.getElementById("help-text");
+
+    if (helpTopics[topicId]) {
+        titleElement.textContent = helpTopics[topicId].title;
+        textElement.textContent = helpTopics[topicId].text;
+    } else {
+        titleElement.textContent = "Topic Not Found";
+        textElement.textContent = "Sorry, we couldn't find content for this topic.";
+    }
+
+    contentArea.scrollIntoView({ behavior: "smooth" });
+}
+</script>
+
+{% endblock %}

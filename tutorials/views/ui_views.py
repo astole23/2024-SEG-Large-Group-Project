@@ -1037,6 +1037,25 @@ def profile_settings(request):
         'password_form': password_form,
     })
 
+
+@login_required
+def delete_account(request):
+    """Allow a logged-in user to delete their own account."""
+    if request.method == 'POST':
+        user = request.user
+        username = user.username
+        user.delete()
+        logout(request)
+        messages.success(request, f"Account '{username}' has been deleted successfully.")
+
+        return redirect('guest')
+    return render(request, 'confirm_delete_account.html')
+
+def help_centre(request):
+    return render(request, 'help_centre.html')
+
+def accessibility(request):
+    return render(request, 'accessibility.html')
 @login_required
 def add_job_by_code(request):
     if request.method != 'POST':

@@ -65,6 +65,10 @@ class UserLoginForm(AuthenticationForm):
         'class': 'form-control',
         'placeholder': 'Password'
     }))
+    remember_me = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
 
 class CompanyLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
@@ -75,6 +79,10 @@ class CompanyLoginForm(AuthenticationForm):
         'class': 'form-control',
         'placeholder': 'Password'
     }))
+    remember_me = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
 
 class UserSignUpForm(UserCreationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={

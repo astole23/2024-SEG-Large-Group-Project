@@ -34,12 +34,12 @@
             {% csrf_token %}
             <!-- Hidden field to pass user type -->
             <input type="hidden" name="user_type" value="user">
-            
+
             <!-- Non-field errors -->
             {% if user_form.non_field_errors %}
               <div class="error">{{ user_form.non_field_errors }}</div>
             {% endif %}
-            
+
             <div class="form-group">
               {{ user_form.username }}
               {% if user_form.username.errors %}
@@ -52,6 +52,15 @@
                 <div class="error">{{ user_form.password.errors }}</div>
               {% endif %}
             </div>
+
+            <!-- Remember Me Checkbox -->
+            <div class="form-group remember-me">
+              <label>
+                <input type="checkbox" name="remember_me">
+                Stay logged in
+              </label>
+            </div>
+
             <button type="submit" class="btn">Login</button>
           </form>
         </div>
@@ -62,11 +71,11 @@
             {% csrf_token %}
             <!-- Hidden field to pass user type -->
             <input type="hidden" name="user_type" value="company">
-            
+
             {% if company_form.non_field_errors %}
               <div class="error">{{ company_form.non_field_errors }}</div>
             {% endif %}
-            
+
             <div class="form-group">
               {{ company_form.username }}
               {% if company_form.username.errors %}
@@ -79,6 +88,15 @@
                 <div class="error">{{ company_form.password.errors }}</div>
               {% endif %}
             </div>
+
+            <!-- Remember Me Checkbox -->
+            <div class="form-group remember-me">
+              <label>
+                <input type="checkbox" name="remember_me">
+                Stay logged in
+              </label>
+            </div>
+
             <button type="submit" class="btn">Login</button>
           </form>
         </div>
