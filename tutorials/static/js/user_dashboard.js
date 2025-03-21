@@ -268,7 +268,7 @@ console.log("📂 User Documents:", userDocuments);
                 </div>
                 <button class="btn btn-primary" id="editCVBtn">Edit Online CV</button>
               </div>
-            </div>
+            
           </section>
 
           <div class="modal-header">
