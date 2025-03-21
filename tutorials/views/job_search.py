@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from tutorials.models.jobposting import JobPosting
 from tutorials.models.standard_cv import CVApplication
-from tutorials.matchmaking_helper import match_job_to_cv_together, is_location_match
+from tutorials.helpers.matchmaking_helper import match_job_to_cv_together, is_location_match
 from tutorials.models.standard_cv import UserCV
 
 def get_random_job_postings(limit=150):

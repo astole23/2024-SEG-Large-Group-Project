@@ -1,24 +1,22 @@
+import os
+import fitz 
+import together
+import json
+
 from django.db import models
 from django.core.validators import FileExtensionValidator, MinLengthValidator, MaxLengthValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-import os
-import fitz  # PyMuPDF
-import together
-from dotenv import load_dotenv
-import json
 from django.conf import settings
 
-# Load your API key from environment
+from dotenv import load_dotenv
 
 load_dotenv() 
-api_key = os.getenv("TOGETHER_API_KEY")  # ✅ Match your .env variable name
+api_key = os.getenv("TOGETHER_API_KEY")  
 
 
 
-# ------------------------------
 # Utility functions
-# ------------------------------
 
 def validate_file_size(value):
     max_size_kb = 1024  # 1MB
@@ -63,9 +61,7 @@ JSON Output:
     return response["choices"][0]["text"]
 
 
-# ------------------------------
 # Main Model
-# ------------------------------
 
 class CVApplication(models.Model):
     # Personal Information
@@ -140,7 +136,6 @@ class CVApplication(models.Model):
         if not self.full_name and self.cv_file:
             self.full_name = os.path.splitext(self.cv_file.name)[0]
 
-        # Run Together AI extraction if CV is uploaded
         if self.cv_file:
             try:
                 pdf_path = self.cv_file.path

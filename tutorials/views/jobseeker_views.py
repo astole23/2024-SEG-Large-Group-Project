@@ -12,7 +12,6 @@ from django.utils.timezone import localtime
 from django.utils.dateparse import parse_date
 from django.utils.timesince import timesince
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.paginator import Paginator
 
 from tutorials.models.applications import JobApplication, Notification
 from tutorials.models.standard_cv import CVApplication, UserCV
@@ -21,7 +20,7 @@ from tutorials.auto_fill import extract_text_from_pdf, classify_resume_with_toge
 from tutorials.views.function_views import split_skills
 
 
-from tutorials.helpers import remove_duplicate_education, remove_duplicate_experience, normalize_to_string_list
+from tutorials.helpers.base_helpers import remove_duplicate_education, remove_duplicate_experience, normalize_to_string_list
 
 
 @login_required

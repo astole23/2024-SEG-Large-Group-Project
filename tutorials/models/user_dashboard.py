@@ -1,10 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User as CustomUser
+from django.contrib.auth.models import User 
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-# models.py
 class UploadedCV(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     file = models.FileField(upload_to='uploads/raw_cvs/')

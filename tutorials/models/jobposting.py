@@ -101,5 +101,5 @@ class JobPosting(models.Model):
 
 def __str__(self):
         if self.company and self.company.company_name:
-            return self.company.company_name  # Return the company name if it exists
-        return ""  # Return an empty string if there is no company name
+            return self.company.company_name  
+        return "" 

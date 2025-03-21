@@ -14,8 +14,7 @@ from tutorials.models.applications import JobApplication, Notification
 from tutorials.models.company_review import Review
 from tutorials.models.accounts import CustomUser
 from tutorials.forms import (CompanyProfileForm)
-
-
+from tutorials.helpers.company_helpers import validate_required_fields, parse_reviews, parse_deadline
 @login_required
 def employer_dashboard(request):
     # Only allow company users
@@ -139,30 +138,23 @@ logger = logging.getLogger(__name__)
 
 def create_job_posting(request):
     logger.debug(f"create_job_posting called by user: {request.user} (is_company={request.user.is_company})")
-    
+
     if not request.user.is_company:
         logger.warning("Non-company user attempted to create a job posting.")
         return JsonResponse({'status': 'error', 'error': 'Not authorized'}, status=403)
-    
+
     try:
         data = json.loads(request.body)
         logger.debug(f"Received data: {data}")
+
+        # Parse deadline
         deadline_str = data.get('application_deadline')
-        logger.debug(f"Application deadline received: {deadline_str}")
-        if not deadline_str:
-            raise ValueError("Application deadline is required.")
-        deadline = parse_date(deadline_str)
+        deadline = parse_deadline(deadline_str)
         logger.debug(f"Parsed deadline: {deadline}")
-        if not deadline:
-            raise ValueError(f"Invalid date format for application_deadline: {deadline_str}. Expected YYYY-MM-DD.")
-        
-        reviews = data.get('company_reviews')
+
+        # Parse reviews
+        reviews = parse_reviews(data.get('company_reviews'))
         logger.debug(f"Company reviews received: {reviews}")
-        try:
-            reviews = float(reviews) if reviews else None
-        except ValueError:
-            logger.warning("Failed to convert company_reviews to float. Setting reviews to None.")
-            reviews = None
 
         # Validate required fields
         required_fields = [
@@ -170,25 +162,18 @@ def create_job_posting(request):
             'job_overview', 'roles_responsibilities', 'required_skills', 
             'perks'
         ]
-        for field in required_fields:
-            if not data.get(field):
-                error_msg = f"Field '{field}' is required but missing or empty."
-                logger.error(error_msg)
-                raise ValueError(error_msg)
-            else:
-                logger.debug(f"Field '{field}' value: {data.get(field)}")
+        validate_required_fields(data, required_fields)
 
-        # Log additional fields (optional)
+        # Log optional fields (for debugging)
         logger.debug(f"Optional fields - department: {data.get('department')}, work_type: {data.get('work_type')}, "
                      f"salary_range: {data.get('salary_range')}, preferred_skills: {data.get('preferred_skills')}, "
                      f"education_required: {data.get('education_required')}, required_documents: {data.get('required_documents')}, "
                      f"company_overview: {data.get('company_overview')}, why_join_us: {data.get('why_join_us')}")
-        
+
+        # Create the job posting
         job_posting = JobPosting.objects.create(
             job_title=data.get('job_title'),
-            # Set the company using the logged-in user
             company=request.user,
-            # Automatically set company_name from the logged-in user
             department=data.get('department'),
             location=data.get('location'),
             work_type=data.get('work_type'),
@@ -200,17 +185,16 @@ def create_job_posting(request):
             preferred_skills=data.get('preferred_skills'),
             education_required=data.get('education_required'),
             perks=data.get('perks'),
-            # Store the deadline as a string 
             application_deadline=deadline_str,
             required_documents=data.get('required_documents'),
             company_overview=data.get('company_overview'),
             why_join_us=data.get('why_join_us'),
             company_reviews=reviews
         )
+
         logger.info(f"Job posting created successfully with ID: {job_posting.id}")
         return JsonResponse({'status': 'success', 'job_id': job_posting.id})
+
     except Exception as e:
         logger.exception("Error creating job posting:")
         return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
-
-

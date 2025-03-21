@@ -35,17 +35,6 @@ class CustomUser(AbstractUser):
         if self.logo:
             self.process_image(self.logo, target_size=(200, 200))
 
-    def generate_unique_id(self):
-        """
-        Generates a unique 8-character code for company accounts.
-        """
-        allowed = string.ascii_uppercase + string.digits + "!@#$%^&*()"
-        while True:
-            new_id = ''.join(random.choices(allowed, k=8))
-            if not CustomUser.objects.filter(unique_id=new_id).exists():
-                self.unique_id = new_id
-                break
-
     def process_image(self, image_field, target_size):
         """
         Processes and resizes the provided image to the specified target size.
