@@ -42,7 +42,8 @@ def company_detail(request, company_id):
             form.save()
     else:
         form = CompanyProfileForm(instance=company)
-    return render(request, 'company/company_detail.html', {'company': company, 'form': form})
+    return render(request, 'jobseeker/company_detail.html', {'company': company, 'form': form})
+
 
 @login_required
 def company_profile(request):

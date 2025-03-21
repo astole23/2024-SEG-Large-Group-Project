@@ -51,6 +51,7 @@ def job_recommendation(request):
                     "company_overview": job.company_overview,
                     "why_join_us": job.why_join_us,
                     "company_reviews": job.company_reviews,
+                    "company_id": job.company.id,
                 }
                 for job in job_postings
             ]
@@ -115,6 +116,7 @@ def job_recommendation(request):
                 "company_overview": job.company_overview,
                 "why_join_us": job.why_join_us,
                 "company_reviews": job.company_reviews,
+                "company_id": job.company.id,
             }
             for job, score in matched_jobs[:3]
         ]

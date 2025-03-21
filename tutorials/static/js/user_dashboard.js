@@ -37,7 +37,10 @@ console.log("📂 User Documents:", userDocuments);
         jobElement.className = 'job-card';
         jobElement.innerHTML = `
           <h5 class="job-title">${job.job_title}</h5>
-          <p class="company-name">${job.company_name}</p>
+          <p class="company-name">
+  <strong>Company:</strong>
+  <a href="/company/${job.company_id}/">${job.company_name}</a>
+</p>
           <p class="location"><i class="fa-solid fa-location-dot"></i>${job.location}</p>
           <p class="pay-contract">${job.salary_range} | ${job.contract_type}</p>
           <p class="job-overview"><strong>Overview:</strong> ${job.job_overview || 'No overview available'}</p>
@@ -115,7 +118,10 @@ console.log("📂 User Documents:", userDocuments);
       card.className = 'job-card';
       card.innerHTML = `
         <h5 class="job-title">${job.job_title}</h5>
-        <p class="company-name"><strong>Company:</strong> ${job.company_name}</p>
+        <p class="company-name">
+  <strong>Company:</strong>
+  <a href="/company/${job.company_id}/">${job.company_name}</a>
+</p>
         <p class="location"><strong>Location:</strong> ${job.location}</p>
         <p class="salary"><strong>Salary:</strong> ${job.salary_range || 'Not specified'}</p>
         <p class="contract-type"><strong>Contract:</strong> ${job.contract_type || 'Not specified'}</p>

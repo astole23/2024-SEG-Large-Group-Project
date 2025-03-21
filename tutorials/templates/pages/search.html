@@ -208,7 +208,10 @@
           <div class="grid-button">
             <div class="job-details">
               <h5 class="job-title">{{ job.job_title }}</h5>
-              <p class="company-name"><strong>Company:</strong> {{ job.company_name }}</p>
+              <p class="company-name">
+                <strong>Company:</strong>
+                <a href="{% url 'company_detail' job.company_id %}">{{ job.company.company_name }}</a>
+              </p>
               <p class="location"><strong>Location:</strong> {{ job.location }}</p>
               <p class="pay-contract"><strong>Salary:</strong> {{ job.salary_range }} | {{ job.contract_type }}</p>
               <p class="company-overview">{{ job.company_overview|truncatewords:10 }}</p>
@@ -252,7 +255,7 @@
               <!-- Basic Job Info -->
               <div class="row mb-3">
                 <div class="col-md-6">
-                  <p><strong>Company:</strong> {{ job.company_name }}</p>
+                  <p><strong>Company:</strong> {{ job.company.company_name }}</p>
                   {% if job.department %}
                     <p><strong>Department:</strong> {{ job.department }}</p>
                   {% endif %}
