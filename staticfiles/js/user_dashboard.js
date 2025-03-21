@@ -6,6 +6,9 @@ const dashboardData = dashboardDataScript ? JSON.parse(dashboardDataScript.textC
 const mockCV = dashboardData.cv_data || {};
 const rawCVInfo = dashboardData.raw_cv_info || {};
 const userDocuments = dashboardData.user_documents || [];
+const profilePicture = userInfo.profile_picture && userInfo.profile_picture.trim() !== ""
+  ? userInfo.profile_picture
+  : "/static/images/empty_profile.png";
 
 // Logging to check data loaded correctly
 console.log("✅ Loaded CV from backend:", mockCV);
@@ -158,7 +161,7 @@ console.log("📂 User Documents:", userDocuments);
         <main>
           <section class="profile-section">
             <div class="profile-picture">
-              <img src="https://i.pravatar.cc/128" alt="John Doe" width="64" height="64">
+              <img src="${profilePicture}" alt="${userInfo.full_name || 'User'}" width="64" height="64">
             </div>
             <div class="profile-info">
               <h1>${userInfo.full_name}</h1>

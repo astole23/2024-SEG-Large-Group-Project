@@ -27,6 +27,7 @@ urlpatterns = [
     path('company/<int:company_id>/review/', company_views.leave_review, name='leave_review'),
     path('company/<int:company_id>/edit/', company_views.edit_company, name='edit_company'),
     path('company/<int:company_id>/add_job/', company_views.create_job_posting, name='add_job_listing'),
+    path('your-job-posting-endpoint/', company_views.create_job_posting, name='create_job_posting'),
 
     # Jobseeker Views
     path('user_dashboard/', jobseeker_views.user_dashboard, name='user_dashboard'),
@@ -61,7 +62,6 @@ urlpatterns = [
     path('apply/step3/', job_applications_views.apply_step3, name='apply_step3'),
     path('apply/step4/', job_applications_views.apply_step4, name='apply_step4'),
     path('apply/success/', job_applications_views.application_success, name='application_success'),
-    path('your-job-posting-endpoint/', company_views.create_job_posting, name='create_job_posting'),
 
     # Company Job Applications Management 
     path('company/applications/', company_views.company_applications, name='company_applications'),
@@ -71,7 +71,7 @@ urlpatterns = [
     # APIs & Other Features 
     path('api/job_postings/', search_views.job_postings_api, name='job_postings_api'),
     path('api/tracked-jobs/', search_views.tracked_jobs_api, name='tracked_jobs_api'),
-    path('job_recommendations/', job_search.job_recommendation, name='job_recommendations'),
+    path('job_recommendation/', job_search.job_recommendation, name='job_recommendations'),
 ]
 
 
