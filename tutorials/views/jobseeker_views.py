@@ -104,6 +104,11 @@ def user_dashboard(request):
 def my_jobs(request):
     return render(request, 'jobseeker/my_jobs.html')
 
+def delete_job(request, job_id):
+    job = get_object_or_404(JobApplication, id=job_id, applicant=request.user)
+    job.delete()
+    return JsonResponse({'success': True})
+
 @login_required
 def notifications(request):
     notifs = Notification.objects.filter(recipient=request.user).order_by('-created_at')
