@@ -57,7 +57,7 @@ def employer_dashboard(request):
     page_number = request.GET.get('page')
     job_postings = paginator.get_page(page_number)
 
-    return render(request, 'employer_dashboard.html', {'job_postings': job_postings})
+    return render(request, 'company/employer_dashboard.html', {'job_postings': job_postings})
 
 def user_logout(request):
     # Log the user out
@@ -67,7 +67,7 @@ def user_logout(request):
 
 
 def contact_us(request):
-    return render(request, 'contact_us.html')
+    return render(request, 'pages/contact_us.html')
 
 def normalize_to_string_list(value):
     if isinstance(value, list):
@@ -82,7 +82,7 @@ def guest(request):
         job_postings = JobPosting.objects.filter(job_title__icontains=query)
     else:
         job_postings = JobPosting.objects.all()
-    return render(request, 'guest.html', {'job_postings': job_postings,'is_guest': True})
+    return render(request, 'pages/guest.html', {'job_postings': job_postings,'is_guest': True})
 
 @login_required
 def user_dashboard(request):
@@ -153,7 +153,7 @@ def user_dashboard(request):
 
     print("🧾 raw_cv_info_json:", raw_cv_info)
 
-    return render(request, 'user_dashboard.html', {
+    return render(request, 'jobseeker/user_dashboard.html', {
         'user_info_json': json.dumps(user_info),
         'cv_data_json': json.dumps(cv_data, cls=DjangoJSONEncoder),
         'raw_cv_info_json': json.dumps(raw_cv_info),
@@ -245,28 +245,28 @@ def search(request):
     print("Selected job types:", selected_job_types)
     print("Job postings count before filtering:", JobPosting.objects.count())
 
-    return render(request, 'search.html', context)
+    return render(request, 'pages/search.html', context)
 
 def about_us(request):
-    return render(request, 'about_us.html')
+    return render(request, 'pages/about_us.html')
 
 def terms_conditions(request):
-    return render(request, 'terms_conditions.html')
+    return render(request, 'pages/terms_conditions.html')
 
 def status(request):
-    return render(request, 'status.html')
+    return render(request, 'jobseeker/status.html')
 
 def privacy(request):
-    return render(request, 'privacy.html')
+    return render(request, 'pages/privacy.html')
 
 def user_agreement(request):
-    return render(request, 'user_agreement.html')
+    return render(request, 'pages/user_agreement.html')
 
 def faq(request):
-    return render(request, 'faq.html')
+    return render(request, 'pages/faq.html')
 
 def my_jobs(request):
-    return render(request, 'my_jobs.html')
+    return render(request, 'jobseeker/my_jobs.html')
 
 
 
@@ -276,7 +276,7 @@ def login_view(request):
     user_form = UserLoginForm(prefix='user')
     company_form = CompanyLoginForm(prefix='company')
 
-    return render(request, 'login.html', {
+    return render(request, 'auth/login.html', {
         'user_form': user_form,
         'company_form': company_form
     })
@@ -344,7 +344,7 @@ def signup_view(request):
         user_form = UserSignUpForm(prefix='user')
         company_form = CompanySignUpForm(prefix='company')
 
-    return render(request, 'signup.html', {'user_form': user_form, 'company_form': company_form})
+    return render(request, 'auth/signup.html', {'user_form': user_form, 'company_form': company_form})
 
 def company_detail(request, company_id):
     """
@@ -357,7 +357,7 @@ def company_detail(request, company_id):
             form.save()
     else:
         form = CompanyProfileForm(instance=company)
-    return render(request, 'company_detail.html', {'company': company, 'form': form})
+    return render(request, 'company/company_detail.html', {'company': company, 'form': form})
 
 def company_profile(request):
     """
@@ -378,7 +378,7 @@ def company_profile(request):
     else:
         form = CompanyProfileForm(instance=company)
 
-    return render(request, 'company_profile.html', {'company': company, 'form': form, 'job_postings': job_postings,})
+    return render(request, 'company/company_profile.html', {'company': company, 'form': form, 'job_postings': job_postings,})
 
 @login_required
 @require_POST
@@ -410,7 +410,7 @@ def edit_company(request, company_id):
             'company': company,
             'message': 'Company details updated!'
         })
-    return render(request, 'edit_company.html', {'company': company})
+    return render(request, 'company/edit_company.html', {'company': company})
 
 
 
@@ -523,7 +523,7 @@ def apply_step1(request):
         application_data['cover_letter'] = request.POST.get('cover_letter')
         request.session['application_data'] = application_data
         return redirect('apply_step2')
-    return render(request, 'step1.html')
+    return render(request, 'application/step1.html')
 
 # Step 2: Personal Information
 @login_required
@@ -615,7 +615,7 @@ def apply_step2(request):
         except UserCV.DoesNotExist:
             initial_data = {}
 
-    return render(request, 'step2.html', {'initial_data': initial_data})
+    return render(request, 'application/step2.html', {'initial_data': initial_data})
 
 
 # Step 3: Job-Specific Questions
@@ -632,7 +632,7 @@ def apply_step3(request):
         application_data['background_check'] = request.POST.get('background_check')
         request.session['application_data'] = application_data
         return redirect('apply_step4')
-    return render(request, 'step3.html')
+    return render(request, 'application/step3.html')
 
 # Step 4: Review and Submit
 @login_required
@@ -725,14 +725,14 @@ def apply_step4(request):
             del request.session['job_posting_id']
         return redirect('application_success')
     # On GET, render the review page showing all collected data
-    return render(request, 'step4.html', {'application_data': application_data})
+    return render(request, 'application/step4.html', {'application_data': application_data})
 
 @login_required
 def application_success(request):
     application_id = request.session.get('application_id', None)
     if 'application_id' in request.session:
         del request.session['application_id']
-    return render(request, 'success.html', {'application_id': application_id})
+    return render(request, 'application/success.html', {'application_id': application_id})
 
 @login_required
 def notifications(request):
@@ -742,7 +742,7 @@ def notifications(request):
          unread_count = notifs.filter(is_read=False).count()
          return JsonResponse({'unread_count': unread_count})
     # Otherwise, render the full notifications page
-    return render(request, 'notifications.html', {'notifications': notifs})
+    return render(request, 'jobseeker/notifications.html', {'notifications': notifs})
 
 
 
@@ -759,13 +759,13 @@ def mark_notification_read(request, notification_id):
 @login_required
 def user_applications(request):
     applications = JobApplication.objects.filter(applicant=request.user).order_by('-submitted_at')
-    return render(request, 'user_applications.html', {'applications': applications})
+    return render(request, 'jobseeker/user_applications.html', {'applications': applications})
 
 # 2. User Application Detail: Detail view for a single application
 @login_required
 def user_application_detail(request, application_id):
     application = get_object_or_404(JobApplication, id=application_id, applicant=request.user)
-    return render(request, 'user_application_detail.html', {'application': application})
+    return render(request, 'jobseeker/user_application_detail.html', {'application': application})
 
 # 3. Company Applications: List of applications received for jobs posted by the logged-in company
 @login_required
@@ -774,13 +774,13 @@ def company_applications(request):
         messages.error(request, "Access restricted to company accounts only.")
         return redirect('login')
     applications = JobApplication.objects.filter(company=request.user).order_by('-submitted_at')
-    return render(request, 'company_applications.html', {'applications': applications})
+    return render(request, 'company/company_applications.html', {'applications': applications})
 
 # 4. Company Application Detail: Detail view for a single application for the company
 @login_required
 def company_application_detail(request, application_id):
     application = get_object_or_404(JobApplication, id=application_id, company=request.user)
-    return render(request, 'company_application_detail.html', {'application': application})
+    return render(request, 'company/company_application_detail.html', {'application': application})
 
 # 5. Update Application Status: Allow a company to update an application's status
 @login_required
@@ -1026,7 +1026,7 @@ def profile_settings(request):
         details_form = UserUpdateForm(instance=request.user)
         password_form = MyPasswordChangeForm(user=request.user)
 
-    return render(request, 'settings.html', {
+    return render(request, 'pages/settings.html', {
         'details_form': details_form,
         'password_form': password_form,
     })
@@ -1068,10 +1068,10 @@ def delete_account(request):
 
 
 def help_centre(request):
-    return render(request, 'help_centre.html')
+    return render(request, 'pages/help_centre.html')
 
 def accessibility(request):
-    return render(request, 'accessibility.html')
+    return render(request, 'pages/accessibility.html')
 
 @login_required
 def add_job_by_code(request):

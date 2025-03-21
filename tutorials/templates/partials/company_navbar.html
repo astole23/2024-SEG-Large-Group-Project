@@ -10,19 +10,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    
-    
-    <div class="dropdown">
-      <div class="dropdown-content">
-        <a href="/employer_dashboard/">View Dashboard</a>
-        <a href="/settings/">Settings</a>
-        <a href="/job-postings/">Job Postings</a>
-        <a href="{% url 'logout' %}">Sign Out</a>
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
+
 <script src="{% static 'js/auth_navbar.js' %}"></script>
     <!-- FontAwesome Icons -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -49,7 +37,7 @@
                 <button class="login-btn"><i class="fas fa-user"></i></button>
                 <div class="dropdown-content">
                     <a href="/employer_dashboard/">View Dashboard</a>
-                    <a href="{% url 'edit_company' company_id=user.id %}">Settings</a>
+                    <a href="/settings/">Settings</a>
                     <a href="/job-postings/">Job Postings</a>
                     <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Sign Out</a>
                 </div>

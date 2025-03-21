@@ -49,17 +49,17 @@ def process_login(request):
 
             # Pass the form with errors for the correct user type
             if user_type == 'company':
-                return render(request, 'login.html', {
+                return render(request, 'auth/login.html', {
                     'company_form': form,
                     'user_form': UserLoginForm(prefix='user')
                 })
             else:
-                return render(request, 'login.html', {
+                return render(request, 'auth/login.html', {
                     'user_form': form,
                     'company_form': CompanyLoginForm(prefix='company')
                 })
     else:
-        return render(request, 'login.html', {
+        return render(request, 'auth/login.html', {
             'user_form': UserLoginForm(prefix='user'),
             'company_form': CompanyLoginForm(prefix='company')
         })
@@ -131,7 +131,7 @@ def process_signup(request):
         user_form = UserSignUpForm(prefix='user')
         company_form = CompanySignUpForm(prefix='company')
 
-    return render(request, "signup.html", {
+    return render(request, "auth/signup.html", {
         "user_form": user_form,
         "company_form": company_form
     })

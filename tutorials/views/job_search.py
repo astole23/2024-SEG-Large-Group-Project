@@ -55,7 +55,7 @@ def job_recommendation(request):
                 for job in job_postings
             ]
             return JsonResponse({"recommended_jobs": recommended_jobs})
-        return render(request, 'job_postings.html', {'sorted_matches': [(job, 0) for job in job_postings]})
+        return render(request, 'jobseeker/job_postings.html', {'sorted_matches': [(job, 0) for job in job_postings]})
 
     job_lookup = {job.job_title: job for job in job_postings}
     job_titles = list(job_lookup.keys())
@@ -120,4 +120,4 @@ def job_recommendation(request):
         ]
         return JsonResponse({"recommended_jobs": recommended_jobs})
 
-    return render(request, 'job_postings.html', {'sorted_matches': matched_jobs})
+    return render(request, 'jobseeker/job_postings.html', {'sorted_matches': matched_jobs})
