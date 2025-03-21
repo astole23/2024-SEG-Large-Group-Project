@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // If there are errors, alert them and stop submission.
     if (errors.length > 0) {
       alert("Please fix the following errors:\n" + errors.join("\n"));
-      return false;
+      return;
     }
 
     // Gather form data for AJAX submission.
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': '{{ csrf_token }}'
+        'X-CSRFToken': csrfToken
       },
       body: JSON.stringify(formData)
     })
@@ -266,8 +266,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.key === 'Enter') {
         e.preventDefault();
         const tag = input.value.trim();
-        if (tag !== '' && !tags.includes(tag)) {
-          tags.push(tag);
+        if (tag !== '' && !tags.includes(tag.toLowerCase())) {
+          tags.push(tag.toLowerCase());
           container.appendChild(createTagElement(tag));
           updateHiddenInput();
           input.value = '';

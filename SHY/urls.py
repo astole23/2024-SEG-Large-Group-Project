@@ -1,93 +1,79 @@
-"""
-URL configuration for SHY project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
-from tutorials.views import job_search, ui_views, function_views
 from django.conf import settings
 from django.conf.urls.static import static
 
+from tutorials.views import (
+    auth_views, company_views, function_views, jobseeker_views, 
+    search_views, job_applications_views, page_views, job_search
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', ui_views.guest, name='guest'),
-    path('logout/', ui_views.user_logout, name='logout'),
-    path('employer_dashboard/', ui_views.employer_dashboard, name='employer_dashboard'),
-    path('contact_us/', ui_views.contact_us, name='contact_us'),
-    path('login/', ui_views.login_view, name='login'),
+
+    # Authentication & User Management
+    path('logout/', auth_views.user_logout, name='logout'),
+    path('login/', auth_views.login_view, name='login'),
     path('login/process/', function_views.process_login, name='process_login'),
-    path('signup/', ui_views.signup_view, name='signup'),
+    path('signup/', auth_views.signup_view, name='signup'),
     path('signup/process/', function_views.process_signup, name='process_signup'),
-    path('delete_account/', ui_views.delete_account, name='delete_account'),
-    path('user_dashboard/', ui_views.user_dashboard, name='user_dashboard'),
-    path('search/', ui_views.search, name='search'),
-    path('about_us/', ui_views.about_us, name='about_us'),
-    path('company/profile/', ui_views.company_profile, name='company_profile'),
-    path('company/<int:company_id>/', ui_views.company_detail, name='company_detail'),
-    path('company/<int:company_id>/review/', ui_views.leave_review, name='leave_review'),
-    path('company/<int:company_id>/edit/', ui_views.edit_company, name='edit_company'),
-    path('settings/', ui_views.profile_settings, name='settings'),
-    path('profile/settings/', ui_views.profile_settings, name='profile_settings'),
+    path('delete_account/', auth_views.delete_account, name='delete_account'),
+    path('settings/', auth_views.profile_settings, name='settings'),
 
+    # Company Views
+    path('employer_dashboard/', company_views.employer_dashboard, name='employer_dashboard'),
+    path('company/profile/', company_views.company_profile, name='company_profile'),
+    path('company/<int:company_id>/', company_views.company_detail, name='company_detail'),
+    path('company/<int:company_id>/review/', company_views.leave_review, name='leave_review'),
+    path('company/<int:company_id>/edit/', company_views.edit_company, name='edit_company'),
+    path('company/<int:company_id>/add_job/', company_views.create_job_posting, name='add_job_listing'),
 
-    path('terms_conditions/', ui_views.terms_conditions, name='terms_conditions'),
-    path('privacy/', ui_views.privacy, name='privacy'),
-    path('user_agreement/', ui_views.user_agreement, name='user_agreement'),
-    path('faq/', ui_views.faq, name='faq'),
-    path('status/', ui_views.status, name='status'),
-    path('help_centre/', ui_views.help_centre, name='help_centre'),
-    path('accessibility/', ui_views.accessibility, name='accessibility'),
-    path('your-job-posting-endpoint/', ui_views.create_job_posting, name='create_job_posting'),
-    path('company/<int:company_id>/add_job/', ui_views.create_job_posting, name='add_job_listing'),
-    path('apply/start/<int:job_posting_id>/', ui_views.start_application, name='start_application'),
-    path('apply/step1/', ui_views.apply_step1, name='apply_step1'),
-    path('apply/step2/', ui_views.apply_step2, name='apply_step2'),
-    path('apply/step3/', ui_views.apply_step3, name='apply_step3'),
-    path('apply/step4/', ui_views.apply_step4, name='apply_step4'),
-    path('apply/success/', ui_views.application_success, name='application_success'),
-    path('notifications/', ui_views.notifications, name='notifications'),
-    path('notifications/mark_read/<int:notification_id>/', ui_views.mark_notification_read, name='mark_notification_read'),
-    # User applications
-    path('user/applications/', ui_views.user_applications, name='user_applications'),
-    path('user/applications/<int:application_id>/', ui_views.user_application_detail, name='user_application_detail'),
-    # urls.py
-    path('upload_cv/', ui_views.upload_cv, name='upload_cvp'),
-    path('upload_raw_cv/', ui_views.upload_raw_cv, name='upload_raw_cv'),
-    path("upload_user_document/", ui_views.get_user_documents, name="upload_user_document"),
-    path("delete_user_document/", ui_views.delete_user_document, name="delete_user_document"),
-    path('delete_raw_cv/', ui_views.delete_raw_cv, name='delete_raw_cv'),
+    # Jobseeker Views
+    path('user_dashboard/', jobseeker_views.user_dashboard, name='user_dashboard'),
+    path('user/applications/', jobseeker_views.user_applications, name='user_applications'),
+    path('user/applications/<int:application_id>/', jobseeker_views.user_application_detail, name='user_application_detail'),
+    path('notifications/', jobseeker_views.notifications, name='notifications'),
+    path('notifications/mark_read/<int:notification_id>/', jobseeker_views.mark_notification_read, name='mark_notification_read'),
+    path('upload_cv/', jobseeker_views.upload_cv, name='upload_cv'),
+    path('upload_raw_cv/', jobseeker_views.upload_raw_cv, name='upload_raw_cv'),
+    path('upload_user_document/', jobseeker_views.get_user_documents, name="upload_user_document"),
+    path('delete_user_document/', jobseeker_views.delete_user_document, name="delete_user_document"),
+    path('delete_raw_cv/', jobseeker_views.delete_raw_cv, name='delete_raw_cv'),
+    path('add-job-by-code/', jobseeker_views.add_job_by_code, name='add_job_by_code'),
+    path('my_jobs/', jobseeker_views.my_jobs, name='my_jobs'),
 
-    # Company applications
-    path('company/applications/', ui_views.company_applications, name='company_applications'),
-    path('company/applications/<int:application_id>/', ui_views.company_application_detail, name='company_application_detail'),
-    path('company/applications/update/<int:application_id>/<str:new_status>/', ui_views.update_application_status, name='update_application_status'),
+    # Page Views & Legal Pages 
+    path('', page_views.guest, name='guest'),
+    path('contact_us/', page_views.contact_us, name='contact_us'),
+    path('about_us/', page_views.about_us, name='about_us'),
+    path('terms_conditions/', page_views.terms_conditions, name='terms_conditions'),
+    path('privacy/', page_views.privacy, name='privacy'),
+    path('user_agreement/', page_views.user_agreement, name='user_agreement'),
+    path('faq/', page_views.faq, name='faq'),
+    path('help_centre/', page_views.help_centre, name='help_centre'),
+    path('accessibility/', page_views.accessibility, name='accessibility'),
 
-    path('api/job_postings/', ui_views.job_postings_api, name='job_postings_api'),
-    path('my_jobs/', ui_views.my_jobs, name='my_jobs'),
-    path('job-postings/', ui_views.search, name='search',),
+    # Job Search & Applications
+    path('search/', search_views.search, name='search'),
+    path('apply/start/<int:job_posting_id>/', job_applications_views.start_application, name='start_application'),
+    path('apply/step1/', job_applications_views.apply_step1, name='apply_step1'),
+    path('apply/step2/', job_applications_views.apply_step2, name='apply_step2'),
+    path('apply/step3/', job_applications_views.apply_step3, name='apply_step3'),
+    path('apply/step4/', job_applications_views.apply_step4, name='apply_step4'),
+    path('apply/success/', job_applications_views.application_success, name='application_success'),
+    path('your-job-posting-endpoint/', company_views.create_job_posting, name='create_job_posting'),
 
-    path('job_recommendation/', job_search.job_recommendation, name='job_recommendation'),
+    # Company Job Applications Management 
+    path('company/applications/', company_views.company_applications, name='company_applications'),
+    path('company/applications/<int:application_id>/', company_views.company_application_detail, name='company_application_detail'),
+    path('company/applications/update/<int:application_id>/<str:new_status>/', company_views.update_application_status, name='update_application_status'),
 
-    path('api/tracked-jobs/', ui_views.tracked_jobs_api, name='tracked_jobs_api'),
-    path('add-job-by-code/', ui_views.add_job_by_code, name='add_job_by_code'),
-
- path('job-postings_view/', job_search.job_recommendation, name='job_postings'),
- path('job_recommendations/', job_search.job_recommendation, name='job_recommendations'),  
-
+    # APIs & Other Features 
+    path('api/job_postings/', search_views.job_postings_api, name='job_postings_api'),
+    path('api/tracked-jobs/', search_views.tracked_jobs_api, name='tracked_jobs_api'),
+    path('job_recommendations/', job_search.job_recommendation, name='job_recommendations'),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

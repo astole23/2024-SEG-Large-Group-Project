@@ -1,8 +1,6 @@
 import json
 import os
 import tempfile
-import traceback
-from datetime import datetime
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -923,6 +921,7 @@ def upload_cv(request):
 
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
 @csrf_exempt
 @login_required
 @require_POST
@@ -970,6 +969,7 @@ def get_user_documents(request):
         'uploaded_at': doc.uploaded_at.strftime('%b %d, %Y %I:%M %p'),
         'uploaded_at_human': 'just now'
     })
+
 @csrf_exempt
 @login_required
 @require_POST
