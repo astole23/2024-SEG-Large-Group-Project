@@ -1,0 +1,129 @@
+{% extends 'company/employer_base.html' %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/employer_dashboard.css' %}">
+{% block main_content %}
+  <h1>Edit Company Details</h1>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div>
+      <label for="id_description">Description</label>
+      <textarea name="description" id="id_description" rows="4" cols="50" placeholder="Enter company description">{{ form.description.value }}</textarea>
+    </div>
+    
+    <div>
+      <label for="id_logo">Logo</label>
+      <input type="file" name="logo" id="id_logo" accept="image/*">
+    </div>
+    
+    {{ form.as_p }}
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <div>
+    <button id="addJobButton" class="btn btn-primary">Add Job Listing</button>
+  </div>
+
+  <a href="{% url 'company_profile' %}">Back to Company Profile</a>
+
+  <div id="jobModal" class="modal" aria-hidden="true" role="dialog">
+    <div class="modal-content">
+      <span class="close" id="closeJobModal">&times;</span>
+      <h2>Add Job Listing</h2>
+      <form id="jobForm" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="jobTitle">Job Title</label>
+          <input type="text" id="jobTitle" name="job_title" required>
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" required>
+        </div>
+        <div class="form-group">
+          <label for="contractType">Contract Type</label>
+          <input type="text" id="contractType" name="contract_type" required>
+        </div>
+        <div class="form-group">
+          <label for="salaryRange">Salary Range</label>
+          <input type="text" id="salaryRange" name="salary_range" required>
+        </div>
+        <div class="form-group">
+          <label for="jobOverview">Job Overview</label>
+          <textarea id="jobOverview" name="job_overview" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="rolesResponsibilities">Roles & Responsibilities</label>
+          <textarea id="rolesResponsibilities" name="roles_responsibilities" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="educationRequired">Education Required</label>
+          <input type="text" id="educationRequired" name="education_required" required>
+        </div>
+        <div class="form-group">
+          <label for="applicationDeadline">Application Deadline</label>
+          <input type="date" id="applicationDeadline" name="application_deadline" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Add Job</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const addJobButton = document.getElementById('addJobButton');
+    const jobModal = document.getElementById('jobModal');
+    const closeJobModal = document.getElementById('closeJobModal');
+
+    addJobButton.addEventListener('click', function () {
+        jobModal.style.display = 'block';
+        jobModal.setAttribute('aria-hidden', 'false');
+    });
+
+    closeJobModal.addEventListener('click', function () {
+        jobModal.style.display = 'none';
+        jobModal.setAttribute('aria-hidden', 'true');
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            jobModal.style.display = 'none';
+            jobModal.setAttribute('aria-hidden', 'true');
+        }
+    });
+
+    const jobForm = document.getElementById('jobForm');
+    jobForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(jobForm);
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch("{% url 'add_job_listing' company.id %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Job listing added successfully!') {
+                alert('Job listing added!');
+                jobModal.style.display = 'none';
+                jobModal.setAttribute('aria-hidden', 'true');
+                jobForm.reset();
+            } else {
+                alert('Error adding job listing');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+  </script>
+{% endblock %}

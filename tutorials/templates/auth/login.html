@@ -1,0 +1,196 @@
+{% extends 'base/base_content.html' %}
+
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Job Search Platform</title>
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+  <style>
+    .error {
+      color: red;
+      font-size: 0.9em;
+      margin-top: 4px;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .modal-buttons {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-around;
+    }
+    .modal-buttons button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .modal-buttons button.yes-btn {
+      background-color: #4b0082;
+      color: white;
+    }
+    .modal-buttons button.no-btn {
+      background-color: #ccc;
+      color: black;
+    }
+    .modal-buttons button.yes-btn:hover {
+      background-color: #6a0dad;
+    }
+    .modal-buttons button.no-btn:hover {
+      background-color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="auth-container">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="user">Job Seeker</button>
+        <button class="tab-btn" data-tab="company">Company</button>
+      </div>
+
+      <div class="tab-content">
+        <!-- Job Seeker Login -->
+        <div class="tab-pane active" id="user-tab">
+          <form id="loginForm" action="{% url 'process_login' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="user_type" value="user">
+            <input type="hidden" name="remember_me" id="remember_me" value="false">
+
+            {% if user_form.non_field_errors %}
+              <div class="error">{{ user_form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="form-group">
+              {{ user_form.username }}
+              {% if user_form.username.errors %}
+                <div class="error">{{ user_form.username.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group">
+              {{ user_form.password }}
+              {% if user_form.password.errors %}
+                <div class="error">{{ user_form.password.errors }}</div>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="btn">Login</button>
+          </form>
+        </div>
+
+        <!-- Company Login -->
+        <div class="tab-pane" id="company-tab">
+          <form id="loginFormCompany" action="{% url 'process_login' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="user_type" value="company">
+            <input type="hidden" name="remember_me" id="remember_me_company" value="false">
+
+            {% if company_form.non_field_errors %}
+              <div class="error">{{ company_form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="form-group">
+              {{ company_form.username }}
+              {% if company_form.username.errors %}
+                <div class="error">{{ company_form.username.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group">
+              {{ company_form.password }}
+              {% if company_form.password.errors %}
+                <div class="error">{{ company_form.password.errors }}</div>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="btn">Login</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="auth-footer">
+        <p>Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Popup for "Stay Logged In" -->
+  <div id="rememberModal" class="modal-overlay">
+    <div class="modal-content">
+      <p>Do you want to stay logged in on this device?</p>
+      <div class="modal-buttons">
+        <button id="rememberYes" class="yes-btn">Yes</button>
+        <button id="rememberNo" class="no-btn">No</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    // Function to handle the form submission interception
+    function handleLoginSubmission(formId, hiddenInputId) {
+      const form = document.getElementById(formId);
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('rememberModal').style.display = 'flex';
+
+        document.getElementById('rememberYes').onclick = function() {
+          document.getElementById(hiddenInputId).value = 'true';
+          closeModalAndSubmit(form);
+        };
+        document.getElementById('rememberNo').onclick = function() {
+          document.getElementById(hiddenInputId).value = 'false';
+          closeModalAndSubmit(form);
+        };
+      });
+    }
+
+    function closeModalAndSubmit(form) {
+      document.getElementById('rememberModal').style.display = 'none';
+      form.submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      handleLoginSubmission('loginForm', 'remember_me');
+      handleLoginSubmission('loginFormCompany', 'remember_me_company');
+
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabPanes = document.querySelectorAll('.tab-pane');
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabPanes.forEach(p => p.classList.remove('active'));
+          this.classList.add('active');
+          const tabType = this.getAttribute('data-tab');
+          document.getElementById(`${tabType}-tab`).classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+
+{% endblock %}

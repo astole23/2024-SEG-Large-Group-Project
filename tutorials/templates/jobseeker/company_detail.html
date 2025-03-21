@@ -1,0 +1,73 @@
+{% extends 'base/base_content.html' %}
+{% load static %}
+{% block content %}
+<div class="company-profile">
+    <div class="company-header">
+        <div class="company-logo-container">
+            {% if company.logo %}
+                <img src="{{ company.logo.url }}" alt="{{ company.company_name }} Logo" class="company-logo">
+            {% else %}
+                <div class="placeholder-logo">No Logo</div>
+            {% endif %}
+            <h1 class="company-name">{{ company.company_name }}</h1>
+        </div>
+        <hr class="company-divider">
+        <p class="company-industry"><strong>Industry:</strong> {{ company.industry }}</p>
+    </div>
+
+    <div class="company-contact">
+        <p><strong>Email:</strong> {{ company.email }}</p>
+        <p><strong>Phone:</strong> {{ company.phone }}</p>
+        <p><strong>Headquarters:</strong> {{ company.location }}</p>
+    </div>
+
+    <section class="job-listings">
+        <h2>Job Openings</h2>
+        {% if job_postings %}
+        <ul>
+            {% for job in job_postings %}
+            <li class="job-item">
+                <h3>{{ job.job_title }}</h3>
+                <p><strong>Location:</strong> {{ job.location }}</p>
+                <p><strong>Contract Type:</strong> {{ job.contract_type }}</p>
+                <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                <p>{{ job.job_overview }}</p>
+                <p><strong>Application Deadline:</strong> {{ job.application_deadline }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No job openings available at the moment.</p>
+        {% endif %}
+    </section>
+
+    <!-- Directly Visible Review Form (no modal, no JS) -->
+    <section class="leave-review">
+        <h2>Leave a Review</h2>
+        <form method="POST" action="{% url 'leave_review' company_id=company.id %}">
+            {% csrf_token %}
+            <div>
+                <label for="text">Your Review:</label><br>
+                <textarea id="text" name="text" required placeholder="Write your review here..." rows="4"></textarea>
+            </div>
+            <div>
+                <label for="rating">Rating:</label><br>
+                <select id="rating" name="rating" required>
+                    <option value="">-- Select Rating --</option>
+                    <option value="1">1 - Very Poor</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="3">3 - Average</option>
+                    <option value="4">4 - Good</option>
+                    <option value="5">5 - Excellent</option>
+                </select>
+            </div>
+            <button type="submit">Submit Review</button>
+        </form>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block extra_stylesheets %}
+    <link rel="stylesheet" href="{% static 'css/company_detail.css' %}">
+{% endblock %}

@@ -143,12 +143,14 @@ console.log("📂 User Documents:", userDocuments);
 
 
     // Grab the script tag with id="current-user"
-    const userInfoScript = document.getElementById('current-user');
-    const userInfo = userInfoScript ? JSON.parse(userInfoScript.textContent) : {};
-    console.log("Dashboard is loading");
+    const dashboardDataScript = document.getElementById('dashboard-data');
+    const dashboardData = dashboardDataScript ? JSON.parse(dashboardDataScript.textContent) : {};
+    const userInfo = dashboardData.user_info || {};
     console.log("User info:", userInfo);
 
     // Inside createDashboard()
+
+    const profilePhotoUrl = userInfo.user_profile_photo || "https://i.pravatar.cc/128";
 
   
 
@@ -158,17 +160,17 @@ console.log("📂 User Documents:", userDocuments);
         <main>
           <section class="profile-section">
             <div class="profile-picture">
-              <img src="https://i.pravatar.cc/128" alt="John Doe" width="64" height="64">
+            <img src="${profilePhotoUrl}" alt="${userInfo.full_name}" width="64" height="64">
             </div>
             <div class="profile-info">
               <h1>${userInfo.full_name}</h1>
-              <p>Senior Software Developer</p>
               <div class="location">
                 <span>📍</span>
-                San Francisco, CA
+                <h1>${userInfo.location}</h1>
               </div>
             </div>
             <button class="btn-outline">Edit Profile</button>
+
           </section>
   
           <section class="cv-section">
@@ -1128,6 +1130,7 @@ console.log("📂 User Documents:", userDocuments);
         modal.style.display = 'none';
       }
     });
+
   }
 
   window.deleteRawCV = async function () {
