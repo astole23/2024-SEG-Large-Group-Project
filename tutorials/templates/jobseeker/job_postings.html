@@ -135,7 +135,10 @@
             {% for job, score in sorted_matches %}
                 <div class="job-card">
                     <h2 class="job-title">{{ job.job_title }}</h2>
-                    <p class="company-name"><strong>Company:</strong> {{ job.company.company_name }}</p>
+                    <p class="company-name">
+                        <strong>Company:</strong>
+                        <a href="{% url 'company_detail' job.company.id %}">{{ job.company.company_name }}</a>
+                    </p>
                     {% if job.department %}
                         <p class="company-name"><strong>Department:</strong> {{ job.department }}</p>
                     {% endif %}
