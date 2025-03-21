@@ -42,6 +42,7 @@ urlpatterns = [
     path('delete_raw_cv/', jobseeker_views.delete_raw_cv, name='delete_raw_cv'),
     path('add-job-by-code/', jobseeker_views.add_job_by_code, name='add_job_by_code'),
     path('my_jobs/', jobseeker_views.my_jobs, name='my_jobs'),
+    path('job_recommendation/', job_search.job_recommendation, name='job_recommendations'),
 
     # Page Views & Legal Pages 
     path('', page_views.guest, name='guest'),
@@ -71,7 +72,7 @@ urlpatterns = [
     # APIs & Other Features 
     path('api/job_postings/', search_views.job_postings_api, name='job_postings_api'),
     path('api/tracked-jobs/', search_views.tracked_jobs_api, name='tracked_jobs_api'),
-    path('job_recommendation/', job_search.job_recommendation, name='job_recommendations'),
+
 ]
 
 

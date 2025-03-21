@@ -14,32 +14,31 @@ console.log("📂 User Documents:", userDocuments);
 
 
   function fetchRecommendedJobs() {
-    console.log("🚀 Fetching recommended jobs...");
+    console.log("Fetching recommended jobs.");
   
     fetch('/job_recommendation/', {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.json())
     .then(data => {
-      console.log("✅ Received recommended jobs:", data);
+      console.log("Received recommended jobs:", data);
   
       const suggestedJobsContainer = document.getElementById('suggested-jobs');
       suggestedJobsContainer.innerHTML = ''; // Clear existing jobs
   
       if (!data.recommended_jobs || data.recommended_jobs.length === 0) {
-        console.log("⚠️ No recommended jobs found.");
+        console.log("No recommended jobs found.");
         suggestedJobsContainer.innerHTML = '<p style="color: gray;">No recommended jobs available.</p>';
         return;
       }
   
-      data.recommended_jobs.forEach(job => {
-        // ✅ Create job card with full details
+      data.recommended_jobs.slice(0,5).forEach(job => {
         const jobElement = document.createElement('div');
         jobElement.className = 'job-card';
         jobElement.innerHTML = `
           <h5 class="job-title">${job.job_title}</h5>
           <p class="company-name">${job.company_name}</p>
-          <p class="location"><span>📍</span> ${job.location}</p>
+          <p class="location"><i class="fa-solid fa-location-dot"></i>${job.location}</p>
           <p class="pay-contract">${job.salary_range} | ${job.contract_type}</p>
           <p class="job-overview"><strong>Overview:</strong> ${job.job_overview || 'No overview available'}</p>
           <p class="roles-responsibilities"><strong>Responsibilities:</strong> ${job.roles_responsibilities || 'Not specified'}</p>
@@ -85,7 +84,7 @@ console.log("📂 User Documents:", userDocuments);
   
       // ✅ Preserve the "View all suggestions" button
       const viewAllButton = document.createElement('a');
-      viewAllButton.href = '/job-postings_view/';
+      viewAllButton.href = '/job_recommendation/';
       viewAllButton.className = 'view-all btn btn-primary';
       viewAllButton.textContent = 'View all suggestions';
       suggestedJobsContainer.appendChild(viewAllButton);
