@@ -1,17 +1,18 @@
-import os
 import re
-import requests
 import random
 import string
-from django.core.management.base import BaseCommand
-from tutorials.models.jobposting import JobPosting
+
+import requests
 import faker
-from tutorials.models.accounts import CustomUser as User, CompanyUser as Company, CustomUser
-from tutorials.models.standard_cv import UserCV
 from phonenumbers import parse, is_possible_number, is_valid_number, PhoneNumberFormat, format_number
 
+from django.core.management.base import BaseCommand
 
-#Already generated list of users
+from tutorials.models.jobposting import JobPosting
+from tutorials.models.accounts import CustomUser as User, CompanyUser as Company, CustomUser
+from tutorials.models.standard_cv import UserCV
+
+# Base user log ins (company user, jobseeker user, admin user)
 user_fixtures = [
     {
         'username': 'JohnLTD',
@@ -19,7 +20,7 @@ user_fixtures = [
         'email': 'johnltd@example.org',
         'industry': 'Construction',
         'phone': '+447652567298',
-        'is_company': True,  # Ensures the unique_id is auto-generated in save()
+        'is_company': True,  
         'user_type': 'company',
         'password': 'password'
     },
@@ -29,7 +30,6 @@ user_fixtures = [
         'first_name': 'Jane',
         'last_name': 'Doe',
         'phone': '+447866352809',
-        # For normal users, we don't set is_company or company-specific fields.
         'user_type': 'user',
         'password': 'password'
     },
@@ -42,11 +42,12 @@ user_fixtures = [
 ]
 
 fake = faker.Faker()
+
 # Adzuna API credentials
 ADZUNA_APP_ID = "dac9af71"
 ADZUNA_APP_KEY = "0d149e6c79fe0dbc54e9bece78c8ff87"
 
-# Categories for diversified job fetching
+# Categories for job fetching
 CATEGORIES = [
     "business", "management", "sales", "marketing", "technology", "software-development",
     "engineering", "design", "finance", "accounting", "healthcare",
@@ -54,14 +55,13 @@ CATEGORIES = [
     "media", "logistics", "human-resources", "writing", "consulting",  "data-science",
 ]
 
-# Randomized options for fields
+# Randomized options for education, perks, application deadlines and why join us
 EDUCATION_OPTIONS = [
     "High School Diploma", "Bachelor's Degree", "Master's Degree", "PhD",
     "Diploma in Related Field", "Certification in Relevant Skill",
     "No Formal Education Required", "Relevant Work Experience",
 ]
 
-# Randomized options for perks, application deadlines,  and why join us
 PERKS_OPTIONS = [
     "Flexible working hours", "Health insurance", "Remote work opportunities",
     "On-site gym", "Free lunch/snacks", "Childcare facilities", "Pet-friendly office",
@@ -84,7 +84,6 @@ PERKS_OPTIONS = [
     "Subscription to industry journals", "Discounts on company products/services"
 ]
 
-# Randomized options for application deadlines
 APPLICATION_DEADLINE_OPTIONS = [
     "7 days from now", "10 days from now", "14 days from now", "30 days from now",
     "60 days from now", "Rolling applications", "Applications close when position is filled",
@@ -105,7 +104,6 @@ APPLICATION_DEADLINE_OPTIONS = [
     "First week of next month", "Application window: Open for 2 more months"
 ]
 
-# Randomized options for why join us section
 WHY_JOIN_US_OPTIONS = [
     "Join a dynamic team passionate about innovation and excellence.",
     "Be part of a company that values creativity and individuality.",
@@ -148,11 +146,12 @@ WHY_JOIN_US_OPTIONS = [
     "Help build a brighter future with a company that cares."
 ]
 
-    # Define pools for each category
 def generate_roles_and_skills(category):
-    # Generate roles, responsibilities, required skills, and preferred skills based on the category
+    """
+    Define pools for each category and generate roles, responsibilities, required skills, and p
+    preferred skills based on the category
+    """
 
-    # Define pools for each category
     category_specific_data = {
         "business": {
             "responsibilities": [
@@ -701,7 +700,6 @@ def generate_roles_and_skills(category):
         "preferred_skills": ", ".join(preferred_skills),
     }
 
-# Function to fetch jobs from Adzuna API
 def fetch_adzuna_jobs():
     """Fetch up to 1000 jobs from Adzuna API."""
     job_list = []
@@ -735,10 +733,9 @@ def fetch_adzuna_jobs():
                     location = job.get("location", {}).get("display_name", "Remote")
                     details = generate_roles_and_skills(category)
 
-                    # Look up any companies with this name
                     companies = Company.objects.filter(company_name=company_name)
                     if companies.exists():
-                        company = companies.first()  # Use existing company
+                        company = companies.first()
                         created = False
                     else:
                         company = Company.objects.create(
@@ -769,50 +766,38 @@ def fetch_adzuna_jobs():
                         })
 
                         if len(job_list) >= 150:
-                            break  # Exit early from job loop
+                            break
 
                 if len(job_list) >= 150:
-                    break  # Exit early from page loop if needed
+                    break 
     except requests.RequestException as e:
         print(f"❌ Error: {e}")
     return job_list
 
 def generate_clean_phone_number():
     """
-    Generate a valid and clean phone number without extensions or invalid characters.
-
-    Returns:
-        str: A valid phone number in E.164 format or a fallback number.
+    Generates a valid and clean phone number without extensions or invalid characters.
     """
     while True:
         try:
-            # Generate a random phone number
             raw_phone_number = fake.phone_number()
-
-            # Remove any extensions or letters
             raw_phone_number = re.sub(r"[a-zA-ZxX]", "", raw_phone_number)
+            parsed_number = parse(raw_phone_number, None)
 
-            # Parse the phone number using the phonenumbers library
-            parsed_number = parse(raw_phone_number, None)  # None allows parsing in any international format
-
-            # Validate the parsed phone number
             if is_possible_number(parsed_number) and is_valid_number(parsed_number):
                 return format_number(parsed_number, PhoneNumberFormat.E164)
 
         except Exception:
-            # If invalid, regenerate a new number
             continue
 
-# Fallback number in case generation consistently fails
+    # Fallback number in case generation consistently fails
     return "+1234567890"
 
 def generate_unique_company_id():
     """Generate a unique 5-character alphanumeric code for a company."""
     while True:
-        # Generate a random 8-character code (letters and digits)
         id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
-        # Ensure it's unique by checking the database
         if not Company.objects.filter(unique_id=id).exists():
             return id
 
@@ -824,7 +809,6 @@ def generate_unique_email(company_name):
     counter = 1
     unique_email = base_email
 
-    # Check if the email already exists in the database
     while Company.objects.filter(email=unique_email).exists():
         unique_email = f"{company_name.replace(' ', '').lower()}{counter}@example.com"
         counter += 1
@@ -842,21 +826,19 @@ def generate_unique_company_username(company_name):
 
 
 
-# Django Command
 class Command(BaseCommand):
     help = "Fetches 150 job postings from Adzuna API and saves them to the database."
 
     def handle(self, *args, **kwargs):
-        self.seed_users(100)  # Seed 100 users
-        self.seed_jobs()      # Seed job postings
-        self.create_known_users(user_fixtures)  # Create known users
+        self.seed_users(100) 
+        self.seed_jobs()     
+        self.create_known_users(user_fixtures)  
 
     
     def create_known_users(self, data):
         for fixture in user_fixtures:
             user_type = fixture.pop('user_type', 'user')
             raw_password = fixture.pop('password')
-            # Pop is_company if provided, defaulting to False for non-company accounts.
             is_company = fixture.pop('is_company', False)
 
             username = fixture.get('username')

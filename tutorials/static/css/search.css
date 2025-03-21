@@ -2,6 +2,7 @@
     --primary-color: #462191;
     --secondary-color: #475569;
     --selected-color: #46219168;
+    --hover-color: linear-gradient(135deg, #4b0082, #6a0dad);
     --background-color: #f8fafc;
     --card-background: #ffffff;
     --border-color: #e2e8f0;
@@ -355,24 +356,16 @@ body {
     text-decoration: none;
     padding: 8px 16px;
     border-radius: 5px;
-    color: #fff;
-    background-color: var(--primary-color); /* Purple background */
+    color: var(--text-secondary);
+    font-weight: bold;
     font-size: 14px; /* Adjust font size if needed */
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Hover effect for the links */
 .step-links a:hover {
-    background: linear-gradient(135deg, #4b0082, #6a0dad);; /* Darker purple on hover */
+    background: var(--selected-color); /* Darker purple on hover */
     color: #fff; /* Ensure text stays white on hover */
-}
-
-.step-links .previous, .step-links .next {
-    background: linear-gradient(135deg, #4b0082, #6a0dad); /* Purple color */
-}
-
-.step-links .previous:hover, .step-links .next:hover {
-    background: linear-gradient(135deg, #4b0082, #6a0dad); /* Darker purple on hover */
 }
 
 

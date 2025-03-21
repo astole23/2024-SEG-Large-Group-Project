@@ -1,5 +1,5 @@
 from django.db import models
-from tutorials.models.accounts import CustomUser  # Import CustomUser since companies are stored there
+from tutorials.models.accounts import CustomUser  
 
 class Review(models.Model):
     text = models.TextField(max_length=2000, blank=False)

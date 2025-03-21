@@ -182,3 +182,24 @@
 .dropdown-content a:hover {
   background-color: #f1f1f1;
 }
+
+/* Modal Buttons */
+.modal-footer .btn-secondary {
+  background-color: var(--secondary-color);  /* Secondary color for the Cancel button */
+  border-color: var(--secondary-color);      /* Border matches the background color */
+  color: white;                              /* Text color for contrast */
+}
+
+.modal-footer .btn-secondary:hover {
+  background-color: darken(var(--secondary-color), 10%);  /* Darker shade on hover */
+}
+
+.modal-footer .btn-primary {
+  background-color: var(--primary-color);    /* Primary color for the 'Yes, Logout' button */
+  border-color: var(--primary-color);        /* Border matches the background color */
+  color: white;                              /* Text color for contrast */
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: darken(var(--primary-color), 10%);  /* Darker shade on hover */
+}

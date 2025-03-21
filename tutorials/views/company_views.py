@@ -179,7 +179,7 @@ def create_job_posting(request):
                 logger.debug(f"Field '{field}' value: {data.get(field)}")
 
         # Log additional fields (optional)
-        logger.debug(f"Optional fields - child_company_name: {data.get('child_company_name')}, work_type: {data.get('work_type')}, "
+        logger.debug(f"Optional fields - department: {data.get('department')}, work_type: {data.get('work_type')}, "
                      f"salary_range: {data.get('salary_range')}, preferred_skills: {data.get('preferred_skills')}, "
                      f"education_required: {data.get('education_required')}, required_documents: {data.get('required_documents')}, "
                      f"company_overview: {data.get('company_overview')}, why_join_us: {data.get('why_join_us')}")
@@ -189,7 +189,7 @@ def create_job_posting(request):
             # Set the company using the logged-in user
             company=request.user,
             # Automatically set company_name from the logged-in user
-            child_company_name=data.get('child_company_name'),
+            department=data.get('department'),
             location=data.get('location'),
             work_type=data.get('work_type'),
             salary_range=data.get('salary_range'),

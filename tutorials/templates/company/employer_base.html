@@ -74,10 +74,10 @@
                 <label for="companyName" class="form-label">Company Name</label>
                 <input type="text" class="form-control" id="companyName" name="company_name" value="{{ request.user.company_name|default:request.user.username }}" disabled>
               </div>
-              <!-- Child-Company Name -->
+              <!-- Department Name -->
               <div class="mb-3">
-              <label for="childCompanyName" class="form-label">Child-Company Name</label>
-              <input type="text" class="form-control" id="childCompanyName" name="child_company_name" placeholder="Enter child-company name">
+              <label for="department" class="form-label">Department Name</label>
+              <input type="text" class="form-control" id="department" name="department" placeholder="Enter department name">
               </div>
               <!-- Location and Work Type -->
               <div class="row">

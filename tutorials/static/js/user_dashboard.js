@@ -165,7 +165,7 @@ console.log("📂 User Documents:", userDocuments);
             <div class="profile-info">
               <h1>${userInfo.full_name}</h1>
               <div class="location">
-                <span>📍</span>
+                <i class="fa-solid fa-location-dot"></i>
                 <h1>${userInfo.location}</h1>
               </div>
             </div>

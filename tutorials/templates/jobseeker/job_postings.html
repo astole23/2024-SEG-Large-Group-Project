@@ -136,8 +136,8 @@
                 <div class="job-card">
                     <h2 class="job-title">{{ job.job_title }}</h2>
                     <p class="company-name"><strong>Company:</strong> {{ job.company.company_name }}</p>
-                    {% if job.child_company_name %}
-                        <p class="company-name"><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                    {% if job.department %}
+                        <p class="company-name"><strong>Department:</strong> {{ job.department }}</p>
                     {% endif %}
                     <p class="location"><strong>Location:</strong> {{ job.location }}</p>
                     <p class="salary"><strong>Salary:</strong> {{ job.salary_range }} GBP</p>
@@ -162,8 +162,8 @@
                         </div>
                         <div class="modal-body">
                             <p><strong>Company:</strong> {{ job.company.company_name }}</p>
-                            {% if job.child_company_name %}
-                                <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                            {% if job.department %}
+                                <p><strong>Department:</strong> {{ job.department }}</p>
                             {% endif %}
                             <p><strong>Location:</strong> {{ job.location }}</p>
                             <p><strong>Work Type:</strong> {{ job.work_type }}</p>

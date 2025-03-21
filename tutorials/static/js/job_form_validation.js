@@ -38,10 +38,10 @@ document.addEventListener('DOMContentLoaded', function() {
       errors.push("Company Name must be less than or equal to 100 characters.");
     }
 
-    // Validate Child-Company Name (optional, max 100 characters)
-    let childCompanyName = document.getElementById('childCompanyName').value.trim();
-    if (childCompanyName && childCompanyName.length > 100) {
-      errors.push("Child-Company Name must be less than or equal to 100 characters.");
+    // Validate Department Name (optional, max 100 characters)
+    let department = document.getElementById('department').value.trim();
+    if (department && department.length > 100) {
+      errors.push("Department Name must be less than or equal to 100 characters.");
     }
 
     // Validate Location (required, max 100 characters)
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const formData = {
       job_title: document.getElementById('jobTitle').value,
       company_name: document.getElementById('companyName').value,
-      child_company_name: document.getElementById('childCompanyName').value,
+      department: document.getElementById('department').value,
       location: document.getElementById('location').value,
       work_type: document.getElementById('workType').value,
       salary_range: document.getElementById('salaryRange').value,

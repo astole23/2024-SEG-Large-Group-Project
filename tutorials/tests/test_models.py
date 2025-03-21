@@ -631,7 +631,7 @@ class JobPostingModelTests(TestCase):
             education_required="Master's degree in Business",
             perks="Stock options, free meals",
             application_deadline="2023-10-30",
-            child_company_name="Innovate Labs",
+            department="Innovate Labs",
             preferred_skills="Data analysis, UX design",
             company_overview="A startup focused on innovation.",
             why_join_us="Be part of a fast-growing team.",

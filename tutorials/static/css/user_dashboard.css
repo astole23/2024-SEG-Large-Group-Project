@@ -2,6 +2,8 @@
 :root {
   --primary-color: #462191;
   --secondary-color: #475569;
+  --selected-color: #46219168;
+  --hover-color: #6a0dad;
   --background-color: #f8fafc;
   --card-background: #ffffff;
   --border-color: #e2e8f0;
@@ -502,7 +504,7 @@ body {
 .btn, .btn-primary {
   display: inline-block;
   padding: 8px 15px;
-  background-color: #007bff !important; /* Force blue */
+  background-color: var(--primary-color) !important; /* Force blue */
   color: white !important; /* Ensure white text */
   text-decoration: none;
   border-radius: 5px;
@@ -510,12 +512,12 @@ body {
   font-weight: bold;
   transition: background 0.3s ease;
   cursor: pointer;
-  border: none;
+  border: var(--primary-color);
   font-size: 14px;
 }
 
 .btn:hover, .btn-primary:hover {
-  background-color: #0056b3 !important; /* Darker blue on hover */
+  background-color: var(--hover-color) !important; /* Darker blue on hover */
   color: white !important;
 }
 

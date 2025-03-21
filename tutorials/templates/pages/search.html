@@ -253,8 +253,8 @@
               <div class="row mb-3">
                 <div class="col-md-6">
                   <p><strong>Company:</strong> {{ job.company_name }}</p>
-                  {% if job.child_company_name %}
-                    <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                  {% if job.department %}
+                    <p><strong>Department:</strong> {{ job.department }}</p>
                   {% endif %}
                   <p><strong>Location:</strong> {{ job.location }}</p>
                   <p><strong>Work Type:</strong> {{ job.work_type }}</p>

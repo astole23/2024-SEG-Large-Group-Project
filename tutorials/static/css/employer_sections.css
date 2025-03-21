@@ -1,12 +1,42 @@
 
 .pagination-container {
     display: flex;
-    justify-content: center;
-    margin-top: 20px;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
 }
+
 .pagination {
     display: flex;
+    flex-direction: column; /* Stack the elements vertically */
     gap: 10px;
+    align-items: center; /* Center the buttons */
+}
+
+.page-info {
+    font-size: 16px; /* Adjust as needed */
+    text-align: center;
+}
+
+.step-links {
+    display: flex;
+    gap: 10px;
+}
+
+.step-links a {
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    color: var(--text-secondary);
+    font-weight: bold;
+    font-size: 14px; /* Adjust font size if needed */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect for the links */
+.step-links a:hover {
+    background: var(--selected-color); /* Darker purple on hover */
+    color: #fff; /* Ensure text stays white on hover */
 }
 
 .grid-container {

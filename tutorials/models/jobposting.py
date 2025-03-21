@@ -6,7 +6,7 @@ class JobPosting(models.Model):
         max_length=255,
         help_text="The title of the job posting."
     )
-    # Link directly to the company account that created the posting.
+
     company = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -16,12 +16,11 @@ class JobPosting(models.Model):
         blank=True  # Allow form submissions without this field
     )
 
-    
-    child_company_name = models.CharField(
+    department = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        help_text="Name of the child company."
+        help_text="Department witin company."
     )
     location = models.CharField(
         max_length=255,
