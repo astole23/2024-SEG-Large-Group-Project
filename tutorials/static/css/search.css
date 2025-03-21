@@ -53,7 +53,6 @@ body {
     transition: 0.3s ease-in-out;
 }
 
-.apply-filters-item .btn,
 .search-bar .submit {
     padding: 15px 30px; 
     font-size: 1.25rem; 
@@ -62,6 +61,7 @@ body {
     color: white; 
     border: none; 
     margin-left: 10px;
+    
     flex-direction: row;
 }
 
@@ -73,6 +73,7 @@ body {
     box-shadow: 0 0 6px rgba(106, 13, 173, 0.3);
 }
 
+.apply-filters-item .btn,
 .search-bar button,
 .salary-buttons button,
 .apply-filters-btn {

@@ -14,7 +14,8 @@ from tutorials.models.applications import JobApplication, Notification
 from tutorials.models.company_review import Review
 from tutorials.models.accounts import CustomUser
 from tutorials.forms import (CompanyProfileForm)
-from tutorials.helpers.company_helpers import validate_required_fields, parse_reviews, parse_deadline
+from tutorials.helpers.company_helpers import validate_required_fields, parse_reviews, parse_deadline # type: ignore
+
 @login_required
 def employer_dashboard(request):
     # Only allow company users
@@ -41,8 +42,7 @@ def company_detail(request, company_id):
             form.save()
     else:
         form = CompanyProfileForm(instance=company)
-    return render(request, 'jobseeker/company_detail.html', {'company': company, 'form': form})
-
+    return render(request, 'company/company_detail.html', {'company': company, 'form': form})
 
 @login_required
 def company_profile(request):
