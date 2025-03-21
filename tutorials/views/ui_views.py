@@ -1,47 +1,39 @@
+import json
+import os
+import tempfile
+import traceback
+from datetime import datetime
+
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from django.http import JsonResponse
-from datetime import datetime
-import json
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from tutorials.models.jobposting import JobPosting
-from tutorials.models.company_review import Review
-from django.contrib.auth import get_user_model
-from django.utils.dateparse import parse_date
-import traceback
 from django.db import transaction
 from django.utils.timezone import localtime
+from django.utils.dateparse import parse_date
+from django.utils.timesince import timesince
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core.paginator import Paginator
+
+import logging
+
+from tutorials.models.jobposting import JobPosting
+from tutorials.models.company_review import Review
+from tutorials.models.accounts import CustomUser
+from tutorials.models.applications import JobApplication, Notification
 from tutorials.forms import (
     UserLoginForm, CompanyLoginForm,
     UserSignUpForm, CompanySignUpForm,
-    CompanyProfileForm, UserUpdateForm, MyPasswordChangeForm
-)
-
-from django.utils.timesince import timesince
-from django.core.serializers.json import DjangoJSONEncoder
-
-from django.contrib.auth.hashers import make_password
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
-from tutorials.models.accounts import CustomUser
-
-from tutorials.models.applications import JobApplication
-from tutorials.models.applications import Notification
-from tutorials.forms import CVApplicationForm
+    CompanyProfileForm, UserUpdateForm, MyPasswordChangeForm)
 from tutorials.models.standard_cv import CVApplication, UserCV
-import logging
-from tutorials.auto_fill import extract_text_from_pdf, classify_resume_with_together
-import tempfile
-from tutorials.views.function_views import remove_duplicates_by_keys , split_skills
-import os
 from tutorials.models.user_dashboard import UploadedCV, UserDocument
-CustomUser = get_user_model()
+from tutorials.auto_fill import extract_text_from_pdf, classify_resume_with_together
+from tutorials.views.function_views import split_skills
 
-from django.contrib.auth import update_session_auth_hash
-from django.core.paginator import Paginator
+
 
 @login_required
 def employer_dashboard(request):
@@ -1117,9 +1109,6 @@ def add_job_by_code(request):
 
 
 
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from tutorials.models.applications import JobApplication  # adjust import to match your structure
 
 @login_required
 def tracked_jobs_api(request):

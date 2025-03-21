@@ -169,7 +169,7 @@ console.log("📂 User Documents:", userDocuments);
                 <h1>${userInfo.location}</h1>
               </div>
             </div>
-            <button class="btn-outline">Edit Profile</button>
+            <a href="/settings/"><button class="btn-outline">Edit Profile</button></a>
 
           </section>
   
@@ -293,35 +293,6 @@ console.log("📂 User Documents:", userDocuments);
             <input type="file" id="docUpload" accept =".pdf" style="display: none">
             <button class="btn btn-primary" id="docUploadBtn">Upload Document</button>
           </div>
-
-          <section class="application-progress">
-            <div class="progress-header">
-              <div class="company-info">
-                <h2>Google</h2>
-                <p>Senior Frontend Developer</p>
-              </div>
-              <span class="status-badge">Interview</span>
-            </div>
-            <div class="progress-steps">
-              <div class="progress-line"></div>
-              <div class="step active">
-                <div class="step-dot">✓</div>
-                <div class="step-label">Applied</div>
-              </div>
-              <div class="step active">
-                <div class="step-dot">✓</div>
-                <div class="step-label">Screening</div>
-              </div>
-              <div class="step active">
-                <div class="step-dot">•</div>
-                <div class="step-label">Interview</div>
-              </div>
-              <div class="step">
-                <div class="step-dot">•</div>
-                <div class="step-label">Offer</div>
-              </div>
-            </div>
-          </section>
         </main>
   
         <aside>

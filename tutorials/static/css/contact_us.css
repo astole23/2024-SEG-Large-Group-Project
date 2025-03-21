@@ -38,7 +38,6 @@ body {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    padding-top: 5rem; /* Account for navbar height */
     padding-bottom: 5rem;
     width: 100vw;
 }

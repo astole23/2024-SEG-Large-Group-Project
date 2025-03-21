@@ -24,7 +24,6 @@
     background-color: var(--background-color);
     color: var(--text-primary);
     line-height: 1.5;
-    padding: 1rem;
   }
   
   /* Container for Page Content */
@@ -32,6 +31,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 1rem;
+    margin-left: 20px;
   }
   
   /* Headings and Text */
