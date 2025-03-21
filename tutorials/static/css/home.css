@@ -24,10 +24,13 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    margin-top: 150px;
+    margin-bottom: 150px;
 }
 
 .main-content {
     flex: 1;
+    margin-bottom: 150px;
 }
 
 .search-bar {
@@ -38,6 +41,8 @@ body {
     flex-wrap: wrap;
     margin: 20px auto 20px auto;
     padding: 0 20px;
+    margin-top: 110px;
+    margin-bottom: 100px;
     
 }
 
@@ -52,7 +57,7 @@ body {
 }
 
 .search-bar button {
-    background-color: #4b0082;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 15px 30px;
@@ -60,6 +65,7 @@ body {
     font-size: 1.25rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-weight: bold;
 }
 
 .search-bar button:hover {
@@ -99,4 +105,14 @@ body {
         padding: 12px 20px; /* Adjust button padding */
         font-size: 1rem;    /* Adjust button font size */
     }
+}
+
+.info-section h2 a {
+    text-decoration: none; /* Removes underline */
+    color: var(--primary-color); /* Sets color to primary color */
+}
+
+.info-section h2 a:hover {
+    text-decoration: underline; /* Optional: Underline on hover */
+    color: #6a0dad; /* Optional: Slightly different color on hover */
 }

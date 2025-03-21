@@ -1,0 +1,276 @@
+:root {
+    --primary-color: #462191;
+    --secondary-color: #475569;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, system-ui, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100 vh;
+}
+
+
+.main-content {
+    flex: 1;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 150px auto;
+    padding: 0 20px;
+}
+
+.grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .scrollable-section {
+      width: 100%;
+      margin: 0 auto;
+    }
+
+.search-bar input {
+    padding: 15px;
+    font-size: 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 25px;
+    width: 600px;
+    max-width: 600px;
+    transition: all 0.3s ease-in-out;
+}
+
+.search-bar input:focus {
+    border-color: #6a0dad;
+    outline: none;
+    box-shadow: 0 0 6px rgba(106, 13, 173, 0.3);
+}
+
+.search-bar button {
+    padding: 15px 30px;
+    font-size: 1.25rem;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #6a0dad, #4b0082);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.search-bar button:hover {
+    background: linear-gradient(135deg, #4b0082, #6a0dad);
+    transform: scale(1.05);
+}
+
+/* Filters Section */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px auto;
+    padding: 25px;
+    max-width: 1200px;
+    background: linear-gradient(135deg, #ffffff, #f8f9fc);
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.filters .filter-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filters label {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #4b0082;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.filters input,
+.filters select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.filters input:focus,
+.filters select:focus {
+    border-color: #6a0dad;
+    outline: none;
+    box-shadow: 0 0 6px rgba(106, 13, 173, 0.3);
+}
+
+/* Styled Buttons (Set Price, Unset Price, Apply Filters) */
+.salary-buttons button,
+.filters .filter-item button {
+    background: linear-gradient(135deg, #6a0dad, #4b0082);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.salary-buttons button:hover,
+.filters .filter-item button:hover {
+    background: linear-gradient(135deg, #4b0082, #6a0dad);
+    transform: scale(1.05);
+}
+
+/* Apply Filters & Clear Filters Button */
+.filters .filter-item a.btn-primary {
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6a0dad, #4b0082);
+    color: white;
+}
+
+.filters .filter-item a.btn-primary:hover {
+    background: linear-gradient(135deg, #4b0082, #6a0dad);
+    transform: scale(1.05);
+}
+
+/* Dropdown Checkbox */
+.dropdown-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.dropdown-checkbox button {
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    background: linear-gradient(135deg, #6a0dad, #4b0082);
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+}
+
+.dropdown-checkbox .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.dropdown-checkbox.active .dropdown-content {
+    display: block;
+}
+
+.dropdown-checkbox .dropdown-content label {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.dropdown-checkbox .dropdown-content input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid #6a0dad;
+    margin-right: 8px;
+}
+
+.dropdown-checkbox .dropdown-content input[type="checkbox"]:checked {
+    background: #6a0dad;
+    border-color: #6a0dad;
+}
+.filters-action-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+/* Apply Filters Button */
+.apply-filters-btn {
+    background: linear-gradient(135deg, #6a0dad, #4b0082);
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    flex: 1;
+    margin-right: 10px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.apply-filters-btn:hover {
+    background: linear-gradient(135deg, #4b0082, #6a0dad);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+
+

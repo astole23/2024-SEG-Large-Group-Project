@@ -1,0 +1,32 @@
+{% extends 'base/base_content.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/application_detail.css' %}">
+<h1>My Applications</h1>
+{% if applications %}
+  <table>
+    <thead>
+      <tr>
+        <th>Job Title</th>
+        <th>Company</th>
+        <th>Status</th>
+        <th>Submitted On</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for app in applications %}
+      <tr>
+        <td>{{ app.job_posting.job_title }}</td>
+        <td>{{ app.job_posting.company.company_name|default:app.job_posting.company.username }}</td>
+        <td>{{ app.status }}</td>
+        <td>{{ app.submitted_at|date:"M d, Y" }}</td>
+        <td><a href="{% url 'user_application_detail' app.id %}">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>You have not submitted any applications yet.</p>
+{% endif %}
+{% endblock %}

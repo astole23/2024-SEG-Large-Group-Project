@@ -1,0 +1,19 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block body %}
+{% if user.is_authenticated %}
+  {% if user.is_company %}
+    {% include 'partials/company_navbar.html' %}
+  {% else %}
+    {% include 'partials/auth_navbar.html' %}
+  {% endif %}
+{% else %}
+  {% include 'partials/navbar.html' %}
+{% endif %}
+
+  <div class="main-content" style="padding-top: 0;">
+    {% block content %}
+    {% endblock %}
+  </div>
+  {% include 'partials/footer.html' %}
+{% endblock %}

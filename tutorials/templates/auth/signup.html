@@ -1,0 +1,234 @@
+{% extends 'base/base_content.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+
+  <div class="container">
+    <div class="auth-container">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="user">Job Seeker</button>
+        <button class="tab-btn" data-tab="company">Company</button>
+      </div>
+      
+      <div class="tab-content">
+        <!-- Job Seeker Sign Up -->
+        <div class="tab-pane active" id="user-tab">
+          <form action="{% url 'signup' %}" method="post">
+            {% csrf_token %}
+            <!-- Hidden field to pass user type -->
+            <input type="hidden" name="user_type" value="user">
+            
+            <!-- Non-field errors -->
+            {% if user_form.non_field_errors %}
+              <div class="error">{{ user_form.non_field_errors }}</div>
+            {% endif %}
+            
+            <div class="form-group">
+              {{ user_form.username }}
+              {% if user_form.username.errors %}
+                <div class="error">{{ user_form.username.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ user_form.email }}
+              {% if user_form.email.errors %}
+                <div class="error">{{ user_form.email.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ user_form.first_name }}
+              {% if user_form.first_name.errors %}
+                <div class="error">{{ user_form.first_name.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ user_form.last_name }}
+              {% if user_form.last_name.errors %}
+                <div class="error">{{ user_form.last_name.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ user_form.password1 }}
+              {% if user_form.password1.errors %}
+                <div class="error">{{ user_form.password1.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ user_form.password2 }}
+              {% if user_form.password2.errors %}
+                <div class="error">{{ user_form.password2.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ user_form.user_industry }}
+              {% if user_form.user_industry.errors %}
+                  <div class="error">{{ user_form.user_industry.errors }}</div>
+              {% endif %}
+            </div>
+            
+      
+          <div class="form-group">
+            
+              {{ user_form.user_location }}
+              {% if user_form.user_location.errors %}
+                  <div class="error">{{ user_form.user_location.errors }}</div>
+              {% endif %}
+          </div>
+          <input type="checkbox" id="agree-terms-user" name="agree_terms" required>
+            <label for="agree-terms">
+                
+                I agree to the <a  href="{% url 'settings' %}" target="_blank">Terms and Conditions</a>
+                
+            </label>
+            <br>
+            <br>
+      
+            
+            <button type="submit" class="btn">Sign Up</button>
+          </form>
+        </div>
+        
+        <!-- Company Sign Up -->
+        <div class="tab-pane" id="company-tab">
+          <form action="{% url 'process_signup' %}" method="post">
+            {% csrf_token %}
+            <!-- Hidden field to pass user type -->
+            <input type="hidden" name="user_type" value="company">
+            
+            {% if company_form.non_field_errors %}
+              <div class="error">{{ company_form.non_field_errors }}</div>
+            {% endif %}
+            
+            <div class="form-group">
+              {{ company_form.username }}
+              {% if company_form.username.errors %}
+                <div class="error">{{ company_form.username.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ company_form.email }}
+              {% if company_form.email.errors %}
+                <div class="error">{{ company_form.email.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ company_form.company_name }}
+              {% if company_form.company_name.errors %}
+                <div class="error">{{ company_form.company_name.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ company_form.industry }}
+              {% if company_form.industry.errors %}
+                <div class="error">{{ company_form.industry.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ company_form.password1 }}
+              {% if company_form.password1.errors %}
+                <div class="error">{{ company_form.password1.errors }}</div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group">
+              {{ company_form.password2 }}
+              {% if company_form.password2.errors %}
+                <div class="error">{{ company_form.password2.errors }}</div>
+              {% endif %}
+            </div>
+            <input type="checkbox" id="agree-terms-company" name="agree_terms" required>
+            <label for="agree-terms">
+                
+                I agree to the <a  href="{% url 'settings' %}" target="_blank">Terms and Conditions</a>
+                
+            </label>
+            <br>
+            <br>
+            
+            
+            
+            <button type="submit" class="btn">Sign Up</button>
+          </form>
+        </div>
+      </div>
+      
+      
+      <div class="auth-footer">
+        <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabPanes = document.querySelectorAll('.tab-pane');
+      
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabPanes.forEach(p => p.classList.remove('active'));
+          this.classList.add('active');
+          const tabType = this.getAttribute('data-tab');
+          document.getElementById(`${tabType}-tab`).classList.add('active');
+        });
+      });
+    });
+  </script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+
+<script>
+    // Initialize Tagify on input fields
+    let industryInput = new Tagify(document.querySelector("#industry-input"), {
+        delimiters: ",",
+        whitelist: [],  // Users can enter anything
+        dropdown: {
+            maxItems: 10,
+            classname: "tags-look",
+            enabled: 0
+        }
+    });
+
+    let locationInput = new Tagify(document.querySelector("#location-input"), {
+        delimiters: ",",
+        whitelist: [],
+        dropdown: {
+            maxItems: 10,
+            classname: "tags-look",
+            enabled: 0
+        }
+    });
+
+    // Convert Tagify data to JSON before form submission
+    document.querySelector("form").addEventListener("submit", function () {
+      document.querySelector("#industry-input").value = JSON.stringify(industryInput.value.map(tag => tag.value));
+      document.querySelector("#location-input").value = JSON.stringify(locationInput.value.map(tag => tag.value));
+});
+    function clearPlaceholder(element) {
+        element.placeholder = '';  // Remove placeholder when typing
+    }
+
+    function restorePlaceholder(element, text) {
+        if (element.value === '') {
+            element.placeholder = text;  // Restore if input is empty
+        }
+    }
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends 'company/employer_base.html' %}
+{% load static %}
+
+
+
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'css/employer_sections.css' %}">
+
+<div class="dashboard-container">
+    <div class="company-header">
+        <div class="company-logo-container">
+            {% if company.logo %}
+                <img src="{{ company.logo.url }}" alt="{{ company.company_name }} Logo" class="company-logo">
+            {% else %}
+                <div class="placeholder-logo">No Logo</div>
+            {% endif %}
+            <h1 class="company-name">{{ company.company_name }}</h1>
+        </div>
+
+        <div class="review-box">
+            <button class="review-button" id="reviewButton">Review Company</button>
+        </div>
+
+        <hr class="company-divider">
+        <div class="company-info">
+            <p class="company-industry"><strong>Industry:</strong> {{ company.industry }}</p>
+            <div class="company-contact">
+                <p><strong>Email:</strong> {{ company.email }}</p>
+                <p><strong>Phone:</strong> {{ company.phone }}</p>
+                <p><strong>Headquarters:</strong> {{ company.location }}</p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Change Edit Profile to Button -->
+    <div class="company-actions">
+        <a href="{% url 'edit_company' company_id=user.id %}">
+            <button class="btn btn-secondary mt-2">Edit Company Details</button>
+        </a>
+    </div>
+
+    <!-- Job Listings Section -->
+    <section class="job-listings">
+        <h2>Job Listings</h2>
+        <div class="scrollable-section">
+            <div class="grid-container">
+                {% if job_postings %}
+                    {% for job in job_postings|slice:":6" %}
+                    <div class="grid-button card shadow-sm p-3 mb-4">
+                        <h5>{{ job.job_title }}</h5>
+                        <p>{{ job.company.company_name }}</p>
+                        <p>{{ job.location }}</p>
+                        <p>{{ job.work_type }}</p>
+                        <p>{{ job.company_overview|truncatewords:10 }}</p>
+                        <button class="btn btn-secondary mt-2" data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">View More</button>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No job postings available.</p>
+                {% endif %}
+            </div>
+
+            <!-- View All Button -->
+            <div class="view-all-btn-container">
+                <a href="/employer_dashboard/">
+                    <button class="btn btn-primary">View All</button>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal" aria-hidden="true" role="dialog">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Leave a Review</h2>
+
+            <!-- Traditional HTML Form -->
+            <form method="POST" action="{% url 'leave_review' company_id=company.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="reviewText">Review Text:</label>
+                    <textarea id="reviewText" name="text" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewRating">Rating:</label>
+                    <select id="reviewRating" name="rating" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-review">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    {% for job in job_postings %}
+      <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+          <div class="modal-content">
+            <!-- Modal Header using primary color from your CSS variables -->
+            <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+              <h5 class="modal-title" id="jobModalLabel{{ job.id }}">{{ job.job_title }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+            </div>
+            <div class="modal-body">
+              <div class="container-fluid">
+                <!-- Row 1: Basic Job Info -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <p><strong>Company:</strong> {{ job.company.company_name }}</p>
+                    {% if job.child_company_name %}
+                    <p><strong>Child Company:</strong> {{ job.child_company_name }}</p>
+                    {% endif %}
+                    <p><strong>Location:</strong> {{ job.location }}</p>
+                    <p><strong>Work Type:</strong> {{ job.work_type }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                    <p><strong>Contract:</strong> {{ job.contract_type }}</p>
+                    <p><strong>Deadline:</strong> {{ job.application_deadline }}</p>
+                  </div>
+                </div>
+                <hr>
+                <!-- Row 2: Job Overview and Responsibilities -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <h6>Job Overview</h6>
+                    <p>{{ job.job_overview }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <h6>Roles &amp; Responsibilities</h6>
+                    <p>{{ job.roles_responsibilities }}</p>
+                  </div>
+                </div>
+                <hr>
+                <!-- Row 3: Skills -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <h6>Required Skills</h6>
+                    <p>{{ job.required_skills }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <h6>Preferred Skills</h6>
+                    <p>{{ job.preferred_skills }}</p>
+                  </div>
+                </div>
+                <hr>
+                <!-- Row 4: Additional Details -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <h6>Education</h6>
+                    <p>{{ job.education_required }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <h6>Perks</h6>
+                    <p>{{ job.perks }}</p>
+                  </div>
+                </div>
+                <hr>
+                <!-- Row 5: Company Details -->
+                <div class="row">
+                  <div class="col-12">
+                    <h6>About the Company</h6>
+                    <p><strong>Overview:</strong> {{ job.company_overview }}</p>
+                    <p><strong>Why Join Us:</strong> {{ job.why_join_us }}</p>
+                    <p><strong>Reviews:</strong> {{ job.company_reviews }}</p>
+                    <p class="text-muted"><small>Posted on {{ job.created_at|date:"M d, Y" }}</small></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+  {% endfor %} 
+  
+</div>
+
+<!-- Simple JS for Modal (optional but recommended for UX) -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const reviewButton = document.getElementById('reviewButton');
+        const reviewModal = document.getElementById('reviewModal');
+        const closeModal = document.getElementById('closeModal');
+
+        reviewButton.onclick = () => reviewModal.style.display = 'block';
+        closeModal.onclick = () => reviewModal.style.display = 'none';
+        
+        window.onclick = event => {
+            if (event.target === reviewModal) reviewModal.style.display = 'none';
+        };
+
+        document.onkeydown = event => {
+            if (event.key === 'Escape') reviewModal.style.display = 'none';
+        };
+    });
+</script>
+
+{% endblock %}
+

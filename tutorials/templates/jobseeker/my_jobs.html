@@ -1,0 +1,205 @@
+{% extends 'base/base_content.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/my_jobs.css' %}">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Applications Status</title>
+</head>
+<body>
+
+  <!-- MAIN PAGE CONTENT -->
+  <div class="status-background">
+    <div class="page-content">
+      <div class="page-title">
+        <h1>Tracked Applications</h1>
+        <button class="add-jobs-btn" onclick="openAddJobsPopup()">+ Add Jobs</button>
+      </div>
+      <!-- Container for tracked job cards -->
+      <div id="jobs-container">
+        <!-- Job cards will be injected here via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD JOBS POPUP with Code Input -->
+  <div class="add-jobs-overlay" id="addJobsModal">
+    <div class="add-jobs-content">
+      <h2>Add Job by Code</h2>
+      <p>Enter the unique code from your job application:</p>
+      <input type="text" id="jobCodeInput" placeholder="Enter your code" />
+      <div class="popup-btns">
+        <button class="confirm-btn" onclick="submitJobCode()">Submit</button>
+        <button class="cancel-btn" onclick="closeAddJobsPopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Instead of mock data, we start with an empty array.
+    let trackedJobs = [];
+
+    // If you still need a status bar for each job, define your stage names.
+    const stageNames = ['Applied', 'Review', 'Interview', 'Assessment', 'Decision', 'Offer'];
+
+    // Renders tracked jobs fetched from the backend.
+    function renderTrackedJobs() {
+      const container = document.getElementById('jobs-container');
+      container.innerHTML = '';
+
+      trackedJobs.forEach(job => {
+        const card = document.createElement('div');
+        card.className = 'job-card';
+
+        const jobInfo = document.createElement('div');
+        jobInfo.className = 'job-info';
+
+        const titleEl = document.createElement('div');
+        titleEl.className = 'job-title';
+        titleEl.textContent = job.title;
+
+        const companyEl = document.createElement('div');
+        companyEl.className = 'company-name';
+        companyEl.textContent = job.company;
+
+        jobInfo.appendChild(titleEl);
+        jobInfo.appendChild(companyEl);
+
+        // Optionally create a status bar if needed.
+        const statusBar = createStatusBar(job);
+        jobInfo.appendChild(statusBar);
+
+        card.appendChild(jobInfo);
+        container.appendChild(card);
+      });
+    }
+
+    // Creates a 6-step status bar for a job.
+    function createStatusBar(job) {
+      const statusWrapper = document.createElement('div');
+      statusWrapper.className = 'status-bar';
+
+      for (let i = 0; i < 6; i++) {
+        if (i > 0) {
+          const lineDiv = document.createElement('div');
+          lineDiv.className = 'bar';
+          statusWrapper.appendChild(lineDiv);
+        }
+
+        const stepDiv = document.createElement('div');
+        stepDiv.className = 'status-step';
+
+        const circleDiv = document.createElement('div');
+        circleDiv.className = 'circle';
+        circleDiv.textContent = i + 1;
+
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'step-label';
+        labelDiv.textContent = stageNames[i];
+
+        if (job.currentStage >= i) {
+          stepDiv.classList.add('active');
+        }
+
+        // If you want to allow changing the stage, keep this onclick:
+        stepDiv.onclick = () => {
+          job.currentStage = i;
+          renderTrackedJobs();
+        };
+
+        stepDiv.appendChild(circleDiv);
+        stepDiv.appendChild(labelDiv);
+        statusWrapper.appendChild(stepDiv);
+      }
+      return statusWrapper;
+    }
+
+    // Popup functions for adding a job by code.
+    function openAddJobsPopup() {
+      document.getElementById('jobCodeInput').value = '';
+      document.getElementById('addJobsModal').style.display = 'flex';
+    }
+
+    function closeAddJobsPopup() {
+      document.getElementById('addJobsModal').style.display = 'none';
+    }
+
+    // Utility: get CSRF token from cookies.
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    // Fetch tracked jobs from the backend API.
+    function fetchTrackedJobs() {
+      fetch('/api/tracked-jobs/', {  // Make sure this endpoint exists on the backend.
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        trackedJobs = data;  // Assuming data is an array of job objects.
+        renderTrackedJobs();
+      })
+      .catch(error => {
+        console.error("Error fetching tracked jobs:", error);
+      });
+    }
+
+    // Submit the unique code to add a job to tracked applications.
+    function submitJobCode() {
+      const code = document.getElementById('jobCodeInput').value.trim();
+      if (!code) {
+        alert("Please enter a valid code.");
+        return;
+      }
+      
+      fetch('/add-job-by-code/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ code: code })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Job added successfully!");
+          fetchTrackedJobs();  // Reload tracked jobs from backend.
+          closeAddJobsPopup();
+        } else {
+          alert(data.error || "Invalid code or job does not belong to you.");
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while adding the job.");
+      });
+    }
+
+    // Initialize by fetching tracked jobs.
+    window.onload = () => {
+      fetchTrackedJobs();
+    };
+  </script>
+</body>
+</html>
+
+{% endblock %}
