@@ -21,11 +21,8 @@ class CustomUser(AbstractUser):
     location = models.CharField(max_length=100, blank=True, null=True)
     logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    unique_id = models.CharField(max_length=8, unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        if self.is_company and not self.unique_id:
-            self.generate_unique_id()
 
         super().save(*args, **kwargs)
 

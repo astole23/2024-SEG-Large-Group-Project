@@ -227,3 +227,17 @@
   .job-option input {
     margin-right: 0.5rem;
   }
+
+  .delete-job-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: var(--text-secondary);
+    border: none;
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-weight: bold;
+  }
