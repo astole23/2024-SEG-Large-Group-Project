@@ -150,7 +150,8 @@ console.log("📂 User Documents:", userDocuments);
 
     // Inside createDashboard()
 
-    const profilePhotoUrl = userInfo.user_profile_photo || "https://i.pravatar.cc/128";
+    const profilePhotoUrl = userInfo.profile_photo || "/static/images/empty_profile.png";
+
 
   
 

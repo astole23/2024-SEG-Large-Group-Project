@@ -3,8 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 import random
 import string
-import json
-
+from PIL import Image
 
 
 
@@ -45,6 +44,33 @@ class CustomUser(AbstractUser):
                     self.unique_id = new_id
                     break
         super().save(*args, **kwargs)
+
+        # Process profile photo if uploaded
+        if self.user_profile_photo:
+            img_path = self.user_profile_photo.path
+            img = Image.open(img_path)
+
+            # Define the target size (same as `empty_profile.png`)
+            target_size = (150, 150)  # Adjust based on your default profile picture dimensions
+
+            # Convert to RGB (for PNG and other formats that may have transparency issues)
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+
+            # Crop to a square before resizing
+            width, height = img.size
+            min_side = min(width, height)
+            left = (width - min_side) / 2
+            top = (height - min_side) / 2
+            right = (width + min_side) / 2
+            bottom = (height + min_side) / 2
+            img = img.crop((left, top, right, bottom))
+
+            # Resize the image
+            img = img.resize(target_size, Image.LANCZOS)
+
+            # Save the processed image (overwrite the existing file)
+            img.save(img_path)
 
     def __str__(self):
         if self.is_company and self.company_name:

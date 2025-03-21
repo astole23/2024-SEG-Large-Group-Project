@@ -92,7 +92,7 @@ def edit_company(request, company_id):
         company.description = request.POST.get('description')
         company.logo = request.FILES.get('logo')
         company.save()
-        return render(request, 'edit_company.html', {
+        return render(request, 'company/edit_company.html', {
             'company': company,
             'message': 'Company details updated!'
         })
