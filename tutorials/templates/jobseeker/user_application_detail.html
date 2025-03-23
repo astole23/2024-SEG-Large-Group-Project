@@ -1,12 +1,115 @@
 {% extends 'base/base_content.html' %}
-{% block content %}
 {% load static %}
-
+{% block content %}
 <link rel="stylesheet" href="{% static 'css/application_detail.css' %}">
-<h1>Application Details</h1>
-<p><strong>Job Title:</strong> {{ application.job_posting.job_title }}</p>
-<p><strong>Company:</strong> {{ application.job_posting.company.company_name|default:application.job_posting.company.username }}</p>
-<p><strong>Status:</strong> {{ application.status }}</p>
-<p><strong>Submitted On:</strong> {{ application.submitted_at|date:"M d, Y" }}</p>
-<a href="{% url 'user_applications' %}">Back to My Applications</a>
+
+<div class="application-detail-card">
+  <h1>Application Details</h1>
+
+  <!-- Unique Application ID -->
+  <p><strong>Application ID:</strong> {{ application.application_id }}</p>
+
+  <!-- Basic Application Info -->
+  <h2>Job Information</h2>
+  <p><strong>Job Title:</strong> {{ application.job_posting.job_title }}</p>
+  <p><strong>Company:</strong> {{ application.job_posting.company.company_name|default:application.job_posting.company.username }}</p>
+  <p><strong>Status:</strong> {{ application.status }}</p>
+  <p><strong>Submitted On:</strong> {{ application.submitted_at|date:"M d, Y" }}</p>
+
+  <!-- Display Cover Letter if it exists -->
+  {% if application.cover_letter %}
+    <h2>Cover Letter</h2>
+    <p>{{ application.cover_letter }}</p>
+  {% endif %}
+
+  {% if application.job_answers %}
+    {% with data=application.job_answers %}
+      
+      <!-- Application Method -->
+      <h2>Application Method</h2>
+      <p><strong>Application Type:</strong> {{ data.application_type }}</p>
+
+      <!-- Personal Information Section -->
+      {% if data.personal_info %}
+        <h2>Personal Information</h2>
+        <p><strong>Title:</strong> {{ data.personal_info.title }}</p>
+        <p><strong>First Name:</strong> {{ data.personal_info.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ data.personal_info.last_name }}</p>
+        <p><strong>Preferred Name:</strong> {{ data.personal_info.preferred_name }}</p>
+        <p><strong>Email:</strong> {{ data.personal_info.email }}</p>
+        <p><strong>Phone:</strong> {{ data.personal_info.phone }}</p>
+        
+        {% if data.personal_info.address %}
+          <h3>Address</h3>
+          <p><strong>Line 1:</strong> {{ data.personal_info.address.line1 }}</p>
+          <p><strong>Line 2:</strong> {{ data.personal_info.address.line2 }}</p>
+          <p><strong>Line 3:</strong> {{ data.personal_info.address.line3 }}</p>
+          <p><strong>City:</strong> {{ data.personal_info.address.city }}</p>
+          <p><strong>County:</strong> {{ data.personal_info.address.county }}</p>
+          <p><strong>Postcode:</strong> {{ data.personal_info.address.postcode }}</p>
+        {% endif %}
+        
+        {% if data.personal_info.skills %}
+          <h3>Skills</h3>
+          <ul>
+            {% for skill in data.personal_info.skills %}
+              <li>{{ skill }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>No skills provided.</p>
+        {% endif %}
+      {% endif %}
+      
+      <!-- Education Section -->
+      <h2>Education</h2>
+      {% if data.education_list %}
+        <ul>
+          {% for edu in data.education_list %}
+            <li>
+              <p><strong>Institution:</strong> {{ edu.university }}</p>
+              <p><strong>Degree:</strong> {{ edu.degreeType }}</p>
+              <p><strong>Dates:</strong> {{ edu.dates }}</p>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No education details provided.</p>
+      {% endif %}
+      
+      <!-- Work Experience Section -->
+      <h2>Work Experience</h2>
+      {% if data.work_experience_list %}
+        <ul>
+          {% for exp in data.work_experience_list %}
+            <li>
+              <p><strong>Company:</strong> {{ exp.employer_name }}</p>
+              <p><strong>Position:</strong> {{ exp.job_title }}</p>
+              <p><strong>Dates:</strong> {{ exp.dates }}</p>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No work experience provided.</p>
+      {% endif %}
+      
+      <!-- Job Specific Questions Section -->
+      {% if data.job_questions %}
+        <h2>Job Specific Questions</h2>
+        <p><strong>Eligible to Work:</strong> {{ data.job_questions.eligible_to_work }}</p>
+        <p><strong>Previously Employed:</strong> {{ data.job_questions.previously_employed }}</p>
+        <p><strong>Require Sponsorship:</strong> {{ data.job_questions.require_sponsorship }}</p>
+        <p><strong>How Did You Hear:</strong> {{ data.job_questions.how_did_you_hear }}</p>
+        <p><strong>Why You're a Good Fit:</strong> {{ data.job_questions.why_good_fit }}</p>
+        <p><strong>Salary Expectations:</strong> {{ data.job_questions.salary_expectations }}</p>
+        <p><strong>Background Check:</strong> {{ data.job_questions.background_check }}</p>
+      {% endif %}
+      
+    {% endwith %}
+  {% else %}
+    <p>No additional details provided.</p>
+  {% endif %}
+
+  <a href="{% url 'user_applications' %}" class="btn btn-secondary">Back to My Applications</a>
+</div>
 {% endblock %}

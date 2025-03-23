@@ -162,7 +162,9 @@ def apply_step4(request):
             return redirect('guest')
         job_posting = get_object_or_404(JobPosting, id=job_posting_id)
 
+        # Merge all the collected data into the job_answers JSON
         job_answers = {
+            'application_type': application_data.get('application_type'),
             'personal_info': {
                 'title': application_data.get('title'),
                 'first_name': application_data.get('first_name'),
@@ -180,6 +182,8 @@ def apply_step4(request):
                 },
                 'skills': application_data.get('skills'),
             },
+            'education_list': application_data.get('education_list'),
+            'work_experience_list': application_data.get('work_experience_list'),
             'job_questions': {
                 'eligible_to_work': application_data.get('eligible_to_work'),
                 'previously_employed': application_data.get('previously_employed'),
@@ -219,6 +223,7 @@ def apply_step4(request):
         return redirect('application_success')
 
     return render(request, 'application/step4.html', {'application_data': application_data})
+
 
 
 @login_required

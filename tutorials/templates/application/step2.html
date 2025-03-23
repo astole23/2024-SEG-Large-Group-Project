@@ -92,6 +92,7 @@
           {% endfor %}
         </div>
         <button type="button" id="add-work-experience">Add Work Experience</button>
+        <button type="button" id="remove-work-experience">Remove</button>
       </div>
 
 
@@ -114,60 +115,104 @@
       const educationData = {{ initial_data.education|default:"[]"|safe }};
       const experienceData = {{ initial_data.workExperience|default:"[]"|safe }};
       const skillsData = {{ initial_data.skills|default:"[]"|safe }};
-    
+  
       const eduContainer = document.getElementById('education-container');
       const expContainer = document.getElementById('experience-container');
       const skillsContainer = document.getElementById('skills-container');
-    
+  
+      /**
+       * Creates a new Education field (no per-entry "Remove" button).
+       */
       function createEducationField(edu = {}) {
         const div = document.createElement('div');
         div.classList.add('education-entry');
         div.innerHTML = `
-          <div class="form-group"><label>Institution</label><input type="text" name="institution" value="${edu.university || ''}"></div>
-          <div class="form-group"><label>Degree</label><input type="text" name="degree" value="${edu.degreeType || ''}"></div>
-          <div class="form-group"><label>Start Date</label><input type="text" name="edu_start" value="${(edu.dates || '').split('-')[0] || ''}"></div>
-          <div class="form-group"><label>End Date</label><input type="text" name="edu_end" value="${(edu.dates || '').split('-')[1] || ''}"></div>
-          <button type="button" class="remove-field">Remove</button>
+          <div class="form-group">
+            <label>Institution</label>
+            <input type="text" name="institution" value="${edu.university || ''}">
+          </div>
+          <div class="form-group">
+            <label>Degree</label>
+            <input type="text" name="degree" value="${edu.degreeType || ''}">
+          </div>
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="text" name="edu_start" value="${(edu.dates || '').split('-')[0] || ''}">
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="text" name="edu_end" value="${(edu.dates || '').split('-')[1] || ''}">
+          </div>
         `;
-        div.querySelector('.remove-field').addEventListener('click', () => div.remove());
         eduContainer.appendChild(div);
       }
-    
+  
+      /**
+       * Creates a new Work Experience field (no per-entry "Remove" button).
+       */
       function createExperienceField(exp = {}) {
         const div = document.createElement('div');
         div.classList.add('work-entry');
         div.innerHTML = `
-          <div class="form-group"><label>Company</label><input type="text" name="company_name" value="${exp.employer_name || ''}"></div>
-          <div class="form-group"><label>Position</label><input type="text" name="position" value="${exp.job_title || ''}"></div>
-          <div class="form-group"><label>Start Date</label><input type="text" name="work_start" value="${(exp.dates || '').split('-')[0] || ''}"></div>
-          <div class="form-group"><label>End Date</label><input type="text" name="work_end" value="${(exp.dates || '').split('-')[1] || ''}"></div>
-          <button type="button" class="remove-field">Remove</button>
+          <div class="form-group">
+            <label>Company</label>
+            <input type="text" name="company_name" value="${exp.employer_name || ''}">
+          </div>
+          <div class="form-group">
+            <label>Position</label>
+            <input type="text" name="position" value="${exp.job_title || ''}">
+          </div>
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="text" name="work_start" value="${(exp.dates || '').split('-')[0] || ''}">
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="text" name="work_end" value="${(exp.dates || '').split('-')[1] || ''}">
+          </div>
         `;
-        div.querySelector('.remove-field').addEventListener('click', () => div.remove());
         expContainer.appendChild(div);
       }
-    
+  
+      /**
+       * Single "Remove" button for Work Experience.
+       * Removes the last .work-entry in the container.
+       */
+      document.getElementById('remove-work-experience').addEventListener('click', () => {
+        const entries = document.querySelectorAll('.work-entry');
+        if (entries.length > 0) {
+          entries[entries.length - 1].remove();
+        }
+      });
+  
+      /**
+       * Creates a new Skill field (still has a per-entry remove button).
+       */
       function createSkillField(skill = '') {
         const div = document.createElement('div');
         div.classList.add('skill-entry');
         div.innerHTML = `
-          <div class="form-group"><input type="text" name="skill" placeholder="Enter skill" value="${skill}"></div>
+          <div class="form-group">
+            <input type="text" name="skill" placeholder="Enter skill" value="${skill}">
+          </div>
           <button type="button" class="remove-field">Remove</button>
         `;
         div.querySelector('.remove-field').addEventListener('click', () => div.remove());
         skillsContainer.appendChild(div);
       }
-    
+  
+      // Hook up "Add" buttons
       document.getElementById('add-edu').addEventListener('click', () => createEducationField());
       document.getElementById('add-work-experience').addEventListener('click', () => createExperienceField());
       document.getElementById('add-skill-btn').addEventListener('click', () => createSkillField());
-    
-      // Init with existing data or one empty row
+  
+      // Initialize fields from existing data or a single empty entry
       (educationData.length ? educationData : [{}]).forEach(createEducationField);
       (experienceData.length ? experienceData : [{}]).forEach(createExperienceField);
       (skillsData.length ? skillsData : ['']).forEach(createSkillField);
     });
-    </script>
+  </script>
+  
     
 
 </body>

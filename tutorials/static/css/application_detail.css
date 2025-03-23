@@ -1,141 +1,207 @@
 /* Global Variables and Reset */
 :root {
-    --primary-color: #462191;
-    --secondary-color: #475569;
-    --background-color: #f8fafc;
-    --card-background: #ffffff;
-    --border-color: #e2e8f0;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --danger-color: #ef4444;
-    --modal-overlay: rgba(0, 0, 0, 0.5);
-    --font-primary: 'Inter', sans-serif;
-    --font-secondary: 'Arial', sans-serif;
-  }
-  
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: var(--font-primary);
-    background-color: var(--background-color);
-    color: var(--text-primary);
-    line-height: 1.5;
-  }
-  
-  /* Container for Page Content */
+  --primary-color: #462191;
+  --secondary-color: #475569;
+  --background-color: #f8fafc;
+  --card-background: #ffffff;
+  --border-color: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --danger-color: #ef4444;
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --font-primary: 'Inter', system-ui, sans-serif;
+  --font-secondary: 'Arial', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* Container for Page Content */
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+/* Headings and Text */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+/* Table Styles for Application Listings */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+table th,
+table td {
+  border: 1px solid var(--border-color);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+table th {
+  background-color: var(--card-background);
+  font-weight: bold;
+}
+
+/* Link Styles */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Button Styles */
+.btn {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+}
+
+/* Card / Section Styles */
+.card {
+  background: var(--card-background);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Detail Page Specific Styling */
+.detail-page h1 {
+  margin-bottom: 1.5rem;
+}
+
+.applications-card {
+  background: var(--card-background);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin: 2rem auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  max-width: 1200px;
+}
+.applications-card table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+.applications-card th,
+.applications-card td {
+  border: 1px solid var(--border-color);
+  padding: 0.75rem;
+  text-align: left;
+}
+.applications-card th {
+  background-color: var(--background-color);
+  font-weight: bold;
+}
+
+.application-detail-card {
+  background: var(--card-background);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin: 2rem auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  max-width: 1200px;
+}
+
+.application-detail-card h1,
+.application-detail-card h2 {
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.application-detail-card p {
+  margin-bottom: 0.75rem;
+}
+
+.application-detail-card ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.application-detail-card ul li {
+  background: var(--background-color);
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.my-applications-heading {
+  max-width: 1200px;
+  margin: 2rem auto 1rem auto; /* top/bottom spacing */
+  padding: 0 2rem;            /* horizontal padding matches .container */
+}
+.my-applications-heading h2 {
+  color: var(--primary-color);
+  margin-bottom: 0; /* override if you want less spacing below the heading */
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
-    margin-left: 20px;
+    padding: 0.5rem;
   }
-  
-  /* Headings and Text */
-  h1, h2, h3, h4, h5, h6 {
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-  }
-  
-  p {
-    margin-bottom: 1rem;
-  }
-  
-  /* Table Styles for Application Listings */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-  }
-  
   table th,
   table td {
-    border: 1px solid var(--border-color);
-    padding: 0.75rem;
-    text-align: left;
-  }
-  
-  table th {
-    background-color: var(--card-background);
-    font-weight: bold;
-  }
-  
-  /* Link Styles */
-  a {
-    color: var(--primary-color);
-    text-decoration: none;
-  }
-  
-  a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Button Styles */
-  .btn {
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    display: inline-block;
-    text-align: center;
-  }
-  
-  .btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
-  .btn-outline {
-    background-color: transparent;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-  }
-  
-  /* Form Styles */
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-  }
-  
-  .form-group input,
-  .form-group textarea,
-  .form-group select {
-    width: 100%;
     padding: 0.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.25rem;
   }
-  
-  /* Card / Section Styles for Page-Specific Content */
-  .card {
-    background: var(--card-background);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  /* Additional styling for detail pages */
-  .detail-page h1 {
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .container {
-      padding: 0.5rem;
-    }
-    table th,
-    table td {
-      padding: 0.5rem;
-    }
-  }
-  
+}
