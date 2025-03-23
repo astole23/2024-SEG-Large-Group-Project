@@ -84,7 +84,7 @@ JSON Output:
 
     
     raw_text = response["choices"][0]["text"]
-    print("🧠 AI OUTPUT:\n", raw_text)
+    print(" AI OUTPUT:\n", raw_text)
 
     try:
         # Extract only the JSON part
@@ -123,4 +123,5 @@ class CV(models.Model):
 
     def __str__(self):
         return self.name
+    
 
