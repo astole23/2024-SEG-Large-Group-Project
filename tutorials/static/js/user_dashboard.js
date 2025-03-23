@@ -15,44 +15,49 @@ console.log("📂 User Documents:", userDocuments);
 
   function fetchRecommendedJobs() {
     console.log("Fetching recommended jobs.");
-  
+
     fetch('/job_recommendation/', {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.json())
     .then(data => {
       console.log("Received recommended jobs:", data);
-  
+
       const suggestedJobsContainer = document.getElementById('suggested-jobs');
       suggestedJobsContainer.innerHTML = ''; // Clear existing jobs
-  
+
       if (!data.recommended_jobs || data.recommended_jobs.length === 0) {
         console.log("No recommended jobs found.");
         suggestedJobsContainer.innerHTML = '<p style="color: gray;">No recommended jobs available.</p>';
         return;
       }
-  
+
       data.recommended_jobs.slice(0,5).forEach(job => {
+        // Create the job card with ONLY minimal info
         const jobElement = document.createElement('div');
         jobElement.className = 'job-card';
         jobElement.innerHTML = `
           <h5 class="job-title">${job.job_title}</h5>
           <p class="company-name">
-  <strong>Company:</strong>
-  <a href="/company/${job.company_id}/">${job.company_name}</a>
-</p>
-          <p class="location"><i class="fa-solid fa-location-dot"></i>${job.location}</p>
+            <strong>Company:</strong> ${job.company_name}
+          </p>
+          <p class="location">
+            <i class="fa-solid fa-location-dot"></i> ${job.location}
+          </p>
           <p class="pay-contract">${job.salary_range} | ${job.contract_type}</p>
-          <p class="job-overview"><strong>Overview:</strong> ${job.job_overview || 'No overview available'}</p>
-          <p class="roles-responsibilities"><strong>Responsibilities:</strong> ${job.roles_responsibilities || 'Not specified'}</p>
-          <p class="required-skills"><strong>Skills Required:</strong> ${job.required_skills || 'Not listed'}</p>
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
-            View &amp; Apply
+          <p class="company-overview">${job.company_overview ? job.company_overview.split(' ').slice(0,10).join(' ') + '...' : ''}</p>
+
+          <!-- "View More" opens the modal -->
+          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#jobModal${job.id}">
+            View More
           </button>
+          <!-- "Apply Now" goes directly to your application URL -->
+          <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
         `;
+
         suggestedJobsContainer.appendChild(jobElement);
-  
-        // ✅ Create Bootstrap modal for detailed job info
+
+        // Create the Bootstrap modal using the search page template structure
         const modalDiv = document.createElement('div');
         modalDiv.className = 'modal fade';
         modalDiv.id = `jobModal${job.id}`;
@@ -64,28 +69,79 @@ console.log("📂 User Documents:", userDocuments);
             <div class="modal-content">
               <div class="modal-header" style="background-color: var(--primary-color); color: white;">
                 <h5 class="modal-title" id="jobModalLabel${job.id}">${job.job_title}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
               </div>
               <div class="modal-body">
-                <p><strong>Company:</strong> ${job.company_name}</p>
-                <p><strong>Location:</strong> ${job.location}</p>
-                <p><strong>Salary:</strong> ${job.salary_range}</p>
-                <p><strong>Contract:</strong> ${job.contract_type || ''}</p>
-                <p><strong>Overview:</strong> ${job.job_overview || 'No overview available'}</p>
-                <p><strong>Roles & Responsibilities:</strong> ${job.roles_responsibilities || 'Not specified'}</p>
-                <p><strong>Required Skills:</strong> ${job.required_skills || 'Not listed'}</p>
+                <div class="container-fluid">
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p><strong>Company:</strong> ${job.company_name}</p>
+                      ${job.department ? `<p><strong>Department:</strong> ${job.department}</p>` : ''}
+                      <p><strong>Location:</strong> ${job.location}</p>
+                      <p><strong>Work Type:</strong> ${job.work_type || ''}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p><strong>Salary:</strong> ${job.salary_range} GBP</p>
+                      <p><strong>Contract:</strong> ${job.contract_type || ''}</p>
+                      <p><strong>Deadline:</strong> ${job.application_deadline || ''}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <h6>Job Overview</h6>
+                      <p>${job.job_overview || ''}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <h6>Roles &amp; Responsibilities</h6>
+                      <p>${job.roles_responsibilities || ''}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <h6>Required Skills</h6>
+                      <p>${job.required_skills || ''}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <h6>Preferred Skills</h6>
+                      <p>${job.preferred_skills || ''}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <h6>Education</h6>
+                      <p>${job.education_required || ''}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <h6>Perks</h6>
+                      <p>${job.perks || ''}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-12">
+                      <h6>About the Company</h6>
+                      <p><strong>Overview:</strong> ${job.company_overview || ''}</p>
+                      <p><strong>Why Join Us:</strong> ${job.why_join_us || ''}</p>
+                      <p><strong>Reviews:</strong> ${job.company_reviews || ''}</p>
+                      <p class="text-muted"><small>Posted on ${job.created_at || ''}</small></p>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="/apply/start/${job.id}/" class="btn btn-primary">Apply Now</a>
               </div>
             </div>
           </div>
         `;
         document.body.appendChild(modalDiv);
+
       });
-  
-      // ✅ Preserve the "View all suggestions" button
+
+      // Preserve the "View all suggestions" button
       const viewAllButton = document.createElement('a');
       viewAllButton.href = '/job_recommendation/';
       viewAllButton.className = 'view-all btn btn-primary';
@@ -96,6 +152,7 @@ console.log("📂 User Documents:", userDocuments);
       console.error("❌ Error fetching recommended jobs:", error);
     });
   }
+
   function renderJobListings(jobs) {
     console.log("📢 Jobs received for rendering:", jobs); // Debugging
   
@@ -268,7 +325,7 @@ console.log("📂 User Documents:", userDocuments);
                 </div>
                 <button class="btn btn-primary" id="editCVBtn">Edit Online CV</button>
               </div>
-            </div>
+            
           </section>
 
           <div class="modal-header">

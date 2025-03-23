@@ -11,9 +11,9 @@ class JobPosting(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='job_postings',
-        help_text="The company posting the job (must be a company account).",
-        null=True,  # Allow null values temporarily
-        blank=True  # Allow form submissions without this field
+        help_text="The user posting the job (must be a company account).",
+        null=True,  
+        blank=True  
     )
 
     department = models.CharField(
@@ -101,5 +101,5 @@ class JobPosting(models.Model):
 
 def __str__(self):
         if self.company and self.company.company_name:
-            return self.company.company_name  # Return the company name if it exists
-        return ""  # Return an empty string if there is no company name
+            return self.company.company_name  
+        return "" 

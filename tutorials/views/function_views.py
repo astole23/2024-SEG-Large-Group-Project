@@ -1,18 +1,11 @@
 from django.shortcuts import render, redirect
-from tutorials.forms import UserLoginForm, CompanyLoginForm, CompanySignUpForm, UserSignUpForm
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
-from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from django.shortcuts import render, redirect
-from tutorials.forms import UserSignUpForm, CompanySignUpForm
-
-from django.contrib.auth.hashers import make_password
-from django.contrib import messages
-
-from django.contrib.auth.decorators import login_required
-from tutorials.models.user_dashboard import UploadedCV
 from django.http import JsonResponse
+
+from tutorials.forms import UserLoginForm, CompanyLoginForm, CompanySignUpForm, UserSignUpForm
+from tutorials.models.user_dashboard import UploadedCV
+
 
 def process_login(request):
     if request.method == 'POST':

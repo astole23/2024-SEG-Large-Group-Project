@@ -1,32 +1,39 @@
 const initialEducation = JSON.parse('{{ initial_data.education|default:"[]"|escapejs }}');
 const initialExperience = JSON.parse('{{ initial_data.workExperience|default:"[]"|escapejs }}');
 
-function createEducationField(edu = {}) {
-  const eduDiv = document.createElement('div');
-  eduDiv.className = 'education-entry';
-  eduDiv.innerHTML = `
-    <div class="form-group"><input type="text" name="institution" placeholder="Institution" value="${edu.university || ''}"></div>
-    <div class="form-group"><input type="text" name="degree" placeholder="Degree" value="${edu.degreeType || ''}"></div>
-    <div class="form-group"><input type="text" name="edu_start" placeholder="Start Date" value="${(edu.dates || '').split('-')[0] || ''}"></div>
-    <div class="form-group"><input type="text" name="edu_end" placeholder="End Date" value="${(edu.dates || '').split('-')[1] || ''}"></div>
+// Function to create a generic field (education or experience)
+function createField(type, data = {}) {
+  const fieldDiv = document.createElement('div');
+  fieldDiv.className = `${type}-entry`;
+  
+  // Dynamically set placeholders and names
+  const fields = {
+    institution: { placeholder: 'Institution', value: data.university || data.employer_name || '' },
+    degree: { placeholder: 'Degree', value: data.degreeType || '' },
+    position: { placeholder: 'Position', value: data.job_title || '' },
+    start: { placeholder: 'Start Date', value: (data.dates || '').split('-')[0] || '' },
+    end: { placeholder: 'End Date', value: (data.dates || '').split('-')[1] || '' },
+  };
+
+  fieldDiv.innerHTML = `
+    ${Object.keys(fields).map(field => `
+      <div class="form-group">
+        <input type="text" name="${field}" placeholder="${fields[field].placeholder}" value="${fields[field].value}">
+      </div>
+    `).join('')}
     <button type="button" class="remove-field">Remove</button>
   `;
-  eduDiv.querySelector('.remove-field').addEventListener('click', () => eduDiv.remove());
-  return eduDiv;
+
+  // Attach remove event
+  fieldDiv.querySelector('.remove-field').addEventListener('click', () => fieldDiv.remove());
+  return fieldDiv;
 }
 
-function createExperienceField(exp = {}) {
-  const expDiv = document.createElement('div');
-  expDiv.className = 'experience-entry';
-  expDiv.innerHTML = `
-    <div class="form-group"><input type="text" name="company_name" placeholder="Company" value="${exp.employer_name || ''}"></div>
-    <div class="form-group"><input type="text" name="position" placeholder="Position" value="${exp.job_title || ''}"></div>
-    <div class="form-group"><input type="text" name="work_start" placeholder="Start Date" value="${(exp.dates || '').split('-')[0] || ''}"></div>
-    <div class="form-group"><input type="text" name="work_end" placeholder="End Date" value="${(exp.dates || '').split('-')[1] || ''}"></div>
-    <button type="button" class="remove-field">Remove</button>
-  `;
-  expDiv.querySelector('.remove-field').addEventListener('click', () => expDiv.remove());
-  return expDiv;
+// Function to add an initial field if there is no data
+function initializeFields(container, data, type) {
+  if (data.length === 0) container.appendChild(createField(type));
+
+  data.forEach(item => container.appendChild(createField(type, item)));
 }
 
 // Init education/work sections
@@ -34,21 +41,18 @@ const eduContainer = document.getElementById('education-container');
 const expContainer = document.getElementById('experience-container');
 
 document.getElementById('add-education-btn').addEventListener('click', () => {
-  eduContainer.appendChild(createEducationField());
+  eduContainer.appendChild(createField('education'));
 });
+
 document.getElementById('add-experience-btn').addEventListener('click', () => {
-  expContainer.appendChild(createExperienceField());
+  expContainer.appendChild(createField('experience'));
 });
 
-// Pre-fill if data exists
-initialEducation.forEach(e => eduContainer.appendChild(createEducationField(e)));
-initialExperience.forEach(e => expContainer.appendChild(createExperienceField(e)));
+// Initialize fields with pre-filled data or an empty field
+initializeFields(eduContainer, initialEducation, 'education');
+initializeFields(expContainer, initialExperience, 'experience');
 
-// If no data, start with 1 empty row
-if (initialEducation.length === 0) eduContainer.appendChild(createEducationField());
-if (initialExperience.length === 0) expContainer.appendChild(createExperienceField());
-
-
+// Skills Section
 const skillsContainer = document.getElementById('skills-container');
 const addSkillBtn = document.getElementById('add-skill-btn');
 
@@ -72,5 +76,3 @@ if (skillsData.length > 0) {
 } else {
   skillsContainer.appendChild(createSkillField());
 }
-
-

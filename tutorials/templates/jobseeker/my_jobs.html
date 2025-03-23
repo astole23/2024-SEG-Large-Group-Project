@@ -68,11 +68,18 @@
         jobInfo.appendChild(titleEl);
         jobInfo.appendChild(companyEl);
 
-        // Optionally create a status bar if needed.
         const statusBar = createStatusBar(job);
         jobInfo.appendChild(statusBar);
 
         card.appendChild(jobInfo);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-job-btn';
+        deleteBtn.innerHTML = '&times;'; // Close icon
+        deleteBtn.onclick = () => deleteJob(job.id);
+
+        card.appendChild(deleteBtn);
+
         container.appendChild(card);
       });
     }
@@ -115,6 +122,27 @@
         statusWrapper.appendChild(stepDiv);
       }
       return statusWrapper;
+    }
+
+    function deleteJob(jobId) {
+      fetch(`/delete-job/${jobId}/`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Job deleted successfully!");
+          fetchTrackedJobs(); // Refresh job list
+        } else {
+          alert("Failed to delete job.");
+        }
+      })
+      .catch(error => {
+        console.error("Error deleting job:", error);
+      });
     }
 
     // Popup functions for adding a job by code.

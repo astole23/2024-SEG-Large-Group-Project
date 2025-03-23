@@ -43,6 +43,7 @@ urlpatterns = [
     path('add-job-by-code/', jobseeker_views.add_job_by_code, name='add_job_by_code'),
     path('my_jobs/', jobseeker_views.my_jobs, name='my_jobs'),
     path('job_recommendation/', job_search.job_recommendation, name='job_recommendations'),
+    path('delete-job/<int:job_id>/', jobseeker_views.delete_job, name='delete-job'),
 
     # Page Views & Legal Pages 
     path('', page_views.guest, name='guest'),

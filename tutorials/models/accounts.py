@@ -21,11 +21,9 @@ class CustomUser(AbstractUser):
     location = models.CharField(max_length=100, blank=True, null=True)
     logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    unique_id = models.CharField(max_length=8, unique=True, blank=True, null=True)
+    unique_id = models.CharField(max_length=8, blank=True, null=True, unique=True)  # ← Add this line
 
     def save(self, *args, **kwargs):
-        if self.is_company and not self.unique_id:
-            self.generate_unique_id()
 
         super().save(*args, **kwargs)
 
@@ -34,17 +32,6 @@ class CustomUser(AbstractUser):
         
         if self.logo:
             self.process_image(self.logo, target_size=(200, 200))
-
-    def generate_unique_id(self):
-        """
-        Generates a unique 8-character code for company accounts.
-        """
-        allowed = string.ascii_uppercase + string.digits + "!@#$%^&*()"
-        while True:
-            new_id = ''.join(random.choices(allowed, k=8))
-            if not CustomUser.objects.filter(unique_id=new_id).exists():
-                self.unique_id = new_id
-                break
 
     def process_image(self, image_field, target_size):
         """
