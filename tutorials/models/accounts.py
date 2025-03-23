@@ -21,6 +21,7 @@ class CustomUser(AbstractUser):
     location = models.CharField(max_length=100, blank=True, null=True)
     logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    unique_id = models.CharField(max_length=8, blank=True, null=True, unique=True)  # ← Add this line
 
     def save(self, *args, **kwargs):
 
