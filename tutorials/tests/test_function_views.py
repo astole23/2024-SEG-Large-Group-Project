@@ -280,3 +280,84 @@ class AuthViewsTests(TestCase):
         self.client.login(username='testcompany', password='testpass123')  # Company user has no CV
         response = self.client.post(reverse('delete_raw_cv'))
         self.assertEqual(response.status_code, 404)
+
+    def test_process_user_type(self):
+        response = self.client.post(reverse('process_login'), {
+            'user_type': 'invalid',  # Invalid user type
+            'username': 'testuser',
+            'password': 'testpass123',
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_request(self):
+        response = self.client.get(reverse('process_login'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_process_login_with_invalid_csrf_token(self):
+        self.client = Client(enforce_csrf_checks=True)
+        response = self.client.post(reverse('process_login'), {
+            'user_type': 'user',
+            'username': 'testuser',
+            'password': 'testpass123',
+        })
+        self.assertEqual(response.status_code, 403) 
+    
+    def test_process_signup_with_invalid_csrf_token(self):
+        self.client = Client(enforce_csrf_checks=True)
+        response = self.client.post(reverse('process_signup'), {
+            'user_type': 'user',
+            'username': 'newuser',
+            'password1': 'newpass123',
+            'password2': 'newpass123',
+        })
+        self.assertEqual(response.status_code, 403)  
+    def test_delete_raw_cv(self):
+        self.client = Client(enforce_csrf_checks=True)
+        self.client.login(username='testuser', password='testpass123')
+        response = self.client.post(reverse('delete_raw_cv'))
+        self.assertEqual(response.status_code, 200) 
+
+    def test_process_login_with_inactive_user(self):
+        inactive_user = CustomUser.objects.create_user(
+            username='inactiveuser',
+            password='inactivepass',
+            is_company=False,
+            is_active=False  # Inactive user
+        )
+        response = self.client.post(reverse('process_login'), {
+            'user_type': 'user',
+            'username': 'inactiveuser',
+            'password': 'inactivepass',
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_process_signup_with_inactive_user(self):
+        response = self.client.post(reverse('process_signup'), {
+            'user_type': 'user',
+            'username': 'inactiveuser',
+            'password1': 'inactivepass',
+            'password2': 'inactivepass',
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_process_login_with_get_request_and_csrf_token(self):
+        response = self.client.get(reverse('process_login'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_process_signup_with_get_request_and_csrf_token(self):
+        response = self.client.get(reverse('process_signup'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_raw_cv_with_get_request_and_csrf_token(self):
+        self.client.login(username='testuser', password='testpass123')
+        response = self.client.get(reverse('delete_raw_cv'))
+        self.assertEqual(response.status_code, 405)  # Method Not Allowed
+
+    def test_login(self):
+        response = self.client.post(reverse('process_login'), {
+            'user_type': 'invalid',  # Invalid user type
+            'username': 'testuser',
+            'password': 'testpass123',
+        })
+        self.assertEqual(response.status_code, 200)
+
