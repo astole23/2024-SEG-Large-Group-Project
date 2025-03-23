@@ -97,3 +97,17 @@ class UtilityFunctionTests(TestCase):
     def test_match_job_to_cv_together_missing_input(self):
         self.assertEqual(matchmaking_helper.match_job_to_cv_together([], ["Job A"]), [])
         self.assertEqual(matchmaking_helper.match_job_to_cv_together(["Some CV"], []), [])
+
+    @patch("tutorials.helpers.matchmaking_helper.get_embeddings")
+    def test_match_job_to_cv_together_similarity_crash(self, mock_embed):
+        from tutorials.helpers.matchmaking_helper import match_job_to_cv_together
+        # Break it by using strings instead of vectors
+        mock_embed.return_value = [[0.1, 0.2, 0.3], "not-a-vector"]
+
+        result = match_job_to_cv_together(["Python"], ["Developer"])
+        self.assertEqual(result, [])  # Should trigger the exception
+
+    def test_match_job_to_cv_together_empty_combined_query(self):
+        from tutorials.helpers.matchmaking_helper import match_job_to_cv_together
+        result = match_job_to_cv_together(["", None, "   "], ["Developer", "Engineer"])
+        self.assertEqual(result, [])
