@@ -411,3 +411,6 @@ class DeleteRawCVTests(TestCase):
         self.assertJSONEqual(response.content, {'success': False, 'error': 'No uploaded CV found.'})
 
 
+
+
+
