@@ -1,3 +1,6 @@
+from tutorials.models.standard_cv import UserCV
+from .database_helper import safe_json_list
+
 def normalize_to_string_list(value):
     if isinstance(value, list):
         return ", ".join(v.strip() for v in value)
@@ -45,3 +48,23 @@ def remove_duplicate_experience(entries):
             seen.add(key)
             cleaned.append(exp)
     return cleaned
+
+def extract_user_data(user):
+    """Extract industry, location, and CV data for the user."""
+    user_industry = user.user_industry or []
+    user_locations = user.user_location
+
+    try:
+        user_cv = UserCV.objects.get(user=user)
+        education_data = safe_json_list(user_cv.education)
+        work_data = safe_json_list(user_cv.work_experience or user_cv.job_title)
+
+        field_of_study = [edu.get("fieldOfStudy") for edu in education_data if "fieldOfStudy" in edu]
+        previous_jobs = [exp.get("job_title") for exp in user_cv.work_experience or []]
+    except UserCV.DoesNotExist:
+        field_of_study = []
+        previous_jobs = []
+
+    user_values = user_industry + field_of_study + previous_jobs
+    return user_values, user_locations
+
