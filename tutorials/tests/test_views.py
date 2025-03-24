@@ -5,8 +5,6 @@ from tutorials.models.jobposting import JobPosting
 from tutorials.models.company_review import Review
 import json
 from datetime import datetime
-from tutorials.views.ui_views import signup_view, login_view, employer_dashboard, user_dashboard, search, contact_us, about_us, company_detail, leave_review, edit_company, profile_settings, create_job_posting, apply_step1, apply_step2, apply_step3, apply_step4, application_success
-
 
 CustomUser = get_user_model()
 
