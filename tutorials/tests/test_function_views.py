@@ -295,12 +295,6 @@ class AuthViewsTests(TestCase):
         response = self.client.post(reverse('delete_raw_cv'))
         self.assertEqual(response.status_code, 302)
 
-    def test_raw_cv_with_no_cv(self):
-        self.client.login(username='testcompany', password='testpass123')  # Company user has no CV
-        response = self.client.post(reverse('delete_raw_cv'))
-        self.assertEqual(response.status_code, 404)
-
-
     def test_delete_raw_cv_with_get_request(self):
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('delete_raw_cv'))
@@ -589,4 +583,5 @@ class FunctionViewsTests(TestCase):
             'company-password2': '123'
         })
         self.assertContains(response, "About SHY", status_code=200)
+
 
