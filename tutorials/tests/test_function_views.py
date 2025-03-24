@@ -235,21 +235,16 @@ class AuthViewsTests(TestCase):
             'user-user_location': 'Trondheim',
         }, follow=True)
 
-        # ✅ Check user created
         self.assertTrue(CustomUser.objects.filter(username='industrytester').exists())
         user = CustomUser.objects.get(username='industrytester')
 
-        # ✅ Check that industry and location were saved
         self.assertEqual(user.user_industry, 'Engineering')
         self.assertEqual(user.user_location, 'Trondheim')
 
-        # ✅ Check that user is logged in
         self.assertEqual(int(self.client.session['_auth_user_id']), user.id)
 
-        # ✅ Check redirect to dashboard
         self.assertRedirects(response, reverse('user_dashboard'))
 
-        # ✅ Check success message
         messages_list = list(response.context['messages'])
         self.assertTrue(any("registered and logged in successfully" in str(m) for m in messages_list))
 
