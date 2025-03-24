@@ -361,3 +361,131 @@ class AuthViewsTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
 
+
+
+
+from django.test import TestCase, Client
+from django.urls import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
+from tutorials.models.user_dashboard import UploadedCV
+from tutorials.models.accounts import CustomUser
+from tutorials.views.function_views import split_skills, remove_duplicates_by_keys
+
+class FunctionViewsTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = CustomUser.objects.create_user(
+            username='user', email='user@test.com', password='testpass',
+            user_industry='Tech', user_location='London'
+        )
+        self.company = CustomUser.objects.create_user(
+            username='company', email='company@test.com', password='testpass',
+            is_company=True
+        )
+
+    def test_login_get(self):
+        response = self.client.get(reverse('process_login'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_login_post_valid_user(self):
+        response = self.client.post(reverse('process_login'), {
+            'user_type': 'user',
+            'user-username': 'user',
+            'user-password': 'testpass',
+        })
+        self.assertRedirects(response, reverse('user_dashboard'))
+
+    def test_login_post_valid_company(self):
+        response = self.client.post(reverse('process_login'), {
+            'user_type': 'company',
+            'company-username': 'company',
+            'company-password': 'testpass',
+        })
+        self.assertRedirects(response, reverse('employer_dashboard'))
+
+    def test_login_post_invalid(self):
+        response = self.client.post(reverse('process_login'), {
+            'user_type': 'user',
+            'user-username': 'user',
+            'user-password': 'wrongpass',
+        })
+        self.assertContains(response, "help")
+
+    def test_signup_get(self):
+        response = self.client.get(reverse('process_signup'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_remove_duplicates_by_keys(self):
+        data = [{'a': 'x', 'b': '1'}, {'a': 'x', 'b': '1'}, {'a': 'y', 'b': '2'}]
+        result = remove_duplicates_by_keys(data, ['a', 'b'])
+        self.assertEqual(len(result), 2)
+
+    def test_split_skills_classification(self):
+        skills = ["Python", "Teamwork", "GitHub", "Leadership"]
+        technical, soft = split_skills(skills)
+        self.assertIn("Python", technical)
+        self.assertIn("GitHub", technical)
+        self.assertIn("Teamwork", soft)
+        self.assertIn("Leadership", soft)
+
+    def test_delete_raw_cv_post_success(self):
+        self.client.login(username='user', password='testpass')
+        uploaded = UploadedCV.objects.create(user=self.user)
+        uploaded.file.save('cv.pdf', SimpleUploadedFile('cv.pdf', b'dummy content'))
+        response = self.client.post(reverse('delete_raw_cv'))
+        self.assertTrue(response.json()['success'])
+
+    def test_delete_raw_cv_post_no_cv(self):
+        self.client.login(username='user', password='testpass')
+        response = self.client.post(reverse('delete_raw_cv'))
+        self.assertFalse(response.json()['success'])
+
+    def test_delete_raw_cv_get_method(self):
+        self.client.login(username='user', password='testpass')
+        response = self.client.get(reverse('delete_raw_cv'))
+        self.assertEqual(response.status_code, 405)
+
+    def test_signup_post_user_valid(self):
+        response = self.client.post(reverse('process_signup'), {
+            'user_type': 'user',
+            'user-username': 'newuser',
+            'user-email': 'newuser@test.com',
+            'user-password1': 'StrongPass123',
+            'user-password2': 'StrongPass123',
+            'user_user_industry': 'Design',
+            'user_user_location': 'Berlin',
+        })
+        self.assertIn(response.status_code, [200, 302])
+
+    def test_signup_post_company_valid(self):
+        response = self.client.post(reverse('process_signup'), {
+            'user_type': 'company',
+            'company-username': 'newco',
+            'company-email': 'newco@test.com',
+            'company-password1': 'StrongPass123',
+            'company-password2': 'StrongPass123'
+        })
+        self.assertIn(response.status_code, [200, 302])
+
+    def test_signup_post_invalid_user_form(self):
+        response = self.client.post(reverse('process_signup'), {
+            'user_type': 'user',
+            'user-username': '',
+            'user-email': '',
+            'user-password1': '123',
+            'user-password2': '123',
+            'user_user_industry': '',
+            'user_user_location': ''
+        })
+        self.assertContains(response, "SHY", status_code=200)
+
+    def test_signup_post_invalid_company_form(self):
+        response = self.client.post(reverse('process_signup'), {
+            'user_type': 'company',
+            'company-username': '',
+            'company-email': '',
+            'company-password1': '123',
+            'company-password2': '123'
+        })
+        self.assertContains(response, "About SHY", status_code=200)
+
