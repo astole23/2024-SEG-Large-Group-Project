@@ -1,0 +1,112 @@
+/* company_profile_override.css */
+
+/* Override the company logo container to center the logo and add spacing */
+.company-logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* centers the content horizontally */
+    gap: 15px;
+    margin-bottom: 1rem;
+}
+
+/* Adjust the company logo size and styling */
+.company-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-right: 0; /* remove employer_sections.css margin if not needed */
+}
+
+/* Center the header content and add bottom margin */
+.company-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Style the divider to match company detail page styling */
+.company-divider {
+    width: 50%;
+    margin: 1rem auto;
+    border: none;
+    border-top: 1px solid var(--primary-color);
+    opacity: 0.8;
+}
+
+/* Center the contact information and add spacing */
+.company-contact {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Style the job listings header */
+.job-listings h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Override grid container layout for job cards to a single column */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+/* Style the job cards similar to the company detail page */
+.job-card {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.job-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Company Reviews Section */
+.company-reviews {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.company-reviews h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.review {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.review:last-child {
+    border-bottom: none;
+}
+
+.review-text {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.review-rating {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.review-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
