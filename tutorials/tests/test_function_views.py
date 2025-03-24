@@ -5,6 +5,7 @@ from django.contrib import messages
 from tutorials.models.user_dashboard import UploadedCV
 from django.core.files.uploadedfile import SimpleUploadedFile
 from tutorials.forms import UserSignUpForm, CompanySignUpForm
+from unittest.mock import patch
 
 # Use the custom user model
 CustomUser = get_user_model()
@@ -137,12 +138,22 @@ class AuthViewsTests(TestCase):
     def test_process_signup_with_valid_company_data(self):
         response = self.client.post(reverse('process_signup'), {
             'user_type': 'company',
-            'username': 'newcompany',
-            'password1': 'newpass123',
-            'password2': 'newpass123',
-        })
-        self.assertEqual(response.status_code, 200)
+            'company-username': 'newcompany',
+            'company-email': 'newcompany@example.com',
+            'company-password1': 'Newpass123',
+            'company-password2': 'Newpass123',
+            'company-company_name': 'Test Corp',
+            'company-industry': 'Technology',
+        }, follow=True)
 
+        self.assertTrue(CustomUser.objects.filter(username='newcompany').exists())
+
+        new_company = CustomUser.objects.get(username='newcompany')
+        self.assertEqual(int(self.client.session['_auth_user_id']), new_company.id)
+        self.assertRedirects(response, reverse('employer_dashboard'))
+
+        messages_list = list(response.context['messages'])
+        self.assertTrue(any("registered and logged in successfully" in str(m) for m in messages_list))
 
     def test_process_signup_with_missing_username(self):
         response = self.client.post(reverse('process_signup'), {
@@ -180,6 +191,27 @@ class AuthViewsTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
 
+    def test_company_signup_auto_login_fails(self):
+        with patch("tutorials.views.function_views.authenticate", return_value=None):
+            response = self.client.post(reverse('process_signup'), {
+                'user_type': 'company',
+                'company-username': 'failcompany',
+                'company-email': 'fail@example.com',
+                'company-password1': 'Newpass123',
+                'company-password2': 'Newpass123',
+                'company-company_name': 'Fail Inc',
+                'company-industry': 'Finance',
+            }, follow=True)
+
+
+        self.assertTrue(CustomUser.objects.filter(username='failcompany').exists())
+
+
+        self.assertRedirects(response, reverse('login'))
+
+        messages_list = list(response.context['messages'])
+        self.assertTrue(any("auto-login failed" in str(m) for m in messages_list))
+
     def test_process_signup_with_invalid_user_location(self):
         response = self.client.post(reverse('process_signup'), {
             'user_type': 'user',
@@ -189,6 +221,50 @@ class AuthViewsTests(TestCase):
             'user_location': '',  # Invalid (empty)
         })
         self.assertEqual(response.status_code, 200)
+
+    def test_user_signup_saves_user_with_industry_and_location(self):
+        response = self.client.post(reverse('process_signup'), {
+            'user_type': 'user',
+            'user-username': 'industrytester',
+            'user-email': 'industry@test.com',
+            'user-first_name': 'Indy',
+            'user-last_name': 'Loca',
+            'user-password1': 'StrongPass123',
+            'user-password2': 'StrongPass123',
+            'user-user_industry': 'Engineering',
+            'user-user_location': 'Trondheim',
+        }, follow=True)
+
+        self.assertTrue(CustomUser.objects.filter(username='industrytester').exists())
+        user = CustomUser.objects.get(username='industrytester')
+
+        self.assertEqual(user.user_industry, 'Engineering')
+        self.assertEqual(user.user_location, 'Trondheim')
+
+        self.assertEqual(int(self.client.session['_auth_user_id']), user.id)
+
+        self.assertRedirects(response, reverse('user_dashboard'))
+
+        messages_list = list(response.context['messages'])
+        self.assertTrue(any("registered and logged in successfully" in str(m) for m in messages_list))
+
+    def test_user_signup_auto_login_fails(self):
+        with patch("tutorials.views.function_views.authenticate", return_value=None):
+            response = self.client.post(reverse('process_signup'), {
+                'user_type': 'user',
+                'user-username': 'newuser2',
+                'user-email': 'auto@test.com',
+                'user-first_name': 'Auto',
+                'user-last_name': 'Fail',
+                'user-password1': 'StrongPass123',
+                'user-password2': 'StrongPass123',
+                'user-user_industry': 'Design',
+                'user-user_location': 'Oslo',
+            }, follow=True)
+
+        self.assertTrue(CustomUser.objects.filter(username='newuser2').exists())
+        self.assertRedirects(response, reverse('login'))
+        self.assertTrue(any("auto-login failed" in str(m) for m in response.context['messages']))
 
     def test_process_signup_with_invalid_company_data(self):
         response = self.client.post(reverse('process_signup'), {
@@ -218,12 +294,6 @@ class AuthViewsTests(TestCase):
     def invalid_credentials(self):
         response = self.client.post(reverse('delete_raw_cv'))
         self.assertEqual(response.status_code, 302)
-
-    def test_raw_cv_with_no_cv(self):
-        self.client.login(username='testcompany', password='testpass123')  # Company user has no CV
-        response = self.client.post(reverse('delete_raw_cv'))
-        self.assertEqual(response.status_code, 404)
-
 
     def test_delete_raw_cv_with_get_request(self):
         self.client.login(username='testuser', password='testpass123')
@@ -440,6 +510,31 @@ class FunctionViewsTests(TestCase):
         response = self.client.post(reverse('delete_raw_cv'))
         self.assertFalse(response.json()['success'])
 
+    def test_delete_raw_cv_post_success(self):
+        self.client.login(username='user', password='testpass')
+        UploadedCV.objects.create(user=self.user, file=SimpleUploadedFile("cv.pdf", b"dummy"))
+
+        response = self.client.post(reverse('delete_raw_cv'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"success": True})
+        self.assertFalse(UploadedCV.objects.filter(user=self.user).exists())
+
+    def test_delete_raw_cv_post_no_cv(self):
+        self.client.login(username='user', password='testpass')
+
+        response = self.client.post(reverse('delete_raw_cv'))
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_raw_cv_get_request(self):
+        self.client.login(username='user', password='testpass')
+
+        response = self.client.get(reverse('delete_raw_cv'))
+
+        self.assertEqual(response.status_code, 405)
+
+
     def test_delete_raw_cv_get_method(self):
         self.client.login(username='user', password='testpass')
         response = self.client.get(reverse('delete_raw_cv'))
@@ -488,4 +583,5 @@ class FunctionViewsTests(TestCase):
             'company-password2': '123'
         })
         self.assertContains(response, "About SHY", status_code=200)
+
 
