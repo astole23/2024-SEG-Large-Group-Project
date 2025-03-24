@@ -1,0 +1,121 @@
+:root {
+    --primary-color: #462191;
+    --secondary-color: #475569;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Arial', sans-serif;
+}
+
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Container for the notifications */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Title */
+h2 {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Notifications list */
+.notifications-list {
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+}
+
+/* Each notification item */
+.notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    font-family: var(--font-primary);
+}
+
+/* Styling for unread notifications */
+.notification-item.unread {
+    background-color: #f7f7f7;
+    font-weight: 600;
+}
+
+/* Hover effect for each notification item */
+.notification-item:hover {
+    background-color: #f1f1f1;
+}
+
+/* Notification message */
+.notification-item p {
+    margin: 0;
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Date of notification */
+.notification-item small {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* "Mark as Read" button */
+.mark-read-btn {
+    padding: 6px 12px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.mark-read-btn:hover {
+    background-color: #3a0069;
+}
+
+.mark-read-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Message when there are no notifications */
+p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    text-align: center;
+}

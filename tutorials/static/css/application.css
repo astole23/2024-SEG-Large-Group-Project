@@ -34,31 +34,6 @@ body {
     padding: 0 2rem;
 }
 
-/* Header Styles */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem 0;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 2rem;
-}
-
-header h1 {
-    color: var(--text-primary);
-}
-
-nav a {
-    margin-left: 1.25rem;
-    text-decoration: none;
-    color: var(--primary-color);
-    font-weight: bold;
-}
-
-nav a:hover {
-    color: var(--hover-color);
-}
-
 /* Form Styles */
 .form-group {
     margin-bottom: 1rem;
@@ -141,6 +116,7 @@ textarea {
 .progress-container {
     margin-top: 1.25rem;
     margin-bottom: 1.875rem;
+    flex-direction: row;
 }
 
 .progress-bar {
@@ -149,6 +125,8 @@ textarea {
     position: relative;
     margin-bottom: 1.875rem;
     counter-reset: step;
+    flex-direction: row;
+
 }
 
 .progress-bar::before {
