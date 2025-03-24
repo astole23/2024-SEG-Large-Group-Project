@@ -1,0 +1,131 @@
+/* edit_company_override.css */
+
+/* Container styling */
+/* Override the .dashboard layout to be single-column, if desired */
+.dashboard {
+    display: block;           /* Instead of grid */
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+  
+  /* Ensure the container looks similar to other dashboard sections */
+  .edit-company-container {
+    background: var(--card-background);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    /* ...any additional styling */
+  }
+  
+
+/* Heading */
+.edit-company-container h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+/* Form styling */
+.edit-company-form,
+.edit-company-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* Button styling */
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--hover-color);
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+/* Back link styling */
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* Job listing action button container */
+.job-listing-action {
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--modal-overlay);
+}
+
+.modal-content {
+    background: var(--card-background);
+    margin: 10% auto;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    max-width: 600px;
+}
+
+.close {
+    float: right;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
