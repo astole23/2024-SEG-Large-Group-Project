@@ -82,16 +82,16 @@ def leave_review(request, company_id):
     text = request.POST.get('text')
     rating = request.POST.get('rating')
 
+    company = get_object_or_404(CustomUser, id=company_id, is_company=True)
+
     if not text or not rating:
         messages.error(request, "Both fields are required.")
-        return redirect('company_profile')
+        return redirect('company_detail', company_id=company.id)
 
-    company = get_object_or_404(CustomUser, id=company_id, is_company=True)
     Review.objects.create(company=company, text=text, rating=rating)
 
     messages.success(request, "Review submitted successfully!")
-    return redirect('company_profile')
-
+    return redirect('company_detail', company_id=company.id)
 def edit_company(request, company_id):
     """
     Allow a company to update its profile details.
