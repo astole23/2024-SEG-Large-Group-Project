@@ -1,4 +1,8 @@
+{% extends 'base/base_content.html' %}
+
 {% load static %}
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,13 +14,6 @@
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>Job Search Platform</h1>
-      <nav>
-        <a href="/">Home</a>
-        <a href="/logout">Logout</a>
-      </nav>
-    </header>
     
     <div class="application-container">
       <div class="application-header">
@@ -114,3 +111,5 @@
   </script>
 </body>
 </html>
+
+{% endblock %}
