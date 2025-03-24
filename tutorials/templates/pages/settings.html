@@ -36,7 +36,7 @@
                     {% if request.user.user_profile_photo %}
                         <img src="{{ request.user.user_profile_photo.url }}" alt="Profile Photo" class="rounded-circle" width="150" height="150">
                     {% else %}
-                        <img src="{% static 'images/default_profile.png' %}" alt="Default Profile" class="rounded-circle" width="150" height="150">
+                        <img src="{% static 'images/empty_profile.png' %}" alt="Default Profile" class="rounded-circle" width="150" height="150">
                     {% endif %}
                 </div>
 
