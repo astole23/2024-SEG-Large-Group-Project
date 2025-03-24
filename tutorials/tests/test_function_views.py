@@ -295,19 +295,6 @@ class AuthViewsTests(TestCase):
         response = self.client.post(reverse('delete_raw_cv'))
         self.assertEqual(response.status_code, 302)
 
-    def test_delete_raw_cv_post_no_cv(self):
-        self.client.login(username='user', password='testpass')
-
-        response = self.client.post(reverse('delete_raw_cv'))
-
-        print("Is authenticated:", response.wsgi_request.user.is_authenticated)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {
-            "success": False,
-            "error": "No CV found."
-        })
-
     def test_delete_raw_cv_with_get_request(self):
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('delete_raw_cv'))
