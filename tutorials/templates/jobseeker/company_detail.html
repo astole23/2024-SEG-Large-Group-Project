@@ -1,6 +1,8 @@
 {% extends 'base/base_content.html' %}
 {% load static %}
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/company_detail.css' %}">
+
 <div class="company-profile">
     <div class="company-header">
         <div class="company-logo-container">
@@ -24,24 +26,68 @@
     <section class="job-listings">
         <h2>Job Openings</h2>
         {% if job_postings %}
-        <ul>
-            {% for job in job_postings %}
-            <li class="job-item">
-                <h3>{{ job.job_title }}</h3>
+        <!-- Grid container for job cards -->
+        <div class="grid-container">
+          {% for job in job_postings %}
+            <div class="job-card">
+              <div class="job-details">
+                <h3 class="job-title">{{ job.job_title }}</h3>
                 <p><strong>Location:</strong> {{ job.location }}</p>
                 <p><strong>Contract Type:</strong> {{ job.contract_type }}</p>
                 <p><strong>Salary:</strong> {{ job.salary_range }}</p>
-                <p>{{ job.job_overview }}</p>
+                <p>{{ job.job_overview|truncatewords:20 }}</p>
                 <p><strong>Application Deadline:</strong> {{ job.application_deadline }}</p>
-            </li>
-            {% endfor %}
-        </ul>
+              </div>
+
+              <!-- Button container for "View More" and "Apply Now" -->
+              <div class="button-container">
+                <button class="btn btn-secondary btn-lg" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#jobModal{{ job.id }}">
+                  View More
+                </button>
+                <a href="{% url 'start_application' job.id %}" class="btn btn-secondary btn-lg">
+                  Apply Now
+                </a>
+              </div>
+            </div>
+
+            <!-- Modal for "View More" -->
+            <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+                    <h5 class="modal-title" id="jobModalLabel{{ job.id }}">{{ job.job_title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Location:</strong> {{ job.location }}</p>
+                    <p><strong>Contract Type:</strong> {{ job.contract_type }}</p>
+                    <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                    <p><strong>Job Overview:</strong> {{ job.job_overview }}</p>
+                    <p><strong>Roles &amp; Responsibilities:</strong> {{ job.roles_responsibilities }}</p>
+                    <p><strong>Required Skills:</strong> {{ job.required_skills }}</p>
+                    {% if job.preferred_skills %}
+                    <p><strong>Preferred Skills:</strong> {{ job.preferred_skills }}</p>
+                    {% endif %}
+                    <p><strong>Education Required:</strong> {{ job.education_required }}</p>
+                    <p><strong>Perks:</strong> {{ job.perks }}</p>
+                    <p><strong>Application Deadline:</strong> {{ job.application_deadline }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
         {% else %}
         <p>No job openings available at the moment.</p>
         {% endif %}
     </section>
 
-    <!-- Directly Visible Review Form (no modal, no JS) -->
+    <!-- Directly Visible Review Form -->
     <section class="leave-review">
         <h2>Leave a Review</h2>
         <form method="POST" action="{% url 'leave_review' company_id=company.id %}">
@@ -61,13 +107,8 @@
                     <option value="5">5 - Excellent</option>
                 </select>
             </div>
-            <button type="submit">Submit Review</button>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
         </form>
     </section>
-
 </div>
-{% endblock %}
-
-{% block extra_stylesheets %}
-    <link rel="stylesheet" href="{% static 'css/company_detail.css' %}">
 {% endblock %}

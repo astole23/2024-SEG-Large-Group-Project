@@ -34,15 +34,24 @@ def employer_dashboard(request):
 
 
 def company_detail(request, company_id):
-
     company = get_object_or_404(CustomUser, id=company_id, is_company=True)
+    
+    # Retrieve job postings for this company and order by latest
+    job_postings = JobPosting.objects.filter(company=company).order_by('-created_at')
+    
     if request.method == 'POST':
         form = CompanyProfileForm(request.POST, request.FILES, instance=company)
         if form.is_valid():
             form.save()
     else:
         form = CompanyProfileForm(instance=company)
-    return render(request, 'company/company_detail.html', {'company': company, 'form': form})
+    
+    return render(request, 'jobseeker/company_detail.html', {
+        'company': company,
+        'form': form,
+        'job_postings': job_postings
+    })
+
 
 @login_required
 def company_profile(request):

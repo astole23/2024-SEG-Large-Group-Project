@@ -1,7 +1,8 @@
-/* Reset some default styling */
 :root {
     --primary-color: #462191;
     --secondary-color: #475569;
+    --selected-color: #46219168;
+    --hover-color: #6a0dad;
     --background-color: #f8fafc;
     --card-background: #ffffff;
     --border-color: #e2e8f0;
@@ -9,156 +10,197 @@
     --text-secondary: #64748b;
     --danger-color: #ef4444;
     --modal-overlay: rgba(0, 0, 0, 0.5);
-    --font-primary: 'Inter', sans-serif;
+    --font-primary: 'Inter', system-ui, sans-serif;
     --font-secondary: 'Arial', sans-serif;
   }
   
-* {
+  * {
     margin: 0;
-    padding: 30px;
+    padding: 0;
     box-sizing: border-box;
-}
-
-/* Body styling */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
-    line-height: 1.6;
+  }
+  
+  body {
+    font-family: var(--font-primary);
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.5;
     padding: 20px;
-}
-
-/* Header styling */
-.company-header {
-    width: 100%;
-    margin: 0 auto;
+  }
+  
+  /* Main container */
+  .company-profile {
+    max-width: 1200px;
+    margin: 2rem auto;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* Header */
+  .company-header {
     text-align: center;
-}
-
-/* Container for logo and company name */
-.company-logo-container {
+    margin-bottom: 2rem;
+  }
+  
+  .company-logo-container {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     gap: 15px;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-/* Company logo styling */
-.company-logo {
+    margin-bottom: 1rem;
+  }
+  
+  .company-logo {
     width: 80px;
     height: 80px;
     border-radius: 10px;
-    object-fit: contain;
-}
-
-/* Placeholder logo styling */
-.placeholder-logo {
+    object-fit: cover;
+  }
+  
+  .placeholder-logo {
     width: 80px;
     height: 80px;
     background-color: #ddd;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14px;
     color: #666;
     border-radius: 10px;
-}
-
-/* Company name styling */
-.company-name {
-    font-size: 2em;
+  }
+  
+  .company-name {
+    font-size: 2rem;
     font-weight: bold;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
-
-/* Review Box Styling */
-.review-box {
-    background-color: purple;
-    padding: 20px;
-    text-align: center;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    position: relative;
-    z-index: 2; /* Ensures the button is above the divider */
-}
-
-.review-button {
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    padding: 10px 20px;
-    background-color: purple;
-    border-radius: 5px;
-    border: 2px solid white;
-}
-
-.review-button:hover {
-    background-color: darkviolet;
-}
-
-/* Horizontal divider styling */
-.company-divider {
+  }
+  
+  /* Divider */
+  .company-divider {
     width: 50%;
-    margin: 10px auto;
+    margin: 1rem auto;
     border: none;
-    border-top: 1px solid purple; /* Changed to a thinner purple line */
+    border-top: 1px solid var(--primary-color);
     opacity: 0.8;
-}
-
-/* Contact info styling */
-.company-contact p {
-    margin: 5px 0;
-}
-
-/* Job listings section styling */
-.job-listings {
-    margin-top: 30px;
-}
-
-.job-listings h2 {
-    font-size: 1.8em;
-    color: #2c3e50;
-    margin-bottom: 15px;
-}
-
-/* Job listing items */
-.job-listings ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.job-listings li {
-    background-color: white;
-    border: 1px solid #ddd;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-}
-
-.job-listings li:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.job-listings h3 {
-    font-size: 1.6em;
-    color: #34495e;
-}
-
-.job-listings p {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-}
-
-/* Footer styling */
-footer {
+  }
+  
+  /* Contact info */
+  .company-contact {
     text-align: center;
-    font-size: 1em;
-    margin-top: 40px;
-}
+    margin-bottom: 2rem;
+  }
+  
+  .company-contact p {
+    margin: 0.5rem 0;
+  }
+  
+  /* Job Listings */
+  .job-listings {
+    margin-top: 2rem;
+  }
+  
+  .job-listings h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  /* Grid layout for the job cards */
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr; /* single column, but easily changed to 2 columns if desired */
+    gap: 2rem; /* spacing between cards */
+  }
+  
+  /* Each job is displayed as a card */
+  .job-card {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .job-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .job-details {
+    margin-bottom: 1rem;
+  }
+  
+  .job-title {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .button-container .btn {
+    width: 50%;
+    text-align: center;
+  }
+  
+  /* Leave Review Section */
+  .leave-review {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+  }
+  
+  .leave-review h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .leave-review form {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .leave-review label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+  
+  .leave-review textarea,
+  .leave-review select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: var(--font-primary);
+  }
+  
+  .leave-review button {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    align-self: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .leave-review button:hover {
+    background-color: var(--hover-color);
+  }
+  
