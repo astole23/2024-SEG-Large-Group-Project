@@ -24,7 +24,7 @@ $ source venv/bin/activate
 Install all required packages:
 
 $ pip3 install -r requirements.txt
-pip install together --no-deps
+$ pip3 install together --no-deps
 Migrate the database:
 
 $ python3 manage.py migrate
