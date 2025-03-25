@@ -67,7 +67,7 @@ body {
   padding: 40px 20px;
   height: 100vh;
   overflow-y: auto;
-  background-image: url('/static/contact_us_background.jpg');
+  background-image: url('/static/images/standard_background.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
