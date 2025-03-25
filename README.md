@@ -14,7 +14,10 @@ Project structure
 The project is called task_manager. It currently consists of a single app tasks.
 
 Deployed version of the application
-The deployed version of the application can be found at [INSERT DEPOLYED URL]
+The deployed version of the application can be found at https://shy-fw7o.onrender.com/
+
+Deployment information 
+Please know that if the website is inactive for a while, once a user uses the link, it takes approximately 90 seconds to load the URL. This is not due to SHY but free subscription limits. In real life, our hiring app will not be inactive for days. 
 
 Installation instructions
 To install the software and use it in your local development environment, you must first set up and activate a local development environment. From the root of the project:
@@ -24,7 +27,6 @@ $ source venv/bin/activate
 Install all required packages:
 
 $ pip3 install -r requirements.txt
-$ pip3 install together --no-deps
 Migrate the database:
 
 $ python3 manage.py migrate
@@ -37,6 +39,6 @@ $ python3 manage.py test
 The above instructions should work in your version of the application. If there are deviations, declare those here in bold. Otherwise, remove this line.
 
 Sources
-The packages used by this application are specified in requirements.txt as well as library together with -no-deps which should be installed manually. 
+The packages used by this application are specified in requirements.txt 
 
 chatgpt.com -> debugging, image development 
