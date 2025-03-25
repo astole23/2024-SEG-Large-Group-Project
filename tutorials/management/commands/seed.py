@@ -706,7 +706,7 @@ def fetch_adzuna_jobs():
     print("🔍 Fetching jobs from Adzuna API...")
 
     try:
-        while len(job_list) < 150:
+        while len(job_list) < 1000:
             category = random.choice(CATEGORIES)
             
             for page in range(1, 6):
@@ -765,10 +765,10 @@ def fetch_adzuna_jobs():
                             "company_overview": random.choice(WHY_JOIN_US_OPTIONS),
                         })
 
-                        if len(job_list) >= 150:
+                        if len(job_list) >= 1000:
                             break
 
-                if len(job_list) >= 150:
+                if len(job_list) >= 1000:
                     break 
     except requests.RequestException as e:
         print(f"❌ Error: {e}")
@@ -827,7 +827,7 @@ def generate_unique_company_username(company_name):
 
 
 class Command(BaseCommand):
-    help = "Fetches 150 job postings from Adzuna API and saves them to the database."
+    help = "Fetches approx 1000 job postings from Adzuna API and saves them to the database."
 
     def handle(self, *args, **kwargs):
         self.seed_users(100) 
