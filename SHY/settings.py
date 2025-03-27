@@ -2,6 +2,7 @@ import certifi
 import ssl
 import smtplib
 import os
+import sys
 
 from pathlib import Path
 from dotenv import load_dotenv
@@ -118,7 +119,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'  # Ensure this is not empty
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -140,4 +140,8 @@ smtplib.SMTP_SSL.context = ssl.create_default_context(cafile=certifi.where())
 load_dotenv()
 TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+if 'test' in sys.argv:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
