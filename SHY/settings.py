@@ -140,3 +140,4 @@ smtplib.SMTP_SSL.context = ssl.create_default_context(cafile=certifi.where())
 load_dotenv()
 TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
 
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
